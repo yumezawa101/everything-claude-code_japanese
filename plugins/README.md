@@ -63,6 +63,10 @@ claude plugin install typescript-lsp@claude-plugins-official
 
 **プロンプト支援:**
 - `prompt-improver` - 曖昧なプロンプトを検出して明確化質問を自動生成（UserPromptSubmit hook）
+  ```bash
+  # ワンコマンドでインストール/更新
+  ./scripts/install-prompt-improver.sh
+  ```
 
 ---
 
