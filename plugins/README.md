@@ -25,6 +25,7 @@ claude plugin marketplace add https://github.com/mixedbread-ai/mgrep
 | claude-plugins-official | `anthropics/claude-plugins-official` |
 | claude-code-plugins | `anthropics/claude-code` |
 | Mixedbread-Grep | `mixedbread-ai/mgrep` |
+| severity1-marketplace | `severity1/severity1-marketplace` |
 
 ---
 
@@ -60,6 +61,9 @@ claude plugin install typescript-lsp@claude-plugins-official
 - `frontend-design` - UI パターン
 - `feature-dev` - 機能開発
 
+**プロンプト支援:**
+- `prompt-improver` - 曖昧なプロンプトを検出して明確化質問を自動生成（UserPromptSubmit hook）
+
 ---
 
 ## クイックセットアップ
@@ -68,6 +72,7 @@ claude plugin install typescript-lsp@claude-plugins-official
 # マーケットプレイスを追加
 claude plugin marketplace add https://github.com/anthropics/claude-plugins-official
 claude plugin marketplace add https://github.com/mixedbread-ai/mgrep
+claude plugin marketplace add severity1/severity1-marketplace
 
 # /plugins を開いて必要なものをインストール
 ```
