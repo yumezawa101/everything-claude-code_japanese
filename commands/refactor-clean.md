@@ -1,3 +1,7 @@
+---
+description: テスト検証を伴い、デッドコードを安全に特定して削除します。knip、depcheck、ts-pruneを使用します。
+---
+
 # Refactor Clean
 
 テスト検証を伴い、デッドコードを安全に特定して削除します:

@@ -1,3 +1,7 @@
+---
+description: TypeScriptおよびビルドエラーを段階的に修正します。ビルド実行、エラー解析、修正適用、再ビルドを繰り返します。
+---
+
 # Build and Fix
 
 TypeScriptおよびビルドエラーを段階的に修正：

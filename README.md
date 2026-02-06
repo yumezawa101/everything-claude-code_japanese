@@ -1,48 +1,49 @@
-# Everything Claude Code
+# Everything Claude Code (Japanese)
 
-[![Stars](https://img.shields.io/github/stars/affaan-m/everything-claude-code?style=flat)](https://github.com/affaan-m/everything-claude-code/stargazers)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-![Shell](https://img.shields.io/badge/-Shell-4EAA25?logo=gnu-bash&logoColor=white)
-![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white)
-![Markdown](https://img.shields.io/badge/-Markdown-000000?logo=markdown&logoColor=white)
-
-**Anthropic ハッカソン優勝者による Claude Code 設定の完全コレクション。**
-
-実際のプロダクト開発で10ヶ月以上にわたる集中的な日常使用を通じて進化した、本番環境対応の agent、skill、hook、command、rule、MCP 設定。
+Claude Code の設定を日本語化し、自分の開発ワークフローに合わせてカスタマイズした個人用ツールキット。本番環境対応の agent、skill、hook、command、rule、MCP 設定を収録。
 
 ---
 
-## ガイド
+## クイックスタート
 
-このリポジトリはコードのみです。ガイドですべてを解説しています。
+2分以内でセットアップ完了：
 
-<table>
-<tr>
-<td width="50%">
-<a href="https://x.com/affaanmustafa/status/2012378465664745795">
-<img src="https://github.com/user-attachments/assets/1a471488-59cc-425b-8345-5245c7efbcef" alt="The Shorthand Guide to Everything Claude Code" />
-</a>
-</td>
-<td width="50%">
-<a href="https://x.com/affaanmustafa/status/2014040193557471352">
-<img src="https://github.com/user-attachments/assets/c9ca43bc-b149-427f-b551-af6840c368f0" alt="The Longform Guide to Everything Claude Code" />
-</a>
-</td>
-</tr>
-<tr>
-<td align="center"><b>簡易ガイド</b><br/>セットアップ、基礎、哲学。<b>まずこちらをお読みください。</b></td>
-<td align="center"><b>詳細ガイド</b><br/>トークン最適化、メモリ永続化、eval、並列化。</td>
-</tr>
-</table>
+### ステップ 1: プラグインをインストール
 
-| トピック | 学べること |
-|---------|-----------|
-| トークン最適化 | モデル選択、システムプロンプトの軽量化、バックグラウンドプロセス |
-| メモリ永続化 | セッション間でコンテキストを自動的に保存・読み込む hook |
-| 継続的学習 | セッションから再利用可能な skill へパターンを自動抽出 |
-| 検証ループ | チェックポイント vs 継続的 eval、grader の種類、pass@k メトリクス |
-| 並列化 | Git worktree、カスケード方式、インスタンスをスケールするタイミング |
-| サブエージェントオーケストレーション | コンテキスト問題、反復的取得パターン |
+```bash
+# マーケットプレイスを追加
+/plugin marketplace add yumezawa101/everything-claude-code_japanese
+
+# プラグインをインストール
+/plugin install everything-claude-code@everything-claude-code
+```
+
+### ステップ 2: ルールをインストール（必須）
+
+> **重要:** Claude Code のプラグインシステムでは rules を自動配布できません。手動でインストールしてください：
+
+```bash
+# リポジトリをクローン
+git clone https://github.com/yumezawa101/everything-claude-code_japanese.git
+
+# 共通ルールをインストール（必須）
+cp -r everything-claude-code_japanese/rules/common/* ~/.claude/rules/
+
+# 言語固有ルールをインストール（使用する言語に合わせて選択）
+cp -r everything-claude-code_japanese/rules/typescript/* ~/.claude/rules/
+```
+
+### ステップ 3: 使い始める
+
+```bash
+# コマンドを試す
+/plan "Add user authentication"
+
+# 利用可能なコマンドを確認
+/plugin list everything-claude-code@everything-claude-code
+```
+
+**以上です！** これで 10 種類の agent、15 種類の skill、27 種類の command が使えます。
 
 ---
 
@@ -85,114 +86,18 @@ node scripts/setup-package-manager.js --detect
 
 このリポジトリは **Claude Code プラグイン** です - 直接インストールするか、手動でコンポーネントをコピーできます。
 
-```
-everything-claude-code/
-|-- .claude-plugin/   # プラグインとマーケットプレイスのマニフェスト
-|   |-- plugin.json         # プラグインのメタデータとコンポーネントパス
-|   |-- marketplace.json    # /plugin marketplace add 用のマーケットプレイスカタログ
-|
-|-- agents/           # 委譲用の特化型サブエージェント
-|   |-- planner.md           # 機能実装計画
-|   |-- architect.md         # システム設計判断
-|   |-- tdd-guide.md         # テスト駆動開発
-|   |-- code-reviewer.md     # 品質とセキュリティレビュー
-|   |-- security-reviewer.md # 脆弱性分析
-|   |-- build-error-resolver.md
-|   |-- e2e-runner.md        # Playwright E2E テスト
-|   |-- refactor-cleaner.md  # デッドコードクリーンアップ
-|   |-- doc-updater.md       # ドキュメント同期
-|
-|-- skills/           # ワークフロー定義とドメイン知識
-|   |-- coding-standards/           # 言語ベストプラクティス
-|   |-- backend-patterns/           # API、データベース、キャッシュパターン
-|   |-- frontend-patterns/          # React、Next.js パターン
-|   |-- continuous-learning/        # セッションからパターンを自動抽出（詳細ガイド）
-|   |-- continuous-learning-v2/     # 信頼度スコアリング付きの instinct ベース学習
-|   |-- iterative-retrieval/        # サブエージェント用の段階的コンテキスト精緻化
-|   |-- strategic-compact/          # 手動コンパクション提案（詳細ガイド）
-|   |-- tdd-workflow/               # TDD 方法論
-|   |-- security-review/            # セキュリティチェックリスト
-|   |-- eval-harness/               # 検証ループ評価（詳細ガイド）
-|   |-- verification-loop/          # 継続的検証（詳細ガイド）
-|
-|-- commands/         # クイック実行用スラッシュコマンド
-|   |-- tdd.md              # /tdd - テスト駆動開発
-|   |-- plan.md             # /plan - 実装計画
-|   |-- e2e.md              # /e2e - E2E テスト生成
-|   |-- code-review.md      # /code-review - 品質レビュー
-|   |-- build-fix.md        # /build-fix - ビルドエラー修正
-|   |-- refactor-clean.md   # /refactor-clean - デッドコード削除
-|   |-- learn.md            # /learn - セッション中にパターンを抽出（詳細ガイド）
-|   |-- checkpoint.md       # /checkpoint - 検証状態を保存（詳細ガイド）
-|   |-- verify.md           # /verify - 検証ループを実行（詳細ガイド）
-|   |-- setup-pm.md         # /setup-pm - パッケージマネージャーを設定（新規）
-|
-|-- rules/            # 常に従うガイドライン（~/.claude/rules/ にコピー）
-|   |-- security.md         # 必須セキュリティチェック
-|   |-- coding-style.md     # イミュータビリティ、ファイル構成
-|   |-- testing.md          # TDD、80% カバレッジ要件
-|   |-- git-workflow.md     # コミット形式、PR プロセス
-|   |-- agents.md           # サブエージェントに委譲するタイミング
-|   |-- performance.md      # モデル選択、コンテキスト管理
-|
-|-- hooks/            # トリガーベースの自動化
-|   |-- hooks.json                # すべての hook 設定（PreToolUse、PostToolUse、Stop など）
-|   |-- memory-persistence/       # セッションライフサイクル hook（詳細ガイド）
-|   |-- strategic-compact/        # コンパクション提案（詳細ガイド）
-|
-|-- scripts/          # クロスプラットフォーム Node.js スクリプト（新規）
-|   |-- lib/                     # 共有ユーティリティ
-|   |   |-- utils.js             # クロスプラットフォームファイル/パス/システムユーティリティ
-|   |   |-- package-manager.js   # パッケージマネージャー検出と選択
-|   |-- hooks/                   # hook 実装
-|   |   |-- session-start.js     # セッション開始時にコンテキストを読み込む
-|   |   |-- session-end.js       # セッション終了時に状態を保存
-|   |   |-- pre-compact.js       # コンパクション前の状態保存
-|   |   |-- suggest-compact.js   # 戦略的コンパクション提案
-|   |   |-- evaluate-session.js  # セッションからパターンを抽出
-|   |-- setup-package-manager.js # インタラクティブ PM セットアップ
-|
-|-- tests/            # テストスイート（新規）
-|   |-- lib/                     # ライブラリテスト
-|   |-- hooks/                   # hook テスト
-|   |-- run-all.js               # すべてのテストを実行
-|
-|-- contexts/         # 動的システムプロンプト注入 context（詳細ガイド）
-|   |-- dev.md              # 開発モード context
-|   |-- review.md           # コードレビューモード context
-|   |-- research.md         # リサーチ/探索モード context
-|
-|-- examples/         # 設定例とセッション例
-|   |-- CLAUDE.md           # プロジェクトレベル設定例
-|   |-- user-CLAUDE.md      # ユーザーレベル設定例
-|
-|-- mcp-configs/      # MCP サーバー設定
-|   |-- mcp-servers.json    # GitHub、Supabase、Vercel、Railway など
-|
-|-- marketplace.json  # セルフホストマーケットプレイス設定（/plugin marketplace add 用）
-```
-
----
-
-## エコシステムツール
-
-### ecc.tools - Skill Creator
-
-リポジトリから Claude Code skill を自動生成します。
-
-[GitHub App をインストール](https://github.com/apps/skill-creator) | [ecc.tools](https://ecc.tools)
-
-リポジトリを分析して以下を作成します：
-- **SKILL.md ファイル** - Claude Code ですぐに使える skill
-- **Instinct コレクション** - continuous-learning-v2 用
-- **パターン抽出** - コミット履歴から学習
-
-```bash
-# GitHub App インストール後、skill は以下に表示されます：
-~/.claude/skills/generated/
-```
-
-`continuous-learning-v2` skill と連携して instinct を継承します。
+| ディレクトリ | 内容 | 数 |
+|---|---|---|
+| `agents/` | 特化型サブエージェント（計画、レビュー、TDD、セキュリティなど） | 10 |
+| `skills/` | ワークフロー定義とドメイン知識 | 15 |
+| `commands/` | スラッシュコマンド（/plan、/tdd、/code-review など） | 27 |
+| `rules/` | 常に従うガイドライン（common + typescript） | 13 |
+| `hooks/` | トリガーベースの自動化 | 1 |
+| `contexts/` | 動的コンテキスト（dev、review、research） | 3 |
+| `scripts/` | クロスプラットフォーム Node.js スクリプト | - |
+| `tests/` | テストスイート | - |
+| `mcp-configs/` | MCP サーバー設定 | 1 |
+| `examples/` | 設定例とセッション例 | 2+ |
 
 ---
 
@@ -200,17 +105,7 @@ everything-claude-code/
 
 ### オプション 1: プラグインとしてインストール（推奨）
 
-このリポジトリを使う最も簡単な方法 - Claude Code プラグインとしてインストール：
-
-```bash
-# このリポジトリをマーケットプレイスとして追加
-/plugin marketplace add affaan-m/everything-claude-code
-
-# プラグインをインストール
-/plugin install everything-claude-code@everything-claude-code
-```
-
-または `~/.claude/settings.json` に直接追加：
+`~/.claude/settings.json` に以下を追加：
 
 ```json
 {
@@ -218,7 +113,7 @@ everything-claude-code/
     "everything-claude-code": {
       "source": {
         "source": "github",
-        "repo": "affaan-m/everything-claude-code"
+        "repo": "yumezawa101/everything-claude-code_japanese"
       }
     }
   },
@@ -230,6 +125,22 @@ everything-claude-code/
 
 これですべての command、agent、skill、hook に即座にアクセスできます。
 
+> **注意:** Claude Code のプラグインシステムでは rules を自動配布できません。手動でインストールしてください：
+>
+> ```bash
+> # リポジトリをクローン
+> git clone https://github.com/yumezawa101/everything-claude-code_japanese.git
+>
+> # オプション A: ユーザーレベル（全プロジェクトに適用）
+> cp -r everything-claude-code_japanese/rules/common/* ~/.claude/rules/
+> cp -r everything-claude-code_japanese/rules/typescript/* ~/.claude/rules/   # 使用する言語に合わせて選択
+>
+> # オプション B: プロジェクトレベル（現在のプロジェクトのみ）
+> mkdir -p .claude/rules
+> cp -r everything-claude-code_japanese/rules/common/* .claude/rules/
+> cp -r everything-claude-code_japanese/rules/typescript/* .claude/rules/     # 使用する言語に合わせて選択
+> ```
+
 ---
 
 ### オプション 2: 手動インストール
@@ -238,19 +149,20 @@ everything-claude-code/
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/affaan-m/everything-claude-code.git
+git clone https://github.com/yumezawa101/everything-claude-code_japanese.git
 
 # agent を Claude 設定にコピー
-cp everything-claude-code/agents/*.md ~/.claude/agents/
+cp everything-claude-code_japanese/agents/*.md ~/.claude/agents/
 
-# rule をコピー
-cp everything-claude-code/rules/*.md ~/.claude/rules/
+# rule をコピー（common + 言語固有）
+cp -r everything-claude-code_japanese/rules/common/* ~/.claude/rules/
+cp -r everything-claude-code_japanese/rules/typescript/* ~/.claude/rules/   # 使用する言語に合わせて選択
 
 # command をコピー
-cp everything-claude-code/commands/*.md ~/.claude/commands/
+cp everything-claude-code_japanese/commands/*.md ~/.claude/commands/
 
 # skill をコピー
-cp -r everything-claude-code/skills/* ~/.claude/skills/
+cp -r everything-claude-code_japanese/skills/* ~/.claude/skills/
 ```
 
 #### settings.json に hook を追加
@@ -312,14 +224,59 @@ hook はツールイベントで発火します。例 - console.log について
 
 ### Rules
 
-rule は常に従うガイドラインです。モジュラーに保ちましょう：
+rule は常に従うガイドラインです。`common/`（言語非依存）+ 言語固有のディレクトリで構成されています：
 
 ```
-~/.claude/rules/
-  security.md      # シークレットのハードコード禁止
-  coding-style.md  # イミュータビリティ、ファイル制限
-  testing.md       # TDD、カバレッジ要件
+rules/
+  common/          # 普遍的な原則（常にインストール）
+  typescript/      # TS/JS 固有のパターンとツール
 ```
+
+詳細は [`rules/README.md`](rules/README.md) を参照してください。
+
+---
+
+## エコシステムツール
+
+### Skill Creator
+
+`/skill-create` コマンドでリポジトリから Claude Code skill を自動生成します：
+
+```bash
+/skill-create                    # 現在のリポジトリを分析
+/skill-create --instincts        # instinct も同時に生成（continuous-learning 用）
+```
+
+git 履歴をローカルで分析し、SKILL.md ファイルを生成します。
+
+### Continuous Learning v2
+
+instinct ベースの学習システムが開発パターンを自動的に学習します：
+
+```bash
+/instinct-status        # 学習済み instinct を信頼度付きで表示
+/instinct-import <file> # 他の環境から instinct をインポート
+/instinct-export        # instinct をエクスポートして共有
+/evolve                 # 関連する instinct をクラスタリングして skill 化
+```
+
+詳細は `skills/continuous-learning-v2/` を参照してください。
+
+---
+
+## 動作要件
+
+### Claude Code CLI バージョン
+
+**最低バージョン: v2.1.0 以上**
+
+hook の処理方法の変更により、Claude Code CLI v2.1.0 以上が必要です。
+
+```bash
+claude --version
+```
+
+> **注意:** `.claude-plugin/plugin.json` に `"hooks"` フィールドを追加しないでください。v2.1 以降は `hooks/hooks.json` が自動的に読み込まれるため、重複検出エラーの原因になります。
 
 ---
 
@@ -336,36 +293,6 @@ node tests/lib/utils.test.js
 node tests/lib/package-manager.test.js
 node tests/hooks/hooks.test.js
 ```
-
----
-
-## コントリビュート
-
-**コントリビュートを歓迎し、推奨しています。**
-
-このリポジトリはコミュニティリソースとなることを目的としています。以下をお持ちの場合：
-- 便利な agent や skill
-- 賢い hook
-- より良い MCP 設定
-- 改善された rule
-
-ぜひコントリビュートしてください！ガイドラインは [CONTRIBUTING.md](CONTRIBUTING.md) をご覧ください。
-
-### コントリビュートのアイデア
-
-- 言語固有の skill（Python、Go、Rust パターン）
-- フレームワーク固有の設定（Django、Rails、Laravel）
-- DevOps agent（Kubernetes、Terraform、AWS）
-- テスト戦略（さまざまなフレームワーク）
-- ドメイン固有の知識（ML、データエンジニアリング、モバイル）
-
----
-
-## 背景
-
-私は実験的ロールアウトから Claude Code を使用しています。2025年9月に [@DRodriguezFX](https://x.com/DRodriguezFX) と共に [zenith.chat](https://zenith.chat) を構築して Anthropic x Forum Ventures ハッカソンで優勝しました - すべて Claude Code を使用して。
-
-これらの設定は複数の本番アプリケーションで実戦テスト済みです。
 
 ---
 
@@ -392,25 +319,6 @@ node tests/hooks/hooks.test.js
 
 ---
 
-## Star 履歴
-
-[![Star History Chart](https://api.star-history.com/svg?repos=affaan-m/everything-claude-code&type=Date)](https://star-history.com/#affaan-m/everything-claude-code&Date)
-
----
-
-## リンク
-
-- **簡易ガイド（まずはこちら）:** [The Shorthand Guide to Everything Claude Code](https://x.com/affaanmustafa/status/2012378465664745795)
-- **詳細ガイド（上級）:** [The Longform Guide to Everything Claude Code](https://x.com/affaanmustafa/status/2014040193557471352)
-- **フォロー:** [@affaanmustafa](https://x.com/affaanmustafa)
-- **zenith.chat:** [zenith.chat](https://zenith.chat)
-
----
-
 ## ライセンス
 
-MIT - 自由に使用し、必要に応じて修正し、可能であればコントリビュートしてください。
-
----
-
-**役に立ったらこのリポジトリに Star を。両方のガイドを読んでください。素晴らしいものを作りましょう。**
+MIT - 自由に使用し、必要に応じて修正してください。

@@ -1,3 +1,7 @@
+---
+description: 複雑なタスクのための順次agentワークフロー。feature、bugfix、refactor、securityの各パイプラインを実行します。
+---
+
 # Orchestrate Command
 
 複雑なタスクのための順次 agent ワークフロー。
