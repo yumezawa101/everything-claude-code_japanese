@@ -1,3 +1,7 @@
+---
+description: フロントエンド特化の開発ワークフロー。Gemini主導でUI/UXタスクのマルチモデル協調を行います。
+---
+
 # Frontend - Frontend-Focused Development
 
 Frontend-focused workflow (Research → Ideation → Plan → Execute → Optimize → Review), Gemini-led.

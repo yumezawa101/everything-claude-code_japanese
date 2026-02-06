@@ -1,3 +1,7 @@
+---
+description: プロジェクトを自動分析し、PM2サービス設定とコマンドファイルを生成します。
+---
+
 # PM2 Init
 
 Auto-analyze project and generate PM2 service commands.

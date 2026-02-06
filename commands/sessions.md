@@ -1,3 +1,7 @@
+---
+description: Claude Codeのセッション履歴を管理します。一覧表示、読み込み、エイリアス作成、情報表示が可能です。
+---
+
 # Sessions Command
 
 Manage Claude Code session history - list, load, alias, and edit sessions stored in `~/.claude/sessions/`.

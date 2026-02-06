@@ -1,3 +1,7 @@
+---
+description: バックエンド特化の開発ワークフロー。Codex主導でサーバーサイドタスクのマルチモデル協調を行います。
+---
+
 # Backend - Backend-Focused Development
 
 Backend-focused workflow (Research → Ideation → Plan → Execute → Optimize → Review), Codex-led.

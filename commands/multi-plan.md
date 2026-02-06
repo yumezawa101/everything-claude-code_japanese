@@ -1,3 +1,7 @@
+---
+description: マルチモデル協調プランニング。コンテキスト取得＋デュアルモデル分析でステップバイステップの実装計画を生成します。
+---
+
 # Plan - Multi-Model Collaborative Planning
 
 Multi-model collaborative planning - Context retrieval + Dual-model analysis → Generate step-by-step implementation plan.

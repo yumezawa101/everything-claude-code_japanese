@@ -1,3 +1,7 @@
+---
+description: マルチモデル協調実行。計画からプロトタイプを取得し、Claudeがリファクタリング・実装・監査を行います。
+---
+
 # Execute - Multi-Model Collaborative Execution
 
 Multi-model collaborative execution - Get prototype from plan → Claude refactors and implements → Multi-model audit and delivery.
