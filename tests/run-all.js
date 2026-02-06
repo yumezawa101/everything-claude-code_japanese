@@ -16,9 +16,18 @@ const testFiles = [
   'hooks/hooks.test.js'
 ];
 
-console.log('╔══════════════════════════════════════════════════════════╗');
-console.log('║           claudecode-tool-ja - Test Suite                 ║');
-console.log('╚══════════════════════════════════════════════════════════╝');
+const BOX_WIDTH = 56;
+const border = '═'.repeat(BOX_WIDTH);
+const pad = (text) => {
+  const padding = BOX_WIDTH - text.length;
+  const left = Math.floor(padding / 2);
+  const right = padding - left;
+  return ' '.repeat(left) + text + ' '.repeat(right);
+};
+
+console.log(`╔${border}╗`);
+console.log(`║${pad('claudecode-tool-ja - Test Suite')}║`);
+console.log(`╚${border}╝`);
 console.log();
 
 let totalPassed = 0;
@@ -65,12 +74,14 @@ for (const testFile of testFiles) {
 
 totalTests = totalPassed + totalFailed;
 
-console.log('\n╔══════════════════════════════════════════════════════════╗');
-console.log('║                     Final Results                        ║');
-console.log('╠══════════════════════════════════════════════════════════╣');
-console.log(`║  Total Tests: ${String(totalTests).padStart(4)}                                      ║`);
-console.log(`║  Passed:      ${String(totalPassed).padStart(4)}  ✓                                   ║`);
-console.log(`║  Failed:      ${String(totalFailed).padStart(4)}  ${totalFailed > 0 ? '✗' : ' '}                                   ║`);
-console.log('╚══════════════════════════════════════════════════════════╝');
+const padRight = (text) => text + ' '.repeat(Math.max(0, BOX_WIDTH - text.length));
+
+console.log(`\n╔${border}╗`);
+console.log(`║${pad('Final Results')}║`);
+console.log(`╠${border}╣`);
+console.log(`║${padRight(`  Total Tests: ${String(totalTests).padStart(4)}`)}║`);
+console.log(`║${padRight(`  Passed:      ${String(totalPassed).padStart(4)}`)}║`);
+console.log(`║${padRight(`  Failed:      ${String(totalFailed).padStart(4)}${totalFailed > 0 ? '  !' : ''}`)}║`);
+console.log(`╚${border}╝`);
 
 process.exit(totalFailed > 0 ? 1 : 0);
