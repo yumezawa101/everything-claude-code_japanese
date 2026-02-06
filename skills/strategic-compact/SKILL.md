@@ -3,7 +3,7 @@ name: strategic-compact
 description: 任意の自動コンパクションではなく、タスクフェーズ間で context を保持するため、論理的な間隔での手動 context コンパクションを提案します。
 ---
 
-# Strategic Compact Skill
+# 戦略的コンパクションスキル
 
 任意の自動コンパクションに頼るのではなく、ワークフローの戦略的なポイントで手動 `/compact` を提案します。
 

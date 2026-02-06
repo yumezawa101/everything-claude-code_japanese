@@ -1,4 +1,4 @@
-# Verification Loop Skill
+# 検証ループスキル
 
 Claude Code セッション用の包括的な検証システムです。
 

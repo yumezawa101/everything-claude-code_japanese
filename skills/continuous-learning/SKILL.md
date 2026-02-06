@@ -3,7 +3,7 @@ name: continuous-learning
 description: Claude Codeセッションから再利用可能なパターンを自動的に抽出し、将来の使用のために学習済みskillとして保存します。
 ---
 
-# Continuous Learning Skill
+# 継続学習スキル
 
 セッション終了時にClaude Codeセッションを自動的に評価し、学習済みskillとして保存できる再利用可能なパターンを抽出します。
 

@@ -1,13 +1,13 @@
 {
-  "name": "everything-claude-code",
+  "name": "claudecode-tool-ja",
   "version": "1.2.0",
-  "description": "Complete collection of battle-tested Claude Code configs from an Anthropic hackathon winner - agents, skills, hooks, and rules evolved over 10+ months of intensive daily use",
+  "description": "10ヶ月以上の実践で磨かれた Claude Code 設定コレクション — agent、skill、hook、rule を収録",
   "author": {
-    "name": "Affaan Mustafa",
-    "url": "https://x.com/affaanmustafa"
+    "name": "yumezawa101",
+    "url": "https://github.com/yumezawa101"
   },
-  "homepage": "https://github.com/affaan-m/everything-claude-code",
-  "repository": "https://github.com/affaan-m/everything-claude-code",
+  "homepage": "https://github.com/yumezawa101/everything-claude-code_japanese",
+  "repository": "https://github.com/yumezawa101/everything-claude-code_japanese",
   "license": "MIT",
   "keywords": [
     "claude-code",

@@ -17,7 +17,7 @@ const testFiles = [
 ];
 
 console.log('╔══════════════════════════════════════════════════════════╗');
-console.log('║           Everything Claude Code - Test Suite            ║');
+console.log('║           claudecode-tool-ja - Test Suite                 ║');
 console.log('╚══════════════════════════════════════════════════════════╝');
 console.log();
 

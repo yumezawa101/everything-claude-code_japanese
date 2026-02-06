@@ -1,4 +1,4 @@
-# Everything Claude Code (Japanese)
+# claudecode-tool-ja
 
 Claude Code の設定を日本語化し、自分の開発ワークフローに合わせてカスタマイズした個人用ツールキット。本番環境対応の agent、skill、hook、command、rule、MCP 設定を収録。
 
@@ -15,7 +15,7 @@ Claude Code の設定を日本語化し、自分の開発ワークフローに�
 /plugin marketplace add yumezawa101/everything-claude-code_japanese
 
 # プラグインをインストール
-/plugin install everything-claude-code@everything-claude-code
+/plugin install claudecode-tool-ja@claudecode-tool-ja
 ```
 
 ### ステップ 2: ルールをインストール（必須）
@@ -40,7 +40,7 @@ cp -r everything-claude-code_japanese/rules/typescript/* ~/.claude/rules/
 /plan "Add user authentication"
 
 # 利用可能なコマンドを確認
-/plugin list everything-claude-code@everything-claude-code
+/plugin list claudecode-tool-ja@claudecode-tool-ja
 ```
 
 **以上です！** これで 10 種類の agent、15 種類の skill、27 種類の command が使えます。
@@ -110,7 +110,7 @@ node scripts/setup-package-manager.js --detect
 ```json
 {
   "extraKnownMarketplaces": {
-    "everything-claude-code": {
+    "claudecode-tool-ja": {
       "source": {
         "source": "github",
         "repo": "yumezawa101/everything-claude-code_japanese"
@@ -118,7 +118,7 @@ node scripts/setup-package-manager.js --detect
     }
   },
   "enabledPlugins": {
-    "everything-claude-code@everything-claude-code": true
+    "claudecode-tool-ja@claudecode-tool-ja": true
   }
 }
 ```

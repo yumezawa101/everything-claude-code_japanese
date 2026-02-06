@@ -1,4 +1,4 @@
-# Everything Claude Code 簡易ガイド
+# claudecode-tool-ja 簡易ガイド
 
 ---
 

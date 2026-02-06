@@ -142,7 +142,7 @@ source: "session-observation"
 
 ### 2. ディレクトリ構造の初期化
 
-The Python CLI will create these automatically, but you can also create them manually:
+Python CLI が自動的に作成しますが、手動で作成することもできます：
 
 ```bash
 mkdir -p ~/.claude/homunculus/{instincts/{personal,inherited},evolved/{agents,skills,commands}}
