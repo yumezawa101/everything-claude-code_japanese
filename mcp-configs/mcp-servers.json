@@ -80,6 +80,21 @@
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/your/projects"],
       "description": "Filesystem operations (set your path)"
+    },
+    "figma": {
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp",
+      "description": "Figma design-to-code - read layers, tokens, auto-layout, components"
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"],
+      "description": "Browser automation for E2E testing and live DOM inspection"
+    },
+    "taskmaster-ai": {
+      "command": "npx",
+      "args": ["-y", "task-master-ai"],
+      "description": "PRD to structured task lists for MVP development"
     }
   },
   "_comments": {
