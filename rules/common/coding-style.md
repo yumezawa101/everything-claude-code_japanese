@@ -36,6 +36,14 @@ ALWAYS validate at system boundaries:
 - Fail fast with clear error messages
 - Never trust external data (API responses, user input, file content)
 
+## エレガントさの追求
+
+重要な変更においては、コード品質を意識する：
+- ハック的・場当たり的に感じるコードは**再実装を検討**する
+- 「今知っていることをすべて踏まえて、エレガントな解決策を実装する」という視点を持つ
+- ただし**過剰設計は避ける** - シンプルで明白な修正にはそのまま適用しない
+- 一時的な修正（temporary fix）は禁止。シニアエンジニア水準を維持する
+
 ## Code Quality Checklist
 
 Before marking work complete:
