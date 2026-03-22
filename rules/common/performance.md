@@ -1,34 +1,34 @@
-# パフォーマンス最適化
+# Performance Optimization
 
-## モデル選択戦略
+## Model Selection Strategy
 
-**Haiku 4.5**（Sonnet の90%の能力、3倍のコスト削減）：
-- 頻繁に呼び出される軽量 agent
-- ペアプログラミングとコード生成
-- マルチエージェントシステムのワーカー agent
+**Haiku 4.5** (90% of Sonnet capability, 3x cost savings):
+- Lightweight agents with frequent invocation
+- Pair programming and code generation
+- Worker agents in multi-agent systems
 
-**Sonnet 4.5**（最高のコーディングモデル）：
-- メイン開発作業
-- マルチエージェントワークフローのオーケストレーション
-- 複雑なコーディングタスク
+**Sonnet 4.6** (Best coding model):
+- Main development work
+- Orchestrating multi-agent workflows
+- Complex coding tasks
 
-**Opus 4.5**（最深の推論）：
-- 複雑なアーキテクチャの決定
-- 最大限の推論が必要な場合
-- リサーチと分析タスク
+**Opus 4.5** (Deepest reasoning):
+- Complex architectural decisions
+- Maximum reasoning requirements
+- Research and analysis tasks
 
-## コンテキストウィンドウ管理
+## Context Window Management
 
-コンテキストウィンドウの最後の20%では以下を避ける：
-- 大規模リファクタリング
-- 複数ファイルにまたがる機能実装
-- 複雑なインタラクションのデバッグ
+Avoid last 20% of context window for:
+- Large-scale refactoring
+- Feature implementation spanning multiple files
+- Debugging complex interactions
 
-コンテキスト感度が低いタスク：
-- 単一ファイルの編集
-- 独立したユーティリティの作成
-- ドキュメント更新
-- 単純なバグ修正
+Lower context sensitivity tasks:
+- Single-file edits
+- Independent utility creation
+- Documentation updates
+- Simple bug fixes
 
 ## Extended Thinking + Plan Mode
 
@@ -40,16 +40,16 @@ Control extended thinking via:
 - **Budget cap**: `export MAX_THINKING_TOKENS=10000`
 - **Verbose mode**: Ctrl+O to see thinking output
 
-深い推論を必要とする複雑なタスクの場合：
-1. 拡張された思考が有効であることを確認（デフォルトで有効）
-2. 構造化されたアプローチのために **Plan Mode** を有効化
-3. 複数の批評ラウンドで徹底的な分析を実施
-4. 多様な分析のために役割分割サブエージェントを使用
+For complex tasks requiring deep reasoning:
+1. Ensure extended thinking is enabled (on by default)
+2. Enable **Plan Mode** for structured approach
+3. Use multiple critique rounds for thorough analysis
+4. Use split role sub-agents for diverse perspectives
 
-## ビルドトラブルシューティング
+## Build Troubleshooting
 
-ビルドが失敗した場合：
-1. **build-error-resolver** agent を使用
-2. エラーメッセージを分析
-3. インクリメンタルに修正
-4. 各修正後に検証
+If build fails:
+1. Use **build-error-resolver** agent
+2. Analyze error messages
+3. Fix incrementally
+4. Verify after each fix

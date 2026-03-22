@@ -1,94 +1,85 @@
-# プラグインとマーケットプレイス
+# Plugins and Marketplaces
 
-プラグインは Claude Code を新しいツールと機能で拡張します。このガイドではインストールのみを扱います - いつ、なぜ使用するかについては[完全な記事](https://x.com/affaanmustafa/status/2012378465664745795)をご覧ください。
+Plugins extend Claude Code with new tools and capabilities. This guide covers installation only - see the [full article](https://x.com/affaanmustafa/status/2012378465664745795) for when and why to use them.
 
 ---
 
-## マーケットプレイス
+## Marketplaces
 
-マーケットプレイスはインストール可能なプラグインのリポジトリです。
+Marketplaces are repositories of installable plugins.
 
-### マーケットプレイスの追加
+### Adding a Marketplace
 
 ```bash
-# 公式 Anthropic マーケットプレイスを追加
+# Add official Anthropic marketplace
 claude plugin marketplace add https://github.com/anthropics/claude-plugins-official
 
-# コミュニティマーケットプレイスを追加
+# Add community marketplaces (mgrep by @mixedbread-ai)
 claude plugin marketplace add https://github.com/mixedbread-ai/mgrep
 ```
 
-### 推奨マーケットプレイス
+### Recommended Marketplaces
 
-| マーケットプレイス | ソース |
-|------------------|--------|
+| Marketplace | Source |
+|-------------|--------|
 | claude-plugins-official | `anthropics/claude-plugins-official` |
 | claude-code-plugins | `anthropics/claude-code` |
-| Mixedbread-Grep | `mixedbread-ai/mgrep` |
-| severity1-marketplace | `severity1/severity1-marketplace` |
+| Mixedbread-Grep (@mixedbread-ai) | `mixedbread-ai/mgrep` |
 
 ---
 
-## プラグインのインストール
+## Installing Plugins
 
 ```bash
-# プラグインブラウザを開く
+# Open plugins browser
 /plugins
 
-# または直接インストール
+# Or install directly
 claude plugin install typescript-lsp@claude-plugins-official
 ```
 
-### 推奨プラグイン
+### Recommended Plugins
 
-**開発:**
-- `typescript-lsp` - TypeScript インテリジェンス
-- `pyright-lsp` - Python 型チェック
-- `hookify` - 会話形式で hook を作成
-- `code-simplifier` - コードのリファクタリング
+**Development:**
+- `typescript-lsp` - TypeScript intelligence
+- `pyright-lsp` - Python type checking
+- `hookify` - Create hooks conversationally
+- `code-simplifier` - Refactor code
 
-**コード品質:**
-- `code-review` - コードレビュー
-- `pr-review-toolkit` - PR 自動化
-- `security-guidance` - セキュリティチェック
+**Code Quality:**
+- `code-review` - Code review
+- `pr-review-toolkit` - PR automation
+- `security-guidance` - Security checks
 
-**検索:**
-- `mgrep` - 強化された検索（ripgrep より優れている）
-- `context7` - ライブドキュメント参照
+**Search:**
+- `mgrep` - Enhanced search (better than ripgrep)
+- `context7` - Live documentation lookup
 
-**ワークフロー:**
-- `commit-commands` - Git ワークフロー
-- `frontend-design` - UI パターン
-- `feature-dev` - 機能開発
-
-**プロンプト支援:**
-- `prompt-improver` - 曖昧なプロンプトを検出して明確化質問を自動生成（UserPromptSubmit hook）
-  ```bash
-  # ワンコマンドでインストール/更新
-  ./scripts/install-prompt-improver.sh
-  ```
+**Workflow:**
+- `commit-commands` - Git workflow
+- `frontend-design` - UI patterns
+- `feature-dev` - Feature development
 
 ---
 
-## クイックセットアップ
+## Quick Setup
 
 ```bash
-# マーケットプレイスを追加
+# Add marketplaces
 claude plugin marketplace add https://github.com/anthropics/claude-plugins-official
 claude plugin marketplace add https://github.com/mixedbread-ai/mgrep
-claude plugin marketplace add severity1/severity1-marketplace
 
-# /plugins を開いて必要なものをインストール
+# Open /plugins and install what you need
 ```
 
 ---
 
-## プラグインファイルの場所
+## Plugin Files Location
 
 ```
 ~/.claude/plugins/
-|-- cache/                    # ダウンロードしたプラグイン
-|-- installed_plugins.json    # インストール済みリスト
-|-- known_marketplaces.json   # 追加したマーケットプレイス
-|-- marketplaces/             # マーケットプレイスデータ
+|-- cache/                    # Downloaded plugins
+|-- installed_plugins.json    # Installed list
+|-- known_marketplaces.json   # Added marketplaces
+|-- marketplaces/             # Marketplace data
 ```

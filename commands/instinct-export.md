@@ -1,38 +1,39 @@
 ---
 name: instinct-export
-description: チームメイトや他のプロジェクトと共有するためにinstinctをエクスポートする
+description: Export instincts from project/global scope to a file
 command: /instinct-export
 ---
 
 # Instinct Export Command
 
-instinctを共有可能なフォーマットにエクスポートします。以下に最適です：
-- チームメイトとの共有
-- 新しいマシンへの転送
-- プロジェクト規約への貢献
+Exports instincts to a shareable format. Perfect for:
+- Sharing with teammates
+- Transferring to a new machine
+- Contributing to project conventions
 
-## 使用方法
+## Usage
 
 ```
-/instinct-export                           # すべての個人instinctをエクスポート
-/instinct-export --domain testing          # testingのinstinctのみをエクスポート
-/instinct-export --min-confidence 0.7      # 高信頼度のinstinctのみをエクスポート
+/instinct-export                           # Export all personal instincts
+/instinct-export --domain testing          # Export only testing instincts
+/instinct-export --min-confidence 0.7      # Only export high-confidence instincts
 /instinct-export --output team-instincts.yaml
+/instinct-export --scope project --output project-instincts.yaml
 ```
 
-## 実行内容
+## What to Do
 
-1. `~/.claude/homunculus/instincts/personal/`からinstinctを読み込む
-2. フラグに基づいてフィルタリング
-3. 機密情報を除去：
-   - セッションIDを削除
-   - ファイルパスを削除（パターンのみを保持）
-   - 「先週」より古いタイムスタンプを削除
-4. エクスポートファイルを生成
+1. Detect current project context
+2. Load instincts by selected scope:
+   - `project`: current project only
+   - `global`: global only
+   - `all`: project + global merged (default)
+3. Apply filters (`--domain`, `--min-confidence`)
+4. Write YAML-style export to file (or stdout if no output path provided)
 
-## 出力フォーマット
+## Output Format
 
-YAMLファイルを作成します：
+Creates a YAML file:
 
 ```yaml
 # Instincts Export
@@ -40,52 +41,26 @@ YAMLファイルを作成します：
 # Source: personal
 # Count: 12 instincts
 
-version: "2.0"
-exported_by: "continuous-learning-v2"
-export_date: "2025-01-22T10:30:00Z"
+---
+id: prefer-functional-style
+trigger: "when writing new functions"
+confidence: 0.8
+domain: code-style
+source: session-observation
+scope: project
+project_id: a1b2c3d4e5f6
+project_name: my-app
+---
 
-instincts:
-  - id: prefer-functional-style
-    trigger: "when writing new functions"
-    action: "Use functional patterns over classes"
-    confidence: 0.8
-    domain: code-style
-    observations: 8
+# Prefer Functional Style
 
-  - id: test-first-workflow
-    trigger: "when adding new functionality"
-    action: "Write test first, then implementation"
-    confidence: 0.9
-    domain: testing
-    observations: 12
-
-  - id: grep-before-edit
-    trigger: "when modifying code"
-    action: "Search with Grep, confirm with Read, then Edit"
-    confidence: 0.7
-    domain: workflow
-    observations: 6
+## Action
+Use functional patterns over classes.
 ```
 
-## プライバシーに関する考慮事項
+## Flags
 
-エクスポートに含まれるもの：
-- ✅ トリガーパターン
-- ✅ アクション
-- ✅ 信頼度スコア
-- ✅ ドメイン
-- ✅ 観察回数
-
-エクスポートに含まれないもの：
-- ❌ 実際のコードスニペット
-- ❌ ファイルパス
-- ❌ セッショントランスクリプト
-- ❌ 個人識別子
-
-## フラグ
-
-- `--domain <name>`: 指定したドメインのみをエクスポート
-- `--min-confidence <n>`: 最小信頼度閾値（デフォルト: 0.3）
-- `--output <file>`: 出力ファイルパス（デフォルト: instincts-export-YYYYMMDD.yaml）
-- `--format <yaml|json|md>`: 出力フォーマット（デフォルト: yaml）
-- `--include-evidence`: 証拠テキストを含める（デフォルト: 除外）
+- `--domain <name>`: Export only specified domain
+- `--min-confidence <n>`: Minimum confidence threshold
+- `--output <file>`: Output file path (prints to stdout when omitted)
+- `--scope <project|global|all>`: Export scope (default: `all`)

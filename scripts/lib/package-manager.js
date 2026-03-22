@@ -1,15 +1,15 @@
 /**
- * パッケージマネージャーの検出と選択
- * 優先パッケージマネージャーを自動検出するか、ユーザーに選択させます
+ * Package Manager Detection and Selection
+ * Automatically detects the preferred package manager or lets user choose
  *
- * 対応: npm, pnpm, yarn, bun
+ * Supports: npm, pnpm, yarn, bun
  */
 
 const fs = require('fs');
 const path = require('path');
 const { commandExists, getClaudeDir, readFile, writeFile } = require('./utils');
 
-// パッケージマネージャーの定義
+// Package manager definitions
 const PACKAGE_MANAGERS = {
   npm: {
     name: 'npm',
@@ -53,16 +53,16 @@ const PACKAGE_MANAGERS = {
   }
 };
 
-// 検出の優先順位
+// Priority order for detection
 const DETECTION_PRIORITY = ['pnpm', 'bun', 'yarn', 'npm'];
 
-// 設定ファイルのパス
+// Config file path
 function getConfigPath() {
   return path.join(getClaudeDir(), 'package-manager.json');
 }
 
 /**
- * 保存されたパッケージマネージャー設定を読み込む
+ * Load saved package manager configuration
  */
 function loadConfig() {
   const configPath = getConfigPath();
@@ -79,7 +79,7 @@ function loadConfig() {
 }
 
 /**
- * パッケージマネージャー設定を保存する
+ * Save package manager configuration
  */
 function saveConfig(config) {
   const configPath = getConfigPath();
@@ -87,7 +87,7 @@ function saveConfig(config) {
 }
 
 /**
- * プロジェクトディレクトリのロックファイルからパッケージマネージャーを検出する
+ * Detect package manager from lock file in project directory
  */
 function detectFromLockFile(projectDir = process.cwd()) {
   for (const pmName of DETECTION_PRIORITY) {
@@ -102,7 +102,7 @@ function detectFromLockFile(projectDir = process.cwd()) {
 }
 
 /**
- * package.jsonのpackageManagerフィールドからパッケージマネージャーを検出する
+ * Detect package manager from package.json packageManager field
  */
 function detectFromPackageJson(projectDir = process.cwd()) {
   const packageJsonPath = path.join(projectDir, 'package.json');
@@ -112,21 +112,26 @@ function detectFromPackageJson(projectDir = process.cwd()) {
     try {
       const pkg = JSON.parse(content);
       if (pkg.packageManager) {
-        // 形式: "pnpm@8.6.0" または単に "pnpm"
+        // Format: "pnpm@8.6.0" or just "pnpm"
         const pmName = pkg.packageManager.split('@')[0];
         if (PACKAGE_MANAGERS[pmName]) {
           return pmName;
         }
       }
     } catch {
-      // 無効なpackage.json
+      // Invalid package.json
     }
   }
   return null;
 }
 
 /**
- * 利用可能なパッケージマネージャーを取得する（システムにインストール済みのもの）
+ * Get available package managers (installed on system)
+ *
+ * WARNING: This spawns child processes (where.exe on Windows, which on Unix)
+ * for each package manager. Do NOT call this during session startup hooks —
+ * it can exceed Bun's spawn limit on Windows and freeze the plugin.
+ * Use detectFromLockFile() or detectFromPackageJson() for hot paths.
  */
 function getAvailablePackageManagers() {
   const available = [];
@@ -141,23 +146,24 @@ function getAvailablePackageManagers() {
 }
 
 /**
- * 現在のプロジェクトで使用するパッケージマネージャーを取得する
+ * Get the package manager to use for current project
  *
- * 検出の優先順位:
- * 1. 環境変数 CLAUDE_PACKAGE_MANAGER
- * 2. プロジェクト固有の設定（.claude/package-manager.json内）
- * 3. package.jsonのpackageManagerフィールド
- * 4. ロックファイルの検出
- * 5. グローバルユーザー設定（~/.claude/package-manager.json内）
- * 6. 最初に利用可能なパッケージマネージャー（優先順位順）
+ * Detection priority:
+ * 1. Environment variable CLAUDE_PACKAGE_MANAGER
+ * 2. Project-specific config (in .claude/package-manager.json)
+ * 3. package.json packageManager field
+ * 4. Lock file detection
+ * 5. Global user preference (in ~/.claude/package-manager.json)
+ * 6. Default to npm (no child processes spawned)
  *
- * @param {object} options - { projectDir, fallbackOrder }
+ * @param {object} options - Options
+ * @param {string} options.projectDir - Project directory to detect from (default: cwd)
  * @returns {object} - { name, config, source }
  */
 function getPackageManager(options = {}) {
-  const { projectDir = process.cwd(), fallbackOrder = DETECTION_PRIORITY } = options;
+  const { projectDir = process.cwd() } = options;
 
-  // 1. 環境変数をチェック
+  // 1. Check environment variable
   const envPm = process.env.CLAUDE_PACKAGE_MANAGER;
   if (envPm && PACKAGE_MANAGERS[envPm]) {
     return {
@@ -167,7 +173,7 @@ function getPackageManager(options = {}) {
     };
   }
 
-  // 2. プロジェクト固有の設定をチェック
+  // 2. Check project-specific config
   const projectConfigPath = path.join(projectDir, '.claude', 'package-manager.json');
   const projectConfig = readFile(projectConfigPath);
   if (projectConfig) {
@@ -181,11 +187,11 @@ function getPackageManager(options = {}) {
         };
       }
     } catch {
-      // 無効な設定
+      // Invalid config
     }
   }
 
-  // 3. package.jsonのpackageManagerフィールドをチェック
+  // 3. Check package.json packageManager field
   const fromPackageJson = detectFromPackageJson(projectDir);
   if (fromPackageJson) {
     return {
@@ -195,7 +201,7 @@ function getPackageManager(options = {}) {
     };
   }
 
-  // 4. ロックファイルをチェック
+  // 4. Check lock file
   const fromLockFile = detectFromLockFile(projectDir);
   if (fromLockFile) {
     return {
@@ -205,7 +211,7 @@ function getPackageManager(options = {}) {
     };
   }
 
-  // 5. グローバルユーザー設定をチェック
+  // 5. Check global user preference
   const globalConfig = loadConfig();
   if (globalConfig && globalConfig.packageManager && PACKAGE_MANAGERS[globalConfig.packageManager]) {
     return {
@@ -215,19 +221,13 @@ function getPackageManager(options = {}) {
     };
   }
 
-  // 6. 最初に利用可能なパッケージマネージャーを使用
-  const available = getAvailablePackageManagers();
-  for (const pmName of fallbackOrder) {
-    if (available.includes(pmName)) {
-      return {
-        name: pmName,
-        config: PACKAGE_MANAGERS[pmName],
-        source: 'fallback'
-      };
-    }
-  }
-
-  // デフォルトはnpm（Node.jsで常に利用可能）
+  // 6. Default to npm (always available with Node.js)
+  // NOTE: Previously this called getAvailablePackageManagers() which spawns
+  // child processes (where.exe/which) for each PM. This caused plugin freezes
+  // on Windows (see #162) because session-start hooks run during Bun init,
+  // and the spawned processes exceed Bun's spawn limit.
+  // Steps 1-5 already cover all config-based and file-based detection.
+  // If none matched, npm is the safe default.
   return {
     name: 'npm',
     config: PACKAGE_MANAGERS.npm,
@@ -236,7 +236,7 @@ function getPackageManager(options = {}) {
 }
 
 /**
- * ユーザーの優先パッケージマネージャーを設定する（グローバル）
+ * Set user's preferred package manager (global)
  */
 function setPreferredPackageManager(pmName) {
   if (!PACKAGE_MANAGERS[pmName]) {
@@ -246,13 +246,18 @@ function setPreferredPackageManager(pmName) {
   const config = loadConfig() || {};
   config.packageManager = pmName;
   config.setAt = new Date().toISOString();
-  saveConfig(config);
+
+  try {
+    saveConfig(config);
+  } catch (err) {
+    throw new Error(`Failed to save package manager preference: ${err.message}`);
+  }
 
   return config;
 }
 
 /**
- * プロジェクトの優先パッケージマネージャーを設定する
+ * Set project's preferred package manager
  */
 function setProjectPackageManager(pmName, projectDir = process.cwd()) {
   if (!PACKAGE_MANAGERS[pmName]) {
@@ -267,16 +272,32 @@ function setProjectPackageManager(pmName, projectDir = process.cwd()) {
     setAt: new Date().toISOString()
   };
 
-  writeFile(configPath, JSON.stringify(config, null, 2));
+  try {
+    writeFile(configPath, JSON.stringify(config, null, 2));
+  } catch (err) {
+    throw new Error(`Failed to save package manager config to ${configPath}: ${err.message}`);
+  }
   return config;
 }
 
+// Allowed characters in script/binary names: alphanumeric, dash, underscore, dot, slash, @
+// This prevents shell metacharacter injection while allowing scoped packages (e.g., @scope/pkg)
+const SAFE_NAME_REGEX = /^[@a-zA-Z0-9_./-]+$/;
+
 /**
- * スクリプトを実行するコマンドを取得する
- * @param {string} script - スクリプト名（例: "dev", "build", "test"）
+ * Get the command to run a script
+ * @param {string} script - Script name (e.g., "dev", "build", "test")
  * @param {object} options - { projectDir }
+ * @throws {Error} If script name contains unsafe characters
  */
 function getRunCommand(script, options = {}) {
+  if (!script || typeof script !== 'string') {
+    throw new Error('Script name must be a non-empty string');
+  }
+  if (!SAFE_NAME_REGEX.test(script)) {
+    throw new Error(`Script name contains unsafe characters: ${script}`);
+  }
+
   const pm = getPackageManager(options);
 
   switch (script) {
@@ -293,68 +314,87 @@ function getRunCommand(script, options = {}) {
   }
 }
 
+// Allowed characters in arguments: alphanumeric, whitespace, dashes, dots, slashes,
+// equals, colons, commas, quotes, @. Rejects shell metacharacters like ; | & ` $ ( ) { } < > !
+const SAFE_ARGS_REGEX = /^[@a-zA-Z0-9\s_./:=,'"*+-]+$/;
+
 /**
- * パッケージバイナリを実行するコマンドを取得する
- * @param {string} binary - バイナリ名（例: "prettier", "eslint"）
- * @param {string} args - 渡す引数
+ * Get the command to execute a package binary
+ * @param {string} binary - Binary name (e.g., "prettier", "eslint")
+ * @param {string} args - Arguments to pass
+ * @throws {Error} If binary name or args contain unsafe characters
  */
 function getExecCommand(binary, args = '', options = {}) {
+  if (!binary || typeof binary !== 'string') {
+    throw new Error('Binary name must be a non-empty string');
+  }
+  if (!SAFE_NAME_REGEX.test(binary)) {
+    throw new Error(`Binary name contains unsafe characters: ${binary}`);
+  }
+  if (args && typeof args === 'string' && !SAFE_ARGS_REGEX.test(args)) {
+    throw new Error(`Arguments contain unsafe characters: ${args}`);
+  }
+
   const pm = getPackageManager(options);
   return `${pm.config.execCmd} ${binary}${args ? ' ' + args : ''}`;
 }
 
 /**
- * パッケージマネージャー選択のインタラクティブプロンプト
- * Claudeがユーザーに表示するメッセージを返す
+ * Interactive prompt for package manager selection
+ * Returns a message for Claude to show to user
+ *
+ * NOTE: Does NOT spawn child processes to check availability.
+ * Lists all supported PMs and shows how to configure preference.
  */
 function getSelectionPrompt() {
-  const available = getAvailablePackageManagers();
-  const current = getPackageManager();
-
-  let message = '[PackageManager] Available package managers:\n';
-
-  for (const pmName of available) {
-    const indicator = pmName === current.name ? ' (current)' : '';
-    message += `  - ${pmName}${indicator}\n`;
-  }
-
+  let message = '[PackageManager] No package manager preference detected.\n';
+  message += 'Supported package managers: ' + Object.keys(PACKAGE_MANAGERS).join(', ') + '\n';
   message += '\nTo set your preferred package manager:\n';
   message += '  - Global: Set CLAUDE_PACKAGE_MANAGER environment variable\n';
   message += '  - Or add to ~/.claude/package-manager.json: {"packageManager": "pnpm"}\n';
   message += '  - Or add to package.json: {"packageManager": "pnpm@8"}\n';
+  message += '  - Or add a lock file to your project (e.g., pnpm-lock.yaml)\n';
 
   return message;
 }
 
+// Escape regex metacharacters in a string before interpolating into a pattern
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 /**
- * すべてのパッケージマネージャーのコマンドにマッチする正規表現パターンを生成する
- * @param {string} action - アクションパターン（例: "run dev", "install", "test"）
+ * Generate a regex pattern that matches commands for all package managers
+ * @param {string} action - Action pattern (e.g., "run dev", "install", "test")
  */
 function getCommandPattern(action) {
   const patterns = [];
 
-  if (action === 'dev') {
+  // Trim spaces from action to handle leading/trailing whitespace gracefully
+  const trimmedAction = action.trim();
+
+  if (trimmedAction === 'dev') {
     patterns.push(
       'npm run dev',
       'pnpm( run)? dev',
       'yarn dev',
       'bun run dev'
     );
-  } else if (action === 'install') {
+  } else if (trimmedAction === 'install') {
     patterns.push(
       'npm install',
       'pnpm install',
       'yarn( install)?',
       'bun install'
     );
-  } else if (action === 'test') {
+  } else if (trimmedAction === 'test') {
     patterns.push(
       'npm test',
       'pnpm test',
       'yarn test',
       'bun test'
     );
-  } else if (action === 'build') {
+  } else if (trimmedAction === 'build') {
     patterns.push(
       'npm run build',
       'pnpm( run)? build',
@@ -362,12 +402,13 @@ function getCommandPattern(action) {
       'bun run build'
     );
   } else {
-    // 汎用のrunコマンド
+    // Generic run command — escape regex metacharacters in action
+    const escaped = escapeRegex(trimmedAction);
     patterns.push(
-      `npm run ${action}`,
-      `pnpm( run)? ${action}`,
-      `yarn ${action}`,
-      `bun run ${action}`
+      `npm run ${escaped}`,
+      `pnpm( run)? ${escaped}`,
+      `yarn ${escaped}`,
+      `bun run ${escaped}`
     );
   }
 

@@ -1,6 +1,6 @@
 /**
- * Claude Code hookとスクリプト用のクロスプラットフォームユーティリティ関数
- * Windows、macOS、Linuxで動作します
+ * Cross-platform utility functions for Claude Code hooks and scripts
+ * Works on Windows, macOS, and Linux
  */
 
 const fs = require('fs');
@@ -8,65 +8,68 @@ const path = require('path');
 const os = require('os');
 const { execSync, spawnSync } = require('child_process');
 
-// プラットフォーム検出
+// Platform detection
 const isWindows = process.platform === 'win32';
 const isMacOS = process.platform === 'darwin';
 const isLinux = process.platform === 'linux';
 
 /**
- * ユーザーのホームディレクトリを取得する（クロスプラットフォーム）
+ * Get the user's home directory (cross-platform)
  */
 function getHomeDir() {
   return os.homedir();
 }
 
 /**
- * Claude設定ディレクトリを取得する
+ * Get the Claude config directory
  */
 function getClaudeDir() {
   return path.join(getHomeDir(), '.claude');
 }
 
 /**
- * セッションディレクトリを取得する
+ * Get the sessions directory
  */
 function getSessionsDir() {
   return path.join(getClaudeDir(), 'sessions');
 }
 
 /**
- * セッションエイリアスファイルのパスを取得する
- */
-function getAliasesPath() {
-  return path.join(getClaudeDir(), 'session-aliases.json');
-}
-
-/**
- * 学習済みskillディレクトリを取得する
+ * Get the learned skills directory
  */
 function getLearnedSkillsDir() {
   return path.join(getClaudeDir(), 'skills', 'learned');
 }
 
 /**
- * 一時ディレクトリを取得する（クロスプラットフォーム）
+ * Get the temp directory (cross-platform)
  */
 function getTempDir() {
   return os.tmpdir();
 }
 
 /**
- * ディレクトリが存在することを確認する（存在しない場合は作成）
+ * Ensure a directory exists (create if not)
+ * @param {string} dirPath - Directory path to create
+ * @returns {string} The directory path
+ * @throws {Error} If directory cannot be created (e.g., permission denied)
  */
 function ensureDir(dirPath) {
-  if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true });
+  try {
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
+  } catch (err) {
+    // EEXIST is fine (race condition with another process creating it)
+    if (err.code !== 'EEXIST') {
+      throw new Error(`Failed to create directory '${dirPath}': ${err.message}`);
+    }
   }
   return dirPath;
 }
 
 /**
- * 現在の日付をYYYY-MM-DD形式で取得する
+ * Get current date in YYYY-MM-DD format
  */
 function getDateString() {
   const now = new Date();
@@ -77,7 +80,7 @@ function getDateString() {
 }
 
 /**
- * 現在の時刻をHH:MM形式で取得する
+ * Get current time in HH:MM format
  */
 function getTimeString() {
   const now = new Date();
@@ -87,7 +90,7 @@ function getTimeString() {
 }
 
 /**
- * gitリポジトリ名を取得する
+ * Get the git repository name
  */
 function getGitRepoName() {
   const result = runCommand('git rev-parse --show-toplevel');
@@ -96,7 +99,7 @@ function getGitRepoName() {
 }
 
 /**
- * gitリポジトリまたはカレントディレクトリからプロジェクト名を取得する
+ * Get project name from git repo or current directory
  */
 function getProjectName() {
   const repoName = getGitRepoName();
@@ -105,9 +108,8 @@ function getProjectName() {
 }
 
 /**
- * CLAUDE_SESSION_ID環境変数から短縮セッションIDを取得する
- * 末尾8文字を返し、プロジェクト名、次に'default'にフォールバック
- * @param {string} fallback - セッションIDがない場合のフォールバック値（デフォルト: 'default'）
+ * Get short session ID from CLAUDE_SESSION_ID environment variable
+ * Returns last 8 characters, falls back to project name then 'default'
  */
 function getSessionIdShort(fallback = 'default') {
   const sessionId = process.env.CLAUDE_SESSION_ID;
@@ -118,7 +120,7 @@ function getSessionIdShort(fallback = 'default') {
 }
 
 /**
- * 現在の日時をYYYY-MM-DD HH:MM:SS形式で取得する
+ * Get current datetime in YYYY-MM-DD HH:MM:SS format
  */
 function getDateTimeString() {
   const now = new Date();
@@ -132,12 +134,15 @@ function getDateTimeString() {
 }
 
 /**
- * ディレクトリ内でパターンにマッチするファイルを検索する（findのクロスプラットフォーム代替）
- * @param {string} dir - 検索するディレクトリ
- * @param {string} pattern - ファイルパターン（例: "*.tmp", "*.md"）
- * @param {object} options - オプション { maxAge: 日数, recursive: boolean }
+ * Find files matching a pattern in a directory (cross-platform alternative to find)
+ * @param {string} dir - Directory to search
+ * @param {string} pattern - File pattern (e.g., "*.tmp", "*.md")
+ * @param {object} options - Options { maxAge: days, recursive: boolean }
  */
 function findFiles(dir, pattern, options = {}) {
+  if (!dir || typeof dir !== 'string') return [];
+  if (!pattern || typeof pattern !== 'string') return [];
+
   const { maxAge = null, recursive = false } = options;
   const results = [];
 
@@ -145,8 +150,10 @@ function findFiles(dir, pattern, options = {}) {
     return results;
   }
 
+  // Escape all regex special characters, then convert glob wildcards.
+  // Order matters: escape specials first, then convert * and ? to regex equivalents.
   const regexPattern = pattern
-    .replace(/\./g, '\\.')
+    .replace(/[.+^${}()|[\]\\]/g, '\\$&')
     .replace(/\*/g, '.*')
     .replace(/\?/g, '.');
   const regex = new RegExp(`^${regexPattern}$`);
@@ -159,14 +166,19 @@ function findFiles(dir, pattern, options = {}) {
         const fullPath = path.join(currentDir, entry.name);
 
         if (entry.isFile() && regex.test(entry.name)) {
+          let stats;
+          try {
+            stats = fs.statSync(fullPath);
+          } catch {
+            continue; // File deleted between readdir and stat
+          }
+
           if (maxAge !== null) {
-            const stats = fs.statSync(fullPath);
             const ageInDays = (Date.now() - stats.mtimeMs) / (1000 * 60 * 60 * 24);
             if (ageInDays <= maxAge) {
               results.push({ path: fullPath, mtime: stats.mtimeMs });
             }
           } else {
-            const stats = fs.statSync(fullPath);
             results.push({ path: fullPath, mtime: stats.mtimeMs });
           }
         } else if (entry.isDirectory() && recursive) {
@@ -174,55 +186,88 @@ function findFiles(dir, pattern, options = {}) {
         }
       }
     } catch (_err) {
-      // 権限エラーを無視
+      // Ignore permission errors
     }
   }
 
   searchDir(dir);
 
-  // 変更時刻でソート（新しい順）
+  // Sort by modification time (newest first)
   results.sort((a, b) => b.mtime - a.mtime);
 
   return results;
 }
 
 /**
- * 標準入力からJSONを読み込む（hook入力用）
+ * Read JSON from stdin (for hook input)
+ * @param {object} options - Options
+ * @param {number} options.timeoutMs - Timeout in milliseconds (default: 5000).
+ *   Prevents hooks from hanging indefinitely if stdin never closes.
+ * @returns {Promise<object>} Parsed JSON object, or empty object if stdin is empty
  */
-async function readStdinJson() {
-  return new Promise((resolve, reject) => {
+async function readStdinJson(options = {}) {
+  const { timeoutMs = 5000, maxSize = 1024 * 1024 } = options;
+
+  return new Promise((resolve) => {
     let data = '';
+    let settled = false;
+
+    const timer = setTimeout(() => {
+      if (!settled) {
+        settled = true;
+        // Clean up stdin listeners so the event loop can exit
+        process.stdin.removeAllListeners('data');
+        process.stdin.removeAllListeners('end');
+        process.stdin.removeAllListeners('error');
+        if (process.stdin.unref) process.stdin.unref();
+        // Resolve with whatever we have so far rather than hanging
+        try {
+          resolve(data.trim() ? JSON.parse(data) : {});
+        } catch {
+          resolve({});
+        }
+      }
+    }, timeoutMs);
 
     process.stdin.setEncoding('utf8');
     process.stdin.on('data', chunk => {
-      data += chunk;
-    });
-
-    process.stdin.on('end', () => {
-      try {
-        if (data.trim()) {
-          resolve(JSON.parse(data));
-        } else {
-          resolve({});
-        }
-      } catch (err) {
-        reject(err);
+      if (data.length < maxSize) {
+        data += chunk;
       }
     });
 
-    process.stdin.on('error', reject);
+    process.stdin.on('end', () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      try {
+        resolve(data.trim() ? JSON.parse(data) : {});
+      } catch {
+        // Consistent with timeout path: resolve with empty object
+        // so hooks don't crash on malformed input
+        resolve({});
+      }
+    });
+
+    process.stdin.on('error', () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      // Resolve with empty object so hooks don't crash on stdin errors
+      resolve({});
+    });
   });
 }
 
 /**
- * 標準エラー出力にログを出力する（Claude Codeでユーザーに表示される）
+ * Log to stderr (visible to user in Claude Code)
  */
 function log(message) {
   console.error(message);
 }
 
 /**
- * 標準出力に出力する（Claudeに返される）
+ * Output to stdout (returned to Claude)
  */
 function output(data) {
   if (typeof data === 'object') {
@@ -233,7 +278,7 @@ function output(data) {
 }
 
 /**
- * テキストファイルを安全に読み込む
+ * Read a text file safely
  */
 function readFile(filePath) {
   try {
@@ -244,7 +289,7 @@ function readFile(filePath) {
 }
 
 /**
- * テキストファイルを書き込む
+ * Write a text file
  */
 function writeFile(filePath, content) {
   ensureDir(path.dirname(filePath));
@@ -252,7 +297,7 @@ function writeFile(filePath, content) {
 }
 
 /**
- * テキストファイルに追記する
+ * Append to a text file
  */
 function appendFile(filePath, content) {
   ensureDir(path.dirname(filePath));
@@ -260,18 +305,18 @@ function appendFile(filePath, content) {
 }
 
 /**
- * コマンドがPATHに存在するかチェックする
- * コマンドインジェクションを防ぐためexecFileSyncを使用
+ * Check if a command exists in PATH
+ * Uses execFileSync to prevent command injection
  */
 function commandExists(cmd) {
-  // コマンド名を検証 - 英数字、ダッシュ、アンダースコア、ドットのみ許可
+  // Validate command name - only allow alphanumeric, dash, underscore, dot
   if (!/^[a-zA-Z0-9_.-]+$/.test(cmd)) {
     return false;
   }
 
   try {
     if (isWindows) {
-      // シェル補間を避けるためspawnSyncを使用
+      // Use spawnSync to avoid shell interpolation
       const result = spawnSync('where', [cmd], { stdio: 'pipe' });
       return result.status === 0;
     } else {
@@ -284,17 +329,30 @@ function commandExists(cmd) {
 }
 
 /**
- * コマンドを実行して出力を返す
+ * Run a command and return output
  *
- * セキュリティ注意: この関数はシェルコマンドを実行します。
- * 信頼できるハードコードされたコマンドでのみ使用してください。
- * ユーザー入力を直接渡さないでください。
- * ユーザー入力の場合は、代わりに引数配列付きのspawnSyncを使用してください。
+ * SECURITY NOTE: This function executes shell commands. Only use with
+ * trusted, hardcoded commands. Never pass user-controlled input directly.
+ * For user input, use spawnSync with argument arrays instead.
  *
- * @param {string} cmd - 実行するコマンド（信頼できる/ハードコードされたものであること）
- * @param {object} options - execSyncオプション
+ * @param {string} cmd - Command to execute (should be trusted/hardcoded)
+ * @param {object} options - execSync options
  */
 function runCommand(cmd, options = {}) {
+  // Allowlist: only permit known-safe command prefixes
+  const allowedPrefixes = ['git ', 'node ', 'npx ', 'which ', 'where '];
+  if (!allowedPrefixes.some(prefix => cmd.startsWith(prefix))) {
+    return { success: false, output: 'runCommand blocked: unrecognized command prefix' };
+  }
+
+  // Reject shell metacharacters. $() and backticks are evaluated inside
+  // double quotes, so block $ and ` anywhere in cmd. Other operators
+  // (;|&) are literal inside quotes, so only check unquoted portions.
+  const unquoted = cmd.replace(/"[^"]*"/g, '').replace(/'[^']*'/g, '');
+  if (/[;|&\n]/.test(unquoted) || /[`$]/.test(cmd)) {
+    return { success: false, output: 'runCommand blocked: shell metacharacters not allowed' };
+  }
+
   try {
     const result = execSync(cmd, {
       encoding: 'utf8',
@@ -308,14 +366,17 @@ function runCommand(cmd, options = {}) {
 }
 
 /**
- * 現在のディレクトリがgitリポジトリかチェックする
+ * Check if current directory is a git repository
  */
 function isGitRepo() {
   return runCommand('git rev-parse --git-dir').success;
 }
 
 /**
- * gitで変更されたファイルを取得する
+ * Get git modified files, optionally filtered by regex patterns
+ * @param {string[]} patterns - Array of regex pattern strings to filter files.
+ *   Invalid patterns are silently skipped.
+ * @returns {string[]} Array of modified file paths
  */
 function getGitModifiedFiles(patterns = []) {
   if (!isGitRepo()) return [];
@@ -326,49 +387,122 @@ function getGitModifiedFiles(patterns = []) {
   let files = result.output.split('\n').filter(Boolean);
 
   if (patterns.length > 0) {
-    files = files.filter(file => {
-      return patterns.some(pattern => {
-        const regex = new RegExp(pattern);
-        return regex.test(file);
-      });
-    });
+    // Pre-compile patterns, skipping invalid ones
+    const compiled = [];
+    for (const pattern of patterns) {
+      if (typeof pattern !== 'string' || pattern.length === 0) continue;
+      try {
+        compiled.push(new RegExp(pattern));
+      } catch {
+        // Skip invalid regex patterns
+      }
+    }
+    if (compiled.length > 0) {
+      files = files.filter(file => compiled.some(regex => regex.test(file)));
+    }
   }
 
   return files;
 }
 
 /**
- * ファイル内のテキストを置換する（sedのクロスプラットフォーム代替）
+ * Replace text in a file (cross-platform sed alternative)
+ * @param {string} filePath - Path to the file
+ * @param {string|RegExp} search - Pattern to search for. String patterns replace
+ *   the FIRST occurrence only; use a RegExp with the `g` flag for global replacement.
+ * @param {string} replace - Replacement string
+ * @param {object} options - Options
+ * @param {boolean} options.all - When true and search is a string, replaces ALL
+ *   occurrences (uses String.replaceAll). Ignored for RegExp patterns.
+ * @returns {boolean} true if file was written, false on error
  */
-function replaceInFile(filePath, search, replace) {
+function replaceInFile(filePath, search, replace, options = {}) {
   const content = readFile(filePath);
   if (content === null) return false;
 
-  const newContent = content.replace(search, replace);
-  writeFile(filePath, newContent);
-  return true;
+  try {
+    let newContent;
+    if (options.all && typeof search === 'string') {
+      newContent = content.replaceAll(search, replace);
+    } else {
+      newContent = content.replace(search, replace);
+    }
+    writeFile(filePath, newContent);
+    return true;
+  } catch (err) {
+    log(`[Utils] replaceInFile failed for ${filePath}: ${err.message}`);
+    return false;
+  }
 }
 
 /**
- * ファイル内のパターンの出現回数をカウントする
+ * Count occurrences of a pattern in a file
+ * @param {string} filePath - Path to the file
+ * @param {string|RegExp} pattern - Pattern to count. Strings are treated as
+ *   global regex patterns. RegExp instances are used as-is but the global
+ *   flag is enforced to ensure correct counting.
+ * @returns {number} Number of matches found
  */
 function countInFile(filePath, pattern) {
   const content = readFile(filePath);
   if (content === null) return 0;
 
-  const regex = pattern instanceof RegExp ? pattern : new RegExp(pattern, 'g');
+  let regex;
+  try {
+    if (pattern instanceof RegExp) {
+      // Always create new RegExp to avoid shared lastIndex state; ensure global flag
+      regex = new RegExp(pattern.source, pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g');
+    } else if (typeof pattern === 'string') {
+      regex = new RegExp(pattern, 'g');
+    } else {
+      return 0;
+    }
+  } catch {
+    return 0; // Invalid regex pattern
+  }
   const matches = content.match(regex);
   return matches ? matches.length : 0;
 }
 
 /**
- * ファイル内でパターンを検索し、行番号付きでマッチした行を返す
+ * Strip all ANSI escape sequences from a string.
+ *
+ * Handles:
+ * - CSI sequences: \x1b[ … <letter>  (colors, cursor movement, erase, etc.)
+ * - OSC sequences: \x1b] … BEL/ST    (window titles, hyperlinks)
+ * - Charset selection: \x1b(B
+ * - Bare ESC + single letter: \x1b <letter>  (e.g. \x1bM for reverse index)
+ *
+ * @param {string} str - Input string possibly containing ANSI codes
+ * @returns {string} Cleaned string with all escape sequences removed
+ */
+function stripAnsi(str) {
+  if (typeof str !== 'string') return '';
+  // eslint-disable-next-line no-control-regex
+  return str.replace(/\x1b(?:\[[0-9;?]*[A-Za-z]|\][^\x07\x1b]*(?:\x07|\x1b\\)|\([A-Z]|[A-Z])/g, '');
+}
+
+/**
+ * Search for pattern in file and return matching lines with line numbers
  */
 function grepFile(filePath, pattern) {
   const content = readFile(filePath);
   if (content === null) return [];
 
-  const regex = pattern instanceof RegExp ? pattern : new RegExp(pattern);
+  let regex;
+  try {
+    if (pattern instanceof RegExp) {
+      // Always create a new RegExp without the 'g' flag to prevent lastIndex
+      // state issues when using .test() in a loop (g flag makes .test() stateful,
+      // causing alternating match/miss on consecutive matching lines)
+      const flags = pattern.flags.replace('g', '');
+      regex = new RegExp(pattern.source, flags);
+    } else {
+      regex = new RegExp(pattern);
+    }
+  } catch {
+    return []; // Invalid regex pattern
+  }
   const lines = content.split('\n');
   const results = [];
 
@@ -382,21 +516,20 @@ function grepFile(filePath, pattern) {
 }
 
 module.exports = {
-  // プラットフォーム情報
+  // Platform info
   isWindows,
   isMacOS,
   isLinux,
 
-  // ディレクトリ
+  // Directories
   getHomeDir,
   getClaudeDir,
   getSessionsDir,
-  getAliasesPath,
   getLearnedSkillsDir,
   getTempDir,
   ensureDir,
 
-  // 日付/時刻
+  // Date/Time
   getDateString,
   getTimeString,
   getDateTimeString,
@@ -406,7 +539,7 @@ module.exports = {
   getGitRepoName,
   getProjectName,
 
-  // ファイル操作
+  // File operations
   findFiles,
   readFile,
   writeFile,
@@ -415,12 +548,15 @@ module.exports = {
   countInFile,
   grepFile,
 
-  // hook入出力
+  // String sanitisation
+  stripAnsi,
+
+  // Hook I/O
   readStdinJson,
   log,
   output,
 
-  // システム
+  // System
   commandExists,
   runCommand,
   isGitRepo,

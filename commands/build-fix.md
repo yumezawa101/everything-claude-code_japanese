@@ -1,33 +1,62 @@
----
-description: TypeScriptおよびビルドエラーを段階的に修正します。ビルド実行、エラー解析、修正適用、再ビルドを繰り返します。
----
-
 # Build and Fix
 
-TypeScriptおよびビルドエラーを段階的に修正：
+Incrementally fix build and type errors with minimal, safe changes.
 
-1. ビルドを実行: npm run build または pnpm build
+## Step 1: Detect Build System
 
-2. エラー出力を解析：
-   - ファイルごとにグループ化
-   - 重大度でソート
+Identify the project's build tool and run the build:
 
-3. 各エラーについて：
-   - エラーのcontext（前後5行）を表示
-   - 問題を説明
-   - 修正を提案
-   - 修正を適用
-   - ビルドを再実行
-   - エラーが解決したことを確認
+| Indicator | Build Command |
+|-----------|---------------|
+| `package.json` with `build` script | `npm run build` or `pnpm build` |
+| `tsconfig.json` (TypeScript only) | `npx tsc --noEmit` |
+| `Cargo.toml` | `cargo build 2>&1` |
+| `pom.xml` | `mvn compile` |
+| `build.gradle` | `./gradlew compileJava` |
+| `go.mod` | `go build ./...` |
+| `pyproject.toml` | `python -m py_compile` or `mypy .` |
 
-4. 以下の場合は停止：
-   - 修正が新しいエラーを導入した
-   - 3回試行しても同じエラーが続く
-   - ユーザーが一時停止を要求
+## Step 2: Parse and Group Errors
 
-5. サマリーを表示：
-   - 修正されたエラー
-   - 残っているエラー
-   - 新たに導入されたエラー
+1. Run the build command and capture stderr
+2. Group errors by file path
+3. Sort by dependency order (fix imports/types before logic errors)
+4. Count total errors for progress tracking
 
-安全のため、一度に1つのエラーを修正すること！
+## Step 3: Fix Loop (One Error at a Time)
+
+For each error:
+
+1. **Read the file** — Use Read tool to see error context (10 lines around the error)
+2. **Diagnose** — Identify root cause (missing import, wrong type, syntax error)
+3. **Fix minimally** — Use Edit tool for the smallest change that resolves the error
+4. **Re-run build** — Verify the error is gone and no new errors introduced
+5. **Move to next** — Continue with remaining errors
+
+## Step 4: Guardrails
+
+Stop and ask the user if:
+- A fix introduces **more errors than it resolves**
+- The **same error persists after 3 attempts** (likely a deeper issue)
+- The fix requires **architectural changes** (not just a build fix)
+- Build errors stem from **missing dependencies** (need `npm install`, `cargo add`, etc.)
+
+## Step 5: Summary
+
+Show results:
+- Errors fixed (with file paths)
+- Errors remaining (if any)
+- New errors introduced (should be zero)
+- Suggested next steps for unresolved issues
+
+## Recovery Strategies
+
+| Situation | Action |
+|-----------|--------|
+| Missing module/import | Check if package is installed; suggest install command |
+| Type mismatch | Read both type definitions; fix the narrower type |
+| Circular dependency | Identify cycle with import graph; suggest extraction |
+| Version conflict | Check `package.json` / `Cargo.toml` for version constraints |
+| Build tool misconfiguration | Read config file; compare with working defaults |
+
+Fix one error at a time for safety. Prefer minimal diffs over refactoring.

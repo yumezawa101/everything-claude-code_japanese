@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 /**
- * 継続学習 - セッション評価器
+ * Continuous Learning - Session Evaluator
  *
- * クロスプラットフォーム対応（Windows、macOS、Linux）
+ * Cross-platform (Windows, macOS, Linux)
  *
- * Stop hook で実行され、Claude Code セッションから再利用可能なパターンを抽出します
+ * Runs on Stop hook to extract reusable patterns from Claude Code sessions.
+ * Reads transcript_path from stdin JSON (Claude Code hook input).
  *
- * UserPromptSubmit ではなく Stop hook を使用する理由:
- * - Stop はセッション終了時に1回だけ実行される（軽量）
- * - UserPromptSubmit は毎メッセージで実行される（重く、レイテンシが増加する）
+ * Why Stop hook instead of UserPromptSubmit:
+ * - Stop runs once at session end (lightweight)
+ * - UserPromptSubmit runs every message (heavy, adds latency)
  */
 
 const path = require('path');
@@ -21,58 +22,79 @@ const {
   log
 } = require('../lib/utils');
 
+// Read hook input from stdin (Claude Code provides transcript_path via stdin JSON)
+const MAX_STDIN = 1024 * 1024;
+let stdinData = '';
+process.stdin.setEncoding('utf8');
+
+process.stdin.on('data', chunk => {
+  if (stdinData.length < MAX_STDIN) {
+    const remaining = MAX_STDIN - stdinData.length;
+    stdinData += chunk.substring(0, remaining);
+  }
+});
+
+process.stdin.on('end', () => {
+  main().catch(err => {
+    console.error('[ContinuousLearning] Error:', err.message);
+    process.exit(0);
+  });
+});
+
 async function main() {
-  // 設定ファイルを見つけるためにスクリプトディレクトリを取得
+  // Parse stdin JSON to get transcript_path
+  let transcriptPath = null;
+  try {
+    const input = JSON.parse(stdinData);
+    transcriptPath = input.transcript_path;
+  } catch {
+    // Fallback: try env var for backwards compatibility
+    transcriptPath = process.env.CLAUDE_TRANSCRIPT_PATH;
+  }
+
+  // Get script directory to find config
   const scriptDir = __dirname;
   const configFile = path.join(scriptDir, '..', '..', 'skills', 'continuous-learning', 'config.json');
 
-  // デフォルト設定
+  // Default configuration
   let minSessionLength = 10;
   let learnedSkillsPath = getLearnedSkillsDir();
 
-  // 設定ファイルが存在すれば読み込む
+  // Load config if exists
   const configContent = readFile(configFile);
   if (configContent) {
     try {
       const config = JSON.parse(configContent);
-      minSessionLength = config.min_session_length || 10;
+      minSessionLength = config.min_session_length ?? 10;
 
       if (config.learned_skills_path) {
-        // パス内の ~ を処理
+        // Handle ~ in path
         learnedSkillsPath = config.learned_skills_path.replace(/^~/, require('os').homedir());
       }
-    } catch {
-      // 無効な設定、デフォルトを使用
+    } catch (err) {
+      log(`[ContinuousLearning] Failed to parse config: ${err.message}, using defaults`);
     }
   }
 
-  // 学習済み skill ディレクトリが存在することを確認
+  // Ensure learned skills directory exists
   ensureDir(learnedSkillsPath);
-
-  // 環境変数からトランスクリプトパスを取得（Claude Code によって設定される）
-  const transcriptPath = process.env.CLAUDE_TRANSCRIPT_PATH;
 
   if (!transcriptPath || !fs.existsSync(transcriptPath)) {
     process.exit(0);
   }
 
-  // セッション内のユーザーメッセージ数をカウント
-  const messageCount = countInFile(transcriptPath, /"type":"user"/g);
+  // Count user messages in session (allow optional whitespace around colon)
+  const messageCount = countInFile(transcriptPath, /"type"\s*:\s*"user"/g);
 
-  // 短いセッションはスキップ
+  // Skip short sessions
   if (messageCount < minSessionLength) {
     log(`[ContinuousLearning] Session too short (${messageCount} messages), skipping`);
     process.exit(0);
   }
 
-  // 抽出可能なパターンを評価する必要があることを Claude に通知
+  // Signal to Claude that session should be evaluated for extractable patterns
   log(`[ContinuousLearning] Session has ${messageCount} messages - evaluate for extractable patterns`);
   log(`[ContinuousLearning] Save learned skills to: ${learnedSkillsPath}`);
 
   process.exit(0);
 }
-
-main().catch(err => {
-  console.error('[ContinuousLearning] Error:', err.message);
-  process.exit(0);
-});

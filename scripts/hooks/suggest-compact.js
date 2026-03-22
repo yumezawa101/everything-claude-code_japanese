@@ -1,52 +1,73 @@
 #!/usr/bin/env node
 /**
- * 戦略的圧縮提案器
+ * Strategic Compact Suggester
  *
- * クロスプラットフォーム対応（Windows、macOS、Linux）
+ * Cross-platform (Windows, macOS, Linux)
  *
- * PreToolUse または定期的に実行され、論理的な間隔で手動圧縮を提案します
+ * Runs on PreToolUse or periodically to suggest manual compaction at logical intervals
  *
- * 自動圧縮より手動を選ぶ理由:
- * - 自動圧縮は任意のタイミングで発生し、多くの場合タスクの途中で起こる
- * - 戦略的な圧縮は論理的なフェーズを通じて context を保持する
- * - 探索後、実行前に圧縮する
- * - マイルストーン完了後、次を開始する前に圧縮する
+ * Why manual over auto-compact:
+ * - Auto-compact happens at arbitrary points, often mid-task
+ * - Strategic compacting preserves context through logical phases
+ * - Compact after exploration, before execution
+ * - Compact after completing a milestone, before starting next
  */
 
+const fs = require('fs');
 const path = require('path');
 const {
   getTempDir,
-  readFile,
   writeFile,
   log
 } = require('../lib/utils');
 
 async function main() {
-  // ツール呼び出し回数を追跡（一時ファイルでインクリメント）
-  // 親プロセスの PID または環境変数のセッション ID に基づいて
-  // セッション固有のカウンターファイルを使用
-  const sessionId = process.env.CLAUDE_SESSION_ID || process.ppid || 'default';
+  // Track tool call count (increment in a temp file)
+  // Use a session-specific counter file based on session ID from environment
+  // or parent PID as fallback
+  const sessionId = (process.env.CLAUDE_SESSION_ID || 'default').replace(/[^a-zA-Z0-9_-]/g, '') || 'default';
   const counterFile = path.join(getTempDir(), `claude-tool-count-${sessionId}`);
-  const threshold = parseInt(process.env.COMPACT_THRESHOLD || '50', 10);
+  const rawThreshold = parseInt(process.env.COMPACT_THRESHOLD || '50', 10);
+  const threshold = Number.isFinite(rawThreshold) && rawThreshold > 0 && rawThreshold <= 10000
+    ? rawThreshold
+    : 50;
 
   let count = 1;
 
-  // 既存のカウントを読み取るか、1から開始
-  const existing = readFile(counterFile);
-  if (existing) {
-    count = parseInt(existing.trim(), 10) + 1;
+  // Read existing count or start at 1
+  // Use fd-based read+write to reduce (but not eliminate) race window
+  // between concurrent hook invocations
+  try {
+    const fd = fs.openSync(counterFile, 'a+');
+    try {
+      const buf = Buffer.alloc(64);
+      const bytesRead = fs.readSync(fd, buf, 0, 64, 0);
+      if (bytesRead > 0) {
+        const parsed = parseInt(buf.toString('utf8', 0, bytesRead).trim(), 10);
+        // Clamp to reasonable range — corrupted files could contain huge values
+        // that pass Number.isFinite() (e.g., parseInt('9'.repeat(30)) => 1e+29)
+        count = (Number.isFinite(parsed) && parsed > 0 && parsed <= 1000000)
+          ? parsed + 1
+          : 1;
+      }
+      // Truncate and write new value
+      fs.ftruncateSync(fd, 0);
+      fs.writeSync(fd, String(count), 0);
+    } finally {
+      fs.closeSync(fd);
+    }
+  } catch {
+    // Fallback: just use writeFile if fd operations fail
+    writeFile(counterFile, String(count));
   }
 
-  // 更新されたカウントを保存
-  writeFile(counterFile, String(count));
-
-  // 閾値のツール呼び出し回数に達したら圧縮を提案
+  // Suggest compact after threshold tool calls
   if (count === threshold) {
     log(`[StrategicCompact] ${threshold} tool calls reached - consider /compact if transitioning phases`);
   }
 
-  // 閾値後の定期的な間隔で提案
-  if (count > threshold && count % 25 === 0) {
+  // Suggest at regular intervals after threshold (every 25 calls from threshold)
+  if (count > threshold && (count - threshold) % 25 === 0) {
     log(`[StrategicCompact] ${count} tool calls - good checkpoint for /compact if context is stale`);
   }
 

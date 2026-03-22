@@ -83,6 +83,12 @@
 - 最低80%カバレッジ
 - 重要なフローにはユニット + インテグレーション + E2E
 
+### Knowledge Capture
+- Personal debugging notes, preferences, and temporary context → auto memory
+- Team/project knowledge (architecture decisions, API changes, implementation runbooks) → follow the project's existing docs structure
+- If the current task already produces the relevant docs, comments, or examples, do not duplicate the same knowledge elsewhere
+- If there is no obvious project doc location, ask before creating a new top-level doc
+
 ---
 
 ## エディタ統合
