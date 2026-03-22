@@ -98,6 +98,68 @@ claudecode-tool-ja/
 
 ---
 
+## おすすめ Skills & Commands
+
+### まずやるべきこと
+
+| 種類 | 名前 | 説明 |
+|------|------|------|
+| skill | **continuous-learning-v2** | セッション中のパターンを自動検出し instinct として蓄積 |
+| command | **`/evolve`** | 蓄積した instinct を skill/command/agent に自動変換 |
+| skill | **codebase-onboarding** | 未知のコードベースを体系的に分析・マップ化 |
+| skill | **verification-loop** | コミット前の包括的検証（build/lint/test） |
+| skill | **tdd-workflow** | TDD を強制、80%+ カバレッジ確保 |
+
+### 必須 Skills
+
+| 名前 | 説明 |
+|------|------|
+| **coding-standards** | TS/JS/React/Node のベストプラクティス |
+| **security-review** | 認証・入力・シークレットの包括的セキュリティチェック |
+| **blueprint** | 1行の目標を複数セッションの実装計画に変換 |
+| **architecture-decision-records** | アーキテクチャ決定を文脈付きで記録 |
+| **e2e-testing** | Playwright E2E テストパターン |
+| **documentation-lookup** | Context7 MCP で最新ドキュメントを取得 |
+
+### 開発基盤 Skills
+
+| 名前 | 説明 |
+|------|------|
+| **api-design** | REST API 設計パターン |
+| **backend-patterns** | Node.js/Express/Next.js バックエンド |
+| **frontend-patterns** | React/Next.js フロントエンド |
+| **postgres-patterns** | PostgreSQL 最適化、RLS |
+| **docker-patterns** | Docker Compose パターン |
+| **deployment-patterns** | CI/CD、Docker、ロールバック |
+| **database-migrations** | 安全なスキーマ変更 |
+| **strategic-compact** | コンテキスト圧縮の戦略的提案 |
+| **iterative-retrieval** | マルチ agent のコンテキスト問題解決 |
+| **context-budget** | コンテキストウィンドウ消費の監査 |
+
+### おすすめ Commands
+
+| コマンド | 説明 |
+|---------|------|
+| **`/plan`** | 要件を分析し段階的な実装計画を作成 |
+| **`/tdd`** | テスト駆動開発ワークフローを強制 |
+| **`/code-review`** | セキュリティと品質の包括的レビュー |
+| **`/build-fix`** | ビルドエラーを段階的に修正 |
+| **`/evolve`** | instinct を skill/command/agent に変換 |
+| **`/instinct-status`** | 学習した instinct を信頼度付きで表示 |
+| **`/verify`** | build、型チェック、lint、テストを一括実行 |
+| **`/refactor-clean`** | デッドコードを安全に特定・削除 |
+| **`/orchestrate`** | 複雑なタスクの順次 agent ワークフロー |
+
+### 言語/フレームワーク固有（51件）
+
+Python, Go, Rust, Java/Spring, Kotlin/Android, PHP/Laravel, Swift/iOS, C++, Perl 等。`skills/` ディレクトリを参照。
+
+### 専門ドメイン（40件）
+
+AI エージェント構築、リサーチ、コンテンツ制作、サプライチェーン、動画編集等。`skills/` ディレクトリを参照。
+
+---
+
 ## 要件
 
 **Claude Code CLI v2.1.0 以上**
