@@ -1,26 +1,26 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "everything-claude-code",
-  "description": "Battle-tested Claude Code configurations from an Anthropic hackathon winner — agents, skills, hooks, commands, and rules evolved over 10+ months of intensive daily use",
+  "name": "claudecode-tool-ja",
+  "description": "10ヶ月以上の実践で磨かれた Claude Code 設定コレクション — agent、skill、hook、command、rule を収録。upstream: affaan-m/everything-claude-code の日本語版フォーク",
   "owner": {
-    "name": "Affaan Mustafa",
-    "email": "me@affaanmustafa.com"
+    "name": "yumezawa101",
+    "email": ""
   },
   "metadata": {
-    "description": "Battle-tested Claude Code configurations from an Anthropic hackathon winner"
+    "description": "10ヶ月以上の実践で磨かれた Claude Code 設定コレクション"
   },
   "plugins": [
     {
-      "name": "everything-claude-code",
+      "name": "claudecode-tool-ja",
       "source": "./",
-      "description": "The most comprehensive Claude Code plugin — 14+ agents, 56+ skills, 33+ commands, and production-ready hooks for TDD, security scanning, code review, and continuous learning",
-      "version": "1.8.0",
+      "description": "28 agent、116 skill、59 command、本番対応 hook を収録した包括的な Claude Code プラグイン（日本語版）",
+      "version": "2.0.0",
       "author": {
-        "name": "Affaan Mustafa",
-        "email": "me@affaanmustafa.com"
+        "name": "yumezawa101",
+        "email": ""
       },
-      "homepage": "https://github.com/affaan-m/everything-claude-code",
-      "repository": "https://github.com/affaan-m/everything-claude-code",
+      "homepage": "https://github.com/yumezawa101/everything-claude-code_japanese",
+      "repository": "https://github.com/yumezawa101/everything-claude-code_japanese",
       "license": "MIT",
       "keywords": [
         "agents",
@@ -30,7 +30,8 @@
         "tdd",
         "code-review",
         "security",
-        "best-practices"
+        "best-practices",
+        "japanese"
       ],
       "category": "workflow",
       "tags": [
@@ -41,7 +42,8 @@
         "tdd",
         "code-review",
         "security",
-        "best-practices"
+        "best-practices",
+        "japanese"
       ],
       "strict": false
     }

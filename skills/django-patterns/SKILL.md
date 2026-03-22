@@ -1,6 +1,6 @@
 ---
 name: django-patterns
-description: Django architecture patterns, REST API design with DRF, ORM best practices, caching, signals, middleware, and production-grade Django apps.
+description: Django アーキテクチャパターン、DRF による REST API 設計、ORM ベストプラクティス、キャッシュ、シグナル、ミドルウェア、本番グレードの Django アプリ。
 ---
 
 # Django 開発パターン

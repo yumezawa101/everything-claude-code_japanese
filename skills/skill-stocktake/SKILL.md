@@ -1,4 +1,5 @@
 ---
+name: skill-stocktake
 description: インストール済みスキルの棚卸し -- 各スキルのステータス、カバレッジ、重複、不足を確認する。
 origin: ECC
 ---

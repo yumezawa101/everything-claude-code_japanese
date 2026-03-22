@@ -1,6 +1,6 @@
 ---
 name: backend-patterns
-description: Backend architecture patterns, API design, database optimization, and server-side best practices for Node.js, Express, and Next.js API routes.
+description: Node.js、Express、Next.js API routes におけるバックエンドアーキテクチャパターン、API 設計、データベース最適化、サーバーサイドのベストプラクティス。
 ---
 
 # バックエンド開発パターン
