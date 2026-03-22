@@ -1,60 +1,60 @@
 ---
-description: Generate and run end-to-end tests with Playwright. Creates test journeys, runs tests, captures screenshots/videos/traces, and uploads artifacts.
+description: Playwright を使用してエンドツーエンドテストを生成・実行します。テストジャーニーの作成、テスト実行、スクリーンショット/ビデオ/トレースのキャプチャ、アーティファクトのアップロードを行います。
 ---
 
-# E2E Command
+# E2E コマンド
 
-This command invokes the **e2e-runner** agent to generate, maintain, and execute end-to-end tests using Playwright.
+このコマンドは **e2e-runner** エージェントを呼び出して、Playwright を使用してエンドツーエンドテストを生成、保守、実行します。
 
-## What This Command Does
+## このコマンドの機能
 
-1. **Generate Test Journeys** - Create Playwright tests for user flows
-2. **Run E2E Tests** - Execute tests across browsers
-3. **Capture Artifacts** - Screenshots, videos, traces on failures
-4. **Upload Results** - HTML reports and JUnit XML
-5. **Identify Flaky Tests** - Quarantine unstable tests
+1. **テストジャーニー生成** - ユーザーフローの Playwright テストを作成
+2. **E2E テスト実行** - 複数ブラウザでテストを実行
+3. **アーティファクトキャプチャ** - 失敗時のスクリーンショット、ビデオ、トレース
+4. **結果アップロード** - HTML レポートと JUnit XML
+5. **不安定なテスト識別** - 不安定なテストを隔離
 
-## When to Use
+## 使用するタイミング
 
-Use `/e2e` when:
-- Testing critical user journeys (login, trading, payments)
-- Verifying multi-step flows work end-to-end
-- Testing UI interactions and navigation
-- Validating integration between frontend and backend
-- Preparing for production deployment
+以下の場合に `/e2e` を使用:
+- 重要なユーザージャーニーのテスト（ログイン、取引、支払い）
+- マルチステップフローのエンドツーエンド動作検証
+- UI インタラクションとナビゲーションのテスト
+- フロントエンドとバックエンド間の統合検証
+- 本番デプロイの準備
 
-## How It Works
+## 動作方法
 
-The e2e-runner agent will:
+e2e-runner エージェントは以下を実行:
 
-1. **Analyze user flow** and identify test scenarios
-2. **Generate Playwright test** using Page Object Model pattern
-3. **Run tests** across multiple browsers (Chrome, Firefox, Safari)
-4. **Capture failures** with screenshots, videos, and traces
-5. **Generate report** with results and artifacts
-6. **Identify flaky tests** and recommend fixes
+1. **ユーザーフローを分析**してテストシナリオを特定
+2. **Page Object Model パターンを使用して Playwright テストを生成**
+3. **複数ブラウザ（Chrome、Firefox、Safari）でテストを実行**
+4. **失敗をキャプチャ**（スクリーンショット、ビデオ、トレース付き）
+5. **結果とアーティファクトを含むレポートを生成**
+6. **不安定なテストを特定**して修正を推奨
 
-## Example Usage
+## 使用例
 
-```
+````
 User: /e2e Test the market search and view flow
 
 Agent (e2e-runner):
-# E2E Test Generation: Market Search and View Flow
+# E2E テスト生成: マーケット検索と表示フロー
 
-## Test Scenario Identified
+## 特定されたテストシナリオ
 
-**User Journey:** Market Search → View Results → Click Market → View Details
+**ユーザージャーニー:** マーケット検索 → 結果表示 → マーケットクリック → 詳細表示
 
-**Test Coverage:**
-1. Navigate to markets page
-2. Perform semantic search
-3. Verify search results
-4. Click on first result
-5. Verify market details page loads
-6. Verify chart renders
+**テストカバレッジ:**
+1. マーケットページに遷移
+2. セマンティック検索を実行
+3. 検索結果を検証
+4. 最初の結果をクリック
+5. マーケット詳細ページの読み込みを検証
+6. チャートの描画を検証
 
-## Generated Test Code
+## 生成されたテストコード
 
 ```typescript
 // tests/e2e/markets/search-and-view.spec.ts
@@ -155,11 +155,12 @@ test.describe('Market Search and View Flow', () => {
   })
 })
 ```
+````
 
-## Running Tests
+## テスト実行
 
 ```bash
-# Run the generated test
+# 生成されたテストを実行
 npx playwright test tests/e2e/markets/search-and-view.spec.ts
 
 Running 3 tests using 3 workers
@@ -176,66 +177,40 @@ Artifacts generated:
 - playwright-report/index.html
 ```
 
-## Test Report
+## テストアーティファクト
 
-```
-╔══════════════════════════════════════════════════════════════╗
-║                    E2E Test Results                          ║
-╠══════════════════════════════════════════════════════════════╣
-║ Status:     ✅ ALL TESTS PASSED                              ║
-║ Total:      3 tests                                          ║
-║ Passed:     3 (100%)                                         ║
-║ Failed:     0                                                ║
-║ Flaky:      0                                                ║
-║ Duration:   9.1s                                             ║
-╚══════════════════════════════════════════════════════════════╝
+テスト実行時に以下のアーティファクトがキャプチャされます:
 
-Artifacts:
-📸 Screenshots: 2 files
-📹 Videos: 0 files (only on failure)
-🔍 Traces: 0 files (only on failure)
-📊 HTML Report: playwright-report/index.html
+**全テスト共通:**
+- タイムラインと結果付き HTML レポート
+- CI 統合用の JUnit XML
 
-View report: npx playwright show-report
-```
+**失敗時のみ:**
+- 失敗状態のスクリーンショット
+- テストのビデオ録画
+- デバッグ用トレースファイル（ステップバイステップのリプレイ）
+- ネットワークログ
+- コンソールログ
 
-✅ E2E test suite ready for CI/CD integration!
-```
-
-## Test Artifacts
-
-When tests run, the following artifacts are captured:
-
-**On All Tests:**
-- HTML Report with timeline and results
-- JUnit XML for CI integration
-
-**On Failure Only:**
-- Screenshot of the failing state
-- Video recording of the test
-- Trace file for debugging (step-by-step replay)
-- Network logs
-- Console logs
-
-## Viewing Artifacts
+## アーティファクトの閲覧
 
 ```bash
-# View HTML report in browser
+# ブラウザで HTML レポートを表示
 npx playwright show-report
 
-# View specific trace file
+# 特定のトレースファイルを表示
 npx playwright show-trace artifacts/trace-abc123.zip
 
-# Screenshots are saved in artifacts/ directory
+# スクリーンショットは artifacts/ ディレクトリに保存
 open artifacts/search-results.png
 ```
 
-## Flaky Test Detection
+## 不安定なテスト検出
 
-If a test fails intermittently:
+テストが断続的に失敗する場合:
 
 ```
-⚠️  FLAKY TEST DETECTED: tests/e2e/markets/trade.spec.ts
+FLAKY TEST DETECTED: tests/e2e/markets/trade.spec.ts
 
 Test passed 7/10 runs (70% pass rate)
 
@@ -251,19 +226,19 @@ Recommended fixes:
 Quarantine recommendation: Mark as test.fixme() until fixed
 ```
 
-## Browser Configuration
+## ブラウザ設定
 
-Tests run on multiple browsers by default:
-- ✅ Chromium (Desktop Chrome)
-- ✅ Firefox (Desktop)
-- ✅ WebKit (Desktop Safari)
-- ✅ Mobile Chrome (optional)
+デフォルトでは複数ブラウザでテストを実行:
+- Chromium（デスクトップ Chrome）
+- Firefox（デスクトップ）
+- WebKit（デスクトップ Safari）
+- Mobile Chrome（オプション）
 
-Configure in `playwright.config.ts` to adjust browsers.
+`playwright.config.ts` で設定してブラウザを調整します。
 
-## CI/CD Integration
+## CI/CD 統合
 
-Add to your CI pipeline:
+CI パイプラインに追加:
 
 ```yaml
 # .github/workflows/e2e.yml
@@ -281,85 +256,56 @@ Add to your CI pipeline:
     path: playwright-report/
 ```
 
-## PMX-Specific Critical Flows
+## ベストプラクティス
 
-For PMX, prioritize these E2E tests:
+**推奨事項:**
+- 保守性を高めるために Page Object Model を使用
+- セレクタに data-testid 属性を使用
+- 任意のタイムアウトではなく API レスポンスを待機
+- 重要なユーザージャーニーのエンドツーエンドテスト
+- main にマージする前にテストを実行
+- テスト失敗時にアーティファクトをレビュー
 
-**🔴 CRITICAL (Must Always Pass):**
-1. User can connect wallet
-2. User can browse markets
-3. User can search markets (semantic search)
-4. User can view market details
-5. User can place trade (with test funds)
-6. Market resolves correctly
-7. User can withdraw funds
+**避けるべき事項:**
+- 不安定なセレクタの使用（CSS クラスは変わる可能性がある）
+- 実装の詳細のテスト
+- 本番環境に対するテスト実行
+- 不安定なテストの無視
+- 失敗時のアーティファクトレビューのスキップ
+- E2E テストですべてのエッジケースをテスト（単体テストを使用）
 
-**🟡 IMPORTANT:**
-1. Market creation flow
-2. User profile updates
-3. Real-time price updates
-4. Chart rendering
-5. Filter and sort markets
-6. Mobile responsive layout
+## 他のコマンドとの統合
 
-## Best Practices
+- `/plan` を使用してテストする重要なジャーニーを特定
+- `/tdd` を単体テストに使用（より速く、より細粒度）
+- `/e2e` を統合とユーザージャーニーテストに使用
+- `/code-review` を使用してテスト品質を検証
 
-**DO:**
-- ✅ Use Page Object Model for maintainability
-- ✅ Use data-testid attributes for selectors
-- ✅ Wait for API responses, not arbitrary timeouts
-- ✅ Test critical user journeys end-to-end
-- ✅ Run tests before merging to main
-- ✅ Review artifacts when tests fail
+## 関連エージェント
 
-**DON'T:**
-- ❌ Use brittle selectors (CSS classes can change)
-- ❌ Test implementation details
-- ❌ Run tests against production
-- ❌ Ignore flaky tests
-- ❌ Skip artifact review on failures
-- ❌ Test every edge case with E2E (use unit tests)
+このコマンドは ECC が提供する `e2e-runner` エージェントを呼び出します。
 
-## Important Notes
-
-**CRITICAL for PMX:**
-- E2E tests involving real money MUST run on testnet/staging only
-- Never run trading tests against production
-- Set `test.skip(process.env.NODE_ENV === 'production')` for financial tests
-- Use test wallets with small test funds only
-
-## Integration with Other Commands
-
-- Use `/plan` to identify critical journeys to test
-- Use `/tdd` for unit tests (faster, more granular)
-- Use `/e2e` for integration and user journey tests
-- Use `/code-review` to verify test quality
-
-## Related Agents
-
-This command invokes the `e2e-runner` agent provided by ECC.
-
-For manual installs, the source file lives at:
+手動インストールの場合、ソースファイルは以下にあります:
 `agents/e2e-runner.md`
 
-## Quick Commands
+## クイックコマンド
 
 ```bash
-# Run all E2E tests
+# すべての E2E テストを実行
 npx playwright test
 
-# Run specific test file
+# 特定のテストファイルを実行
 npx playwright test tests/e2e/markets/search.spec.ts
 
-# Run in headed mode (see browser)
+# ヘッドモードで実行（ブラウザ表示）
 npx playwright test --headed
 
-# Debug test
+# テストをデバッグ
 npx playwright test --debug
 
-# Generate test code
+# テストコードを生成
 npx playwright codegen http://localhost:3000
 
-# View report
+# レポートを表示
 npx playwright show-report
 ```

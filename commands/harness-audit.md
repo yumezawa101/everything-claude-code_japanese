@@ -1,27 +1,27 @@
-# Harness Audit Command
+# Harness Audit コマンド
 
-Run a deterministic repository harness audit and return a prioritized scorecard.
+決定論的なリポジトリハーネス監査を実行し、優先順位付きのスコアカードを返します。
 
-## Usage
+## 使用方法
 
 `/harness-audit [scope] [--format text|json]`
 
-- `scope` (optional): `repo` (default), `hooks`, `skills`, `commands`, `agents`
-- `--format`: output style (`text` default, `json` for automation)
+- `scope`（オプション）: `repo`（デフォルト）、`hooks`、`skills`、`commands`、`agents`
+- `--format`: 出力形式（デフォルト `text`、自動化用に `json`）
 
-## Deterministic Engine
+## 決定論的エンジン
 
-Always run:
+常に以下を実行:
 
 ```bash
 node scripts/harness-audit.js <scope> --format <text|json>
 ```
 
-This script is the source of truth for scoring and checks. Do not invent additional dimensions or ad-hoc points.
+このスクリプトがスコアリングとチェックの信頼できるソースです。追加のディメンションやアドホックポイントを独自に作成しないでください。
 
-Rubric version: `2026-03-16`.
+ルーブリックバージョン: `2026-03-16`
 
-The script computes 7 fixed categories (`0-10` normalized each):
+スクリプトは7つの固定カテゴリ（各 `0-10` に正規化）を計算:
 
 1. Tool Coverage
 2. Context Efficiency
@@ -31,26 +31,26 @@ The script computes 7 fixed categories (`0-10` normalized each):
 6. Security Guardrails
 7. Cost Efficiency
 
-Scores are derived from explicit file/rule checks and are reproducible for the same commit.
+スコアは明示的なファイル/ルールチェックから導出され、同一コミットで再現可能です。
 
-## Output Contract
+## 出力仕様
 
-Return:
+返却内容:
 
-1. `overall_score` out of `max_score` (70 for `repo`; smaller for scoped audits)
-2. Category scores and concrete findings
-3. Failed checks with exact file paths
-4. Top 3 actions from the deterministic output (`top_actions`)
-5. Suggested ECC skills to apply next
+1. `overall_score` / `max_score`（`repo` の場合70、スコープ監査ではより小さい値）
+2. カテゴリスコアと具体的な検出結果
+3. 失敗したチェックと正確なファイルパス
+4. 決定論的出力からのトップ3アクション（`top_actions`）
+5. 次に適用すべき推奨 ECC スキル
 
-## Checklist
+## チェックリスト
 
-- Use script output directly; do not rescore manually.
-- If `--format json` is requested, return the script JSON unchanged.
-- If text is requested, summarize failing checks and top actions.
-- Include exact file paths from `checks[]` and `top_actions[]`.
+- スクリプト出力を直接使用し、手動でスコアを付け直さない
+- `--format json` がリクエストされた場合、スクリプトの JSON をそのまま返す
+- text がリクエストされた場合、失敗したチェックとトップアクションを要約
+- `checks[]` と `top_actions[]` からの正確なファイルパスを含める
 
-## Example Result
+## 出力例
 
 ```text
 Harness Audit (repo): 66/70
@@ -64,8 +64,8 @@ Top 3 Actions:
 3) [Eval Coverage] Increase automated test coverage across scripts/hooks/lib. (tests/)
 ```
 
-## Arguments
+## 引数
 
 $ARGUMENTS:
-- `repo|hooks|skills|commands|agents` (optional scope)
-- `--format text|json` (optional output format)
+- `repo|hooks|skills|commands|agents`（オプションのスコープ）
+- `--format text|json`（オプションの出力形式）

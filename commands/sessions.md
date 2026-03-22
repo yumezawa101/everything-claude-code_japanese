@@ -1,37 +1,30 @@
----
-description: Manage Claude Code session history, aliases, and session metadata.
----
+# Sessionsコマンド
 
-# Sessions Command
+Claude Codeセッション履歴を管理 - `~/.claude/sessions/` に保存されたセッションのリスト表示、読み込み、エイリアス設定、編集を行います。
 
-Manage Claude Code session history - list, load, alias, and edit sessions stored in `~/.claude/sessions/`.
+## 使用方法
 
-## Usage
+`/sessions [list|load|alias|info|help] [オプション]`
 
-`/sessions [list|load|alias|info|help] [options]`
+## アクション
 
-## Actions
+### セッションのリスト表示
 
-### List Sessions
-
-Display all sessions with metadata, filtering, and pagination.
-
-Use `/sessions info` when you need operator-surface context for a swarm: branch, worktree path, and session recency.
+メタデータ、フィルタリング、ページネーション付きですべてのセッションを表示します。
 
 ```bash
-/sessions                              # List all sessions (default)
-/sessions list                         # Same as above
-/sessions list --limit 10              # Show 10 sessions
-/sessions list --date 2026-02-01       # Filter by date
-/sessions list --search abc            # Search by session ID
+/sessions                              # すべてのセッションをリスト表示（デフォルト）
+/sessions list                         # 上記と同じ
+/sessions list --limit 10              # 10件のセッションを表示
+/sessions list --date 2026-02-01       # 日付でフィルタリング
+/sessions list --search abc            # セッションIDで検索
 ```
 
-**Script:**
+**スクリプト:**
 ```bash
 node -e "
-const sm = require((()=>{var e=process.env.CLAUDE_PLUGIN_ROOT;if(e&&e.trim())return e.trim();var p=require('path'),f=require('fs'),h=require('os').homedir(),d=p.join(h,'.claude'),q=p.join('scripts','lib','utils.js');if(f.existsSync(p.join(d,q)))return d;try{var b=p.join(d,'plugins','cache','everything-claude-code');for(var o of f.readdirSync(b))for(var v of f.readdirSync(p.join(b,o))){var c=p.join(b,o,v);if(f.existsSync(p.join(c,q)))return c}}catch(x){}return d})()+'/scripts/lib/session-manager');
-const aa = require((()=>{var e=process.env.CLAUDE_PLUGIN_ROOT;if(e&&e.trim())return e.trim();var p=require('path'),f=require('fs'),h=require('os').homedir(),d=p.join(h,'.claude'),q=p.join('scripts','lib','utils.js');if(f.existsSync(p.join(d,q)))return d;try{var b=p.join(d,'plugins','cache','everything-claude-code');for(var o of f.readdirSync(b))for(var v of f.readdirSync(p.join(b,o))){var c=p.join(b,o,v);if(f.existsSync(p.join(c,q)))return c}}catch(x){}return d})()+'/scripts/lib/session-aliases');
-const path = require('path');
+const sm = require('./scripts/lib/session-manager');
+const aa = require('./scripts/lib/session-aliases');
 
 const result = sm.getAllSessions({ limit: 20 });
 const aliases = aa.listAliases();
@@ -40,38 +33,37 @@ for (const a of aliases) aliasMap[a.sessionPath] = a.name;
 
 console.log('Sessions (showing ' + result.sessions.length + ' of ' + result.total + '):');
 console.log('');
-console.log('ID        Date        Time     Branch       Worktree           Alias');
-console.log('────────────────────────────────────────────────────────────────────');
+console.log('ID        Date        Time     Size     Lines  Alias');
+console.log('────────────────────────────────────────────────────');
 
 for (const s of result.sessions) {
   const alias = aliasMap[s.filename] || '';
-  const metadata = sm.parseSessionMetadata(sm.getSessionContent(s.sessionPath));
+  const size = sm.getSessionSize(s.sessionPath);
+  const stats = sm.getSessionStats(s.sessionPath);
   const id = s.shortId === 'no-id' ? '(none)' : s.shortId.slice(0, 8);
   const time = s.modifiedTime.toTimeString().slice(0, 5);
-  const branch = (metadata.branch || '-').slice(0, 12);
-  const worktree = metadata.worktree ? path.basename(metadata.worktree).slice(0, 18) : '-';
 
-  console.log(id.padEnd(8) + ' ' + s.date + '  ' + time + '   ' + branch.padEnd(12) + ' ' + worktree.padEnd(18) + ' ' + alias);
+  console.log(id.padEnd(8) + ' ' + s.date + '  ' + time + '   ' + size.padEnd(7) + '  ' + String(stats.lineCount).padEnd(5) + '  ' + alias);
 }
 "
 ```
 
-### Load Session
+### セッションの読み込み
 
-Load and display a session's content (by ID or alias).
+セッションの内容を読み込んで表示します（IDまたはエイリアスで指定）。
 
 ```bash
-/sessions load <id|alias>             # Load session
-/sessions load 2026-02-01             # By date (for no-id sessions)
-/sessions load a1b2c3d4               # By short ID
-/sessions load my-alias               # By alias name
+/sessions load <id|alias>             # セッションを読み込む
+/sessions load 2026-02-01             # 日付で指定（IDなしセッションの場合）
+/sessions load a1b2c3d4               # 短縮IDで指定
+/sessions load my-alias               # エイリアス名で指定
 ```
 
-**Script:**
+**スクリプト:**
 ```bash
 node -e "
-const sm = require((()=>{var e=process.env.CLAUDE_PLUGIN_ROOT;if(e&&e.trim())return e.trim();var p=require('path'),f=require('fs'),h=require('os').homedir(),d=p.join(h,'.claude'),q=p.join('scripts','lib','utils.js');if(f.existsSync(p.join(d,q)))return d;try{var b=p.join(d,'plugins','cache','everything-claude-code');for(var o of f.readdirSync(b))for(var v of f.readdirSync(p.join(b,o))){var c=p.join(b,o,v);if(f.existsSync(p.join(c,q)))return c}}catch(x){}return d})()+'/scripts/lib/session-manager');
-const aa = require((()=>{var e=process.env.CLAUDE_PLUGIN_ROOT;if(e&&e.trim())return e.trim();var p=require('path'),f=require('fs'),h=require('os').homedir(),d=p.join(h,'.claude'),q=p.join('scripts','lib','utils.js');if(f.existsSync(p.join(d,q)))return d;try{var b=p.join(d,'plugins','cache','everything-claude-code');for(var o of f.readdirSync(b))for(var v of f.readdirSync(p.join(b,o))){var c=p.join(b,o,v);if(f.existsSync(p.join(c,q)))return c}}catch(x){}return d})()+'/scripts/lib/session-aliases');
+const sm = require('./scripts/lib/session-manager');
+const aa = require('./scripts/lib/session-aliases');
 const id = process.argv[1];
 
 // First try to resolve as alias
@@ -116,35 +108,23 @@ if (session.metadata.started) {
 if (session.metadata.lastUpdated) {
   console.log('Last Updated: ' + session.metadata.lastUpdated);
 }
-
-if (session.metadata.project) {
-  console.log('Project: ' + session.metadata.project);
-}
-
-if (session.metadata.branch) {
-  console.log('Branch: ' + session.metadata.branch);
-}
-
-if (session.metadata.worktree) {
-  console.log('Worktree: ' + session.metadata.worktree);
-}
 " "$ARGUMENTS"
 ```
 
-### Create Alias
+### エイリアスの作成
 
-Create a memorable alias for a session.
+セッションに覚えやすいエイリアスを作成します。
 
 ```bash
-/sessions alias <id> <name>           # Create alias
-/sessions alias 2026-02-01 today-work # Create alias named "today-work"
+/sessions alias <id> <name>           # エイリアスを作成
+/sessions alias 2026-02-01 today-work # "today-work"という名前のエイリアスを作成
 ```
 
-**Script:**
+**スクリプト:**
 ```bash
 node -e "
-const sm = require((()=>{var e=process.env.CLAUDE_PLUGIN_ROOT;if(e&&e.trim())return e.trim();var p=require('path'),f=require('fs'),h=require('os').homedir(),d=p.join(h,'.claude'),q=p.join('scripts','lib','utils.js');if(f.existsSync(p.join(d,q)))return d;try{var b=p.join(d,'plugins','cache','everything-claude-code');for(var o of f.readdirSync(b))for(var v of f.readdirSync(p.join(b,o))){var c=p.join(b,o,v);if(f.existsSync(p.join(c,q)))return c}}catch(x){}return d})()+'/scripts/lib/session-manager');
-const aa = require((()=>{var e=process.env.CLAUDE_PLUGIN_ROOT;if(e&&e.trim())return e.trim();var p=require('path'),f=require('fs'),h=require('os').homedir(),d=p.join(h,'.claude'),q=p.join('scripts','lib','utils.js');if(f.existsSync(p.join(d,q)))return d;try{var b=p.join(d,'plugins','cache','everything-claude-code');for(var o of f.readdirSync(b))for(var v of f.readdirSync(p.join(b,o))){var c=p.join(b,o,v);if(f.existsSync(p.join(c,q)))return c}}catch(x){}return d})()+'/scripts/lib/session-aliases');
+const sm = require('./scripts/lib/session-manager');
+const aa = require('./scripts/lib/session-aliases');
 
 const sessionId = process.argv[1];
 const aliasName = process.argv[2];
@@ -171,19 +151,19 @@ if (result.success) {
 " "$ARGUMENTS"
 ```
 
-### Remove Alias
+### エイリアスの削除
 
-Delete an existing alias.
+既存のエイリアスを削除します。
 
 ```bash
-/sessions alias --remove <name>        # Remove alias
-/sessions unalias <name>               # Same as above
+/sessions alias --remove <name>        # エイリアスを削除
+/sessions unalias <name>               # 上記と同じ
 ```
 
-**Script:**
+**スクリプト:**
 ```bash
 node -e "
-const aa = require((()=>{var e=process.env.CLAUDE_PLUGIN_ROOT;if(e&&e.trim())return e.trim();var p=require('path'),f=require('fs'),h=require('os').homedir(),d=p.join(h,'.claude'),q=p.join('scripts','lib','utils.js');if(f.existsSync(p.join(d,q)))return d;try{var b=p.join(d,'plugins','cache','everything-claude-code');for(var o of f.readdirSync(b))for(var v of f.readdirSync(p.join(b,o))){var c=p.join(b,o,v);if(f.existsSync(p.join(c,q)))return c}}catch(x){}return d})()+'/scripts/lib/session-aliases');
+const aa = require('./scripts/lib/session-aliases');
 
 const aliasName = process.argv[1];
 if (!aliasName) {
@@ -201,19 +181,19 @@ if (result.success) {
 " "$ARGUMENTS"
 ```
 
-### Session Info
+### セッション情報
 
-Show detailed information about a session.
+セッションの詳細情報を表示します。
 
 ```bash
-/sessions info <id|alias>              # Show session details
+/sessions info <id|alias>              # セッション詳細を表示
 ```
 
-**Script:**
+**スクリプト:**
 ```bash
 node -e "
-const sm = require((()=>{var e=process.env.CLAUDE_PLUGIN_ROOT;if(e&&e.trim())return e.trim();var p=require('path'),f=require('fs'),h=require('os').homedir(),d=p.join(h,'.claude'),q=p.join('scripts','lib','utils.js');if(f.existsSync(p.join(d,q)))return d;try{var b=p.join(d,'plugins','cache','everything-claude-code');for(var o of f.readdirSync(b))for(var v of f.readdirSync(p.join(b,o))){var c=p.join(b,o,v);if(f.existsSync(p.join(c,q)))return c}}catch(x){}return d})()+'/scripts/lib/session-manager');
-const aa = require((()=>{var e=process.env.CLAUDE_PLUGIN_ROOT;if(e&&e.trim())return e.trim();var p=require('path'),f=require('fs'),h=require('os').homedir(),d=p.join(h,'.claude'),q=p.join('scripts','lib','utils.js');if(f.existsSync(p.join(d,q)))return d;try{var b=p.join(d,'plugins','cache','everything-claude-code');for(var o of f.readdirSync(b))for(var v of f.readdirSync(p.join(b,o))){var c=p.join(b,o,v);if(f.existsSync(p.join(c,q)))return c}}catch(x){}return d})()+'/scripts/lib/session-aliases');
+const sm = require('./scripts/lib/session-manager');
+const aa = require('./scripts/lib/session-aliases');
 
 const id = process.argv[1];
 const resolved = aa.resolveAlias(id);
@@ -235,9 +215,6 @@ console.log('ID:          ' + (session.shortId === 'no-id' ? '(none)' : session.
 console.log('Filename:    ' + session.filename);
 console.log('Date:        ' + session.date);
 console.log('Modified:    ' + session.modifiedTime.toISOString().slice(0, 19).replace('T', ' '));
-console.log('Project:     ' + (session.metadata.project || '-'));
-console.log('Branch:      ' + (session.metadata.branch || '-'));
-console.log('Worktree:    ' + (session.metadata.worktree || '-'));
 console.log('');
 console.log('Content:');
 console.log('  Lines:         ' + stats.lineCount);
@@ -251,18 +228,18 @@ if (aliases.length > 0) {
 " "$ARGUMENTS"
 ```
 
-### List Aliases
+### エイリアスのリスト表示
 
-Show all session aliases.
+すべてのセッションエイリアスを表示します。
 
 ```bash
-/sessions aliases                      # List all aliases
+/sessions aliases                      # すべてのエイリアスをリスト表示
 ```
 
-**Script:**
+**スクリプト:**
 ```bash
 node -e "
-const aa = require((()=>{var e=process.env.CLAUDE_PLUGIN_ROOT;if(e&&e.trim())return e.trim();var p=require('path'),f=require('fs'),h=require('os').homedir(),d=p.join(h,'.claude'),q=p.join('scripts','lib','utils.js');if(f.existsSync(p.join(d,q)))return d;try{var b=p.join(d,'plugins','cache','everything-claude-code');for(var o of f.readdirSync(b))for(var v of f.readdirSync(p.join(b,o))){var c=p.join(b,o,v);if(f.existsSync(p.join(c,q)))return c}}catch(x){}return d})()+'/scripts/lib/session-aliases');
+const aa = require('./scripts/lib/session-aliases');
 
 const aliases = aa.listAliases();
 console.log('Session Aliases (' + aliases.length + '):');
@@ -283,51 +260,46 @@ if (aliases.length === 0) {
 "
 ```
 
-## Operator Notes
-
-- Session files persist `Project`, `Branch`, and `Worktree` in the header so `/sessions info` can disambiguate parallel tmux/worktree runs.
-- For command-center style monitoring, combine `/sessions info`, `git diff --stat`, and the cost metrics emitted by `scripts/hooks/cost-tracker.js`.
-
-## Arguments
+## 引数
 
 $ARGUMENTS:
-- `list [options]` - List sessions
-  - `--limit <n>` - Max sessions to show (default: 50)
-  - `--date <YYYY-MM-DD>` - Filter by date
-  - `--search <pattern>` - Search in session ID
-- `load <id|alias>` - Load session content
-- `alias <id> <name>` - Create alias for session
-- `alias --remove <name>` - Remove alias
-- `unalias <name>` - Same as `--remove`
-- `info <id|alias>` - Show session statistics
-- `aliases` - List all aliases
-- `help` - Show this help
+- `list [オプション]` - セッションをリスト表示
+  - `--limit <n>` - 表示する最大セッション数（デフォルト: 50）
+  - `--date <YYYY-MM-DD>` - 日付でフィルタリング
+  - `--search <パターン>` - セッションIDで検索
+- `load <id|alias>` - セッション内容を読み込む
+- `alias <id> <name>` - セッションのエイリアスを作成
+- `alias --remove <name>` - エイリアスを削除
+- `unalias <name>` - `--remove`と同じ
+- `info <id|alias>` - セッション統計を表示
+- `aliases` - すべてのエイリアスをリスト表示
+- `help` - このヘルプを表示
 
-## Examples
+## 例
 
 ```bash
-# List all sessions
+# すべてのセッションをリスト表示
 /sessions list
 
-# Create an alias for today's session
+# 今日のセッションにエイリアスを作成
 /sessions alias 2026-02-01 today
 
-# Load session by alias
+# エイリアスでセッションを読み込む
 /sessions load today
 
-# Show session info
+# セッション情報を表示
 /sessions info today
 
-# Remove alias
+# エイリアスを削除
 /sessions alias --remove today
 
-# List all aliases
+# すべてのエイリアスをリスト表示
 /sessions aliases
 ```
 
-## Notes
+## 備考
 
-- Sessions are stored as markdown files in `~/.claude/sessions/`
-- Aliases are stored in `~/.claude/session-aliases.json`
-- Session IDs can be shortened (first 4-8 characters usually unique enough)
-- Use aliases for frequently referenced sessions
+- セッションは `~/.claude/sessions/` にMarkdownファイルとして保存されます
+- エイリアスは `~/.claude/session-aliases.json` に保存されます
+- セッションIDは短縮できます（通常、最初の4〜8文字で一意になります）
+- 頻繁に参照するセッションにはエイリアスを使用してください

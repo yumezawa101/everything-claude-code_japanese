@@ -1,38 +1,37 @@
 ---
-description: Analyze a draft prompt and output an optimized, ECC-enriched version ready to paste and run. Does NOT execute the task — outputs advisory analysis only.
+description: ドラフトプロンプトを分析し、ECC で強化された最適化バージョンを出力します。そのまま貼り付けて実行可能です。タスクは実行せず、分析のみを出力します。
 ---
 
 # /prompt-optimize
 
-Analyze and optimize the following prompt for maximum ECC leverage.
+以下のプロンプトを分析し、ECC の活用を最大化するために最適化します。
 
-## Your Task
+## タスク
 
-Apply the **prompt-optimizer** skill to the user's input below. Follow the 6-phase analysis pipeline:
+ユーザーの入力に **prompt-optimizer** スキルを適用します。6フェーズの分析パイプラインに従ってください:
 
-0. **Project Detection** — Read CLAUDE.md, detect tech stack from project files (package.json, go.mod, pyproject.toml, etc.)
-1. **Intent Detection** — Classify the task type (new feature, bug fix, refactor, research, testing, review, documentation, infrastructure, design)
-2. **Scope Assessment** — Evaluate complexity (TRIVIAL / LOW / MEDIUM / HIGH / EPIC), using codebase size as signal if detected
-3. **ECC Component Matching** — Map to specific skills, commands, agents, and model tier
-4. **Missing Context Detection** — Identify gaps. If 3+ critical items missing, ask the user to clarify before generating
-5. **Workflow & Model** — Determine lifecycle position, recommend model tier, and split into multiple prompts if HIGH/EPIC
+0. **プロジェクト検出** -- CLAUDE.md を読み、プロジェクトファイル（package.json、go.mod、pyproject.toml 等）から技術スタックを検出
+1. **意図検出** -- タスクタイプを分類（新機能、バグ修正、リファクタリング、調査、テスト、レビュー、ドキュメント、インフラ、デザイン）
+2. **スコープ評価** -- 複雑さを評価（TRIVIAL / LOW / MEDIUM / HIGH / EPIC）、検出された場合はコードベースサイズをシグナルとして使用
+3. **ECC コンポーネントマッチング** -- 具体的な skill、コマンド、エージェント、モデルティアにマッピング
+4. **欠落コンテキスト検出** -- ギャップを特定。3つ以上の重要項目が欠落している場合、生成前にユーザーに確認
+5. **ワークフローとモデル** -- ライフサイクル位置を決定、モデルティアを推奨、HIGH/EPIC の場合は複数プロンプトに分割
 
-## Output Requirements
+## 出力要件
 
-- Present diagnosis, recommended ECC components, and an optimized prompt using the Output Format from the prompt-optimizer skill
-- Provide both **Full Version** (detailed) and **Quick Version** (compact, varied by intent type)
-- Respond in the same language as the user's input
-- The optimized prompt must be complete and ready to copy-paste into a new session
-- End with a footer offering adjustment or a clear next step for starting a separate execution request
+- 診断、推奨 ECC コンポーネント、最適化されたプロンプトを prompt-optimizer スキルの出力形式で提示
+- **完全版**（詳細）と**簡易版**（コンパクト、意図タイプにより変化）の両方を提供
+- ユーザーの入力と同じ言語で回答
+- 最適化されたプロンプトは完全で、新しいセッションにコピー＆ペーストして実行可能
+- 調整オファーまたは次のステップの明確な指示をフッターに記載
 
-## CRITICAL
+## 重要
 
-Do NOT execute the user's task. Output ONLY the analysis and optimized prompt.
-If the user asks for direct execution, explain that `/prompt-optimize` only produces advisory output and tell them to start a normal task request instead.
+ユーザーのタスクを実行しないでください。分析と最適化されたプロンプト**のみ**を出力してください。
+ユーザーが直接実行を求めた場合、`/prompt-optimize` はアドバイスのみを出力するコマンドであることを説明し、通常のタスクリクエストを開始するよう伝えてください。
 
-Note: `blueprint` is a **skill**, not a slash command. Write "Use the blueprint skill"
-instead of presenting it as a `/...` command.
+注意: `blueprint` は**スキル**であり、スラッシュコマンドではありません。`/...` コマンドとして提示するのではなく、「blueprint スキルを使用」と記述してください。
 
-## User Input
+## ユーザー入力
 
 $ARGUMENTS

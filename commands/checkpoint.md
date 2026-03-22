@@ -1,8 +1,8 @@
 ---
-description: ワークフロー内でチェックポイントを作成・検証・一覧表示します。git stash/commitベースの状態管理です。
+description: ワークフロー内でチェックポイントを作成・検証・一覧表示します。git stash/commit ベースの状態管理です。
 ---
 
-# Checkpoint Command
+# Checkpoint コマンド
 
 ワークフロー内でチェックポイントを作成または検証します。
 

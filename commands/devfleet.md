@@ -1,92 +1,92 @@
 ---
-description: Orchestrate parallel Claude Code agents via Claude DevFleet — plan projects from natural language, dispatch agents in isolated worktrees, monitor progress, and read structured reports.
+description: Claude DevFleet を通じて並列の Claude Code エージェントをオーケストレーション。自然言語からプロジェクトを計画し、分離されたワークツリーでエージェントをディスパッチし、進捗を監視し、構造化レポートを取得します。
 ---
 
-# DevFleet — Multi-Agent Orchestration
+# DevFleet -- マルチエージェントオーケストレーション
 
-Orchestrate parallel Claude Code agents via Claude DevFleet. Each agent runs in an isolated git worktree with full tooling.
+Claude DevFleet を通じて並列の Claude Code エージェントをオーケストレーションします。各エージェントは完全なツール環境を備えた分離された git ワークツリーで実行されます。
 
-Requires the DevFleet MCP server: `claude mcp add devfleet --transport http http://localhost:18801/mcp`
+DevFleet MCP サーバーが必要: `claude mcp add devfleet --transport http http://localhost:18801/mcp`
 
-## Flow
+## フロー
 
 ```
-User describes project
-  → plan_project(prompt) → mission DAG with dependencies
-  → Show plan, get approval
-  → dispatch_mission(M1) → Agent spawns in worktree
-  → M1 completes → auto-merge → M2 auto-dispatches (depends_on M1)
-  → M2 completes → auto-merge
+ユーザーがプロジェクトを説明
+  → plan_project(prompt) → 依存関係付きのミッション DAG
+  → プランを表示し承認を取得
+  → dispatch_mission(M1) → エージェントがワークツリーで起動
+  → M1 完了 → 自動マージ → M2 が自動ディスパッチ（M1 に依存）
+  → M2 完了 → 自動マージ
   → get_report(M2) → files_changed, what_done, errors, next_steps
-  → Report summary to user
+  → ユーザーにサマリーを報告
 ```
 
-## Workflow
+## ワークフロー
 
-1. **Plan the project** from the user's description:
+1. **プロジェクトを計画** -- ユーザーの説明から:
 
 ```
-mcp__devfleet__plan_project(prompt="<user's description>")
+mcp__devfleet__plan_project(prompt="<ユーザーの説明>")
 ```
 
-This returns a project with chained missions. Show the user:
-- Project name and ID
-- Each mission: title, type, dependencies
-- The dependency DAG (which missions block which)
+これにより連鎖されたミッションを持つプロジェクトが返されます。以下をユーザーに表示:
+- プロジェクト名と ID
+- 各ミッション: タイトル、タイプ、依存関係
+- 依存関係 DAG（どのミッションがどれをブロックするか）
 
-2. **Wait for user approval** before dispatching. Show the plan clearly.
+2. **ディスパッチ前にユーザーの承認を待つ**。プランを明確に表示する。
 
-3. **Dispatch the first mission** (the one with empty `depends_on`):
+3. **最初のミッションをディスパッチ**（`depends_on` が空のもの）:
 
 ```
 mcp__devfleet__dispatch_mission(mission_id="<first_mission_id>")
 ```
 
-The remaining missions auto-dispatch as their dependencies complete (because `plan_project` creates them with `auto_dispatch=true`). When manually creating missions with `create_mission`, you must explicitly set `auto_dispatch=true` for this behavior.
+残りのミッションは依存関係が完了すると自動ディスパッチされます（`plan_project` が `auto_dispatch=true` で作成するため）。`create_mission` で手動作成する場合は、明示的に `auto_dispatch=true` を設定する必要があります。
 
-4. **Monitor progress** — check what's running:
+4. **進捗を監視** -- 実行中のものを確認:
 
 ```
 mcp__devfleet__get_dashboard()
 ```
 
-Or check a specific mission:
+または特定のミッションを確認:
 
 ```
 mcp__devfleet__get_mission_status(mission_id="<id>")
 ```
 
-Prefer polling with `get_mission_status` over `wait_for_mission` for long-running missions, so the user sees progress updates.
+長時間実行ミッションでは `wait_for_mission` より `get_mission_status` でのポーリングを推奨。ユーザーに進捗更新を表示できます。
 
-5. **Read the report** for each completed mission:
+5. **レポートを取得** -- 完了した各ミッションについて:
 
 ```
 mcp__devfleet__get_report(mission_id="<mission_id>")
 ```
 
-Call this for every mission that reached a terminal state. Reports contain: files_changed, what_done, what_open, what_tested, what_untested, next_steps, errors_encountered.
+ターミナル状態に達したすべてのミッションで呼び出します。レポートには files_changed、what_done、what_open、what_tested、what_untested、next_steps、errors_encountered が含まれます。
 
-## All Available Tools
+## 利用可能なツール一覧
 
-| Tool | Purpose |
+| ツール | 目的 |
 |------|---------|
-| `plan_project(prompt)` | AI breaks description into chained missions with `auto_dispatch=true` |
-| `create_project(name, path?, description?)` | Create a project manually, returns `project_id` |
-| `create_mission(project_id, title, prompt, depends_on?, auto_dispatch?)` | Add a mission. `depends_on` is a list of mission ID strings. |
-| `dispatch_mission(mission_id, model?, max_turns?)` | Start an agent |
-| `cancel_mission(mission_id)` | Stop a running agent |
-| `wait_for_mission(mission_id, timeout_seconds?)` | Block until done (prefer polling for long tasks) |
-| `get_mission_status(mission_id)` | Check progress without blocking |
-| `get_report(mission_id)` | Read structured report |
-| `get_dashboard()` | System overview |
-| `list_projects()` | Browse projects |
-| `list_missions(project_id, status?)` | List missions |
+| `plan_project(prompt)` | AI が説明を `auto_dispatch=true` の連鎖ミッションに分解 |
+| `create_project(name, path?, description?)` | プロジェクトを手動作成、`project_id` を返す |
+| `create_mission(project_id, title, prompt, depends_on?, auto_dispatch?)` | ミッションを追加。`depends_on` はミッション ID 文字列のリスト |
+| `dispatch_mission(mission_id, model?, max_turns?)` | エージェントを起動 |
+| `cancel_mission(mission_id)` | 実行中のエージェントを停止 |
+| `wait_for_mission(mission_id, timeout_seconds?)` | 完了までブロック（長時間タスクにはポーリング推奨） |
+| `get_mission_status(mission_id)` | ブロックせずに進捗を確認 |
+| `get_report(mission_id)` | 構造化レポートを取得 |
+| `get_dashboard()` | システム概要 |
+| `list_projects()` | プロジェクトを閲覧 |
+| `list_missions(project_id, status?)` | ミッションを一覧表示 |
 
-## Guidelines
+## ガイドライン
 
-- Always confirm the plan before dispatching unless the user said "go ahead"
-- Include mission titles and IDs when reporting status
-- If a mission fails, read its report to understand errors before retrying
-- Agent concurrency is configurable (default: 3). Excess missions queue and auto-dispatch as slots free up. Check `get_dashboard()` for slot availability.
-- Dependencies form a DAG — never create circular dependencies
-- Each agent auto-merges its worktree on completion. If a merge conflict occurs, the changes remain on the worktree branch for manual resolution.
+- ユーザーが「進めて」と言っていない限り、ディスパッチ前に必ずプランを確認
+- ステータス報告時にミッションのタイトルと ID を含める
+- ミッションが失敗した場合、リトライ前にレポートを読んでエラーを理解する
+- エージェント並行数は設定可能（デフォルト: 3）。超過ミッションはキューに入り、スロットが空くと自動ディスパッチ。`get_dashboard()` でスロットの空き状況を確認
+- 依存関係は DAG を形成 -- 循環依存を作成しないこと
+- 各エージェントは完了時にワークツリーを自動マージ。マージコンフリクトが発生した場合、変更はワークツリーブランチに残り手動解決が必要

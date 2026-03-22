@@ -1,211 +1,41 @@
 ---
-description: Enforce TDD workflow for Kotlin. Write Kotest tests first, then implement. Verify 80%+ coverage with Kover.
+description: Kotlin の TDD ワークフローを適用します。Kotest テストを最初に記述し、その後実装します。Kover で 80% 以上のカバレッジを確認します。
 ---
 
-# Kotlin TDD Command
+# Kotlin TDD コマンド
 
-This command enforces test-driven development methodology for Kotlin code using Kotest, MockK, and Kover.
+このコマンドは Kotest、MockK、Kover を使用した Kotlin コードのテスト駆動開発手法を適用します。
 
-## What This Command Does
+## このコマンドの機能
 
-1. **Define Types/Interfaces**: Scaffold function signatures first
-2. **Write Kotest Tests**: Create comprehensive test specs (RED)
-3. **Run Tests**: Verify tests fail for the right reason
-4. **Implement Code**: Write minimal code to pass (GREEN)
-5. **Refactor**: Improve while keeping tests green
-6. **Check Coverage**: Ensure 80%+ coverage with Kover
+1. **型/インターフェースの定義**: 関数シグネチャを最初にスキャフォールディング
+2. **Kotest テストの作成**: 包括的なテストスペックを作成（RED）
+3. **テストの実行**: テストが正しい理由で失敗することを確認
+4. **コードの実装**: テストをパスするための最小限のコードを記述（GREEN）
+5. **リファクタリング**: テストをグリーンに保ちながら改善
+6. **カバレッジの確認**: Kover で 80% 以上のカバレッジを保証
 
-## When to Use
+## 使用するタイミング
 
-Use `/kotlin-test` when:
-- Implementing new Kotlin functions or classes
-- Adding test coverage to existing Kotlin code
-- Fixing bugs (write failing test first)
-- Building critical business logic
-- Learning TDD workflow in Kotlin
+以下の場合に `/kotlin-test` を使用:
+- 新しい Kotlin 関数やクラスの実装時
+- 既存 Kotlin コードへのテストカバレッジ追加時
+- バグ修正時（失敗するテストを最初に作成）
+- 重要なビジネスロジックの構築時
+- Kotlin での TDD ワークフローの学習時
 
-## TDD Cycle
+## TDD サイクル
 
 ```
-RED     -> Write failing Kotest test
-GREEN   -> Implement minimal code to pass
-REFACTOR -> Improve code, tests stay green
-REPEAT  -> Next test case
+RED     -> 失敗する Kotest テストを作成
+GREEN   -> テストをパスするための最小限のコードを実装
+REFACTOR -> コードを改善、テストはグリーンを保持
+REPEAT  -> 次のテストケースへ
 ```
 
-## Example Session
+## テストパターン
 
-````text
-User: /kotlin-test I need a function to validate user registration requests
-
-Agent:
-# TDD Session: Registration Validator
-
-## Step 1: Define Interface
-
-```kotlin
-// validator/RegistrationValidator.kt
-package com.example.validator
-
-data class RegistrationRequest(
-    val name: String,
-    val email: String,
-    val password: String,
-)
-
-sealed class ValidationResult {
-    data object Valid : ValidationResult()
-    data class Invalid(val errors: List<String>) : ValidationResult()
-}
-
-fun validateRegistration(request: RegistrationRequest): ValidationResult {
-    TODO("not implemented")
-}
-```
-
-## Step 2: Write Kotest Tests (RED)
-
-```kotlin
-// validator/RegistrationValidatorTest.kt
-package com.example.validator
-
-import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.shouldBeInstanceOf
-
-class RegistrationValidatorTest : FunSpec({
-    test("valid registration returns Valid") {
-        val request = RegistrationRequest(
-            name = "Alice",
-            email = "alice@example.com",
-            password = "SecureP@ss1",
-        )
-
-        val result = validateRegistration(request)
-
-        result.shouldBeInstanceOf<ValidationResult.Valid>()
-    }
-
-    test("blank name returns Invalid") {
-        val request = RegistrationRequest(
-            name = "",
-            email = "alice@example.com",
-            password = "SecureP@ss1",
-        )
-
-        val result = validateRegistration(request)
-
-        val invalid = result.shouldBeInstanceOf<ValidationResult.Invalid>()
-        invalid.errors shouldBe listOf("Name is required")
-    }
-
-    test("invalid email returns Invalid") {
-        val request = RegistrationRequest(
-            name = "Alice",
-            email = "not-an-email",
-            password = "SecureP@ss1",
-        )
-
-        val result = validateRegistration(request)
-
-        val invalid = result.shouldBeInstanceOf<ValidationResult.Invalid>()
-        invalid.errors shouldBe listOf("Invalid email format")
-    }
-
-    test("short password returns Invalid") {
-        val request = RegistrationRequest(
-            name = "Alice",
-            email = "alice@example.com",
-            password = "short",
-        )
-
-        val result = validateRegistration(request)
-
-        val invalid = result.shouldBeInstanceOf<ValidationResult.Invalid>()
-        invalid.errors shouldBe listOf("Password must be at least 8 characters")
-    }
-
-    test("multiple errors returns all errors") {
-        val request = RegistrationRequest(
-            name = "",
-            email = "bad",
-            password = "short",
-        )
-
-        val result = validateRegistration(request)
-
-        val invalid = result.shouldBeInstanceOf<ValidationResult.Invalid>()
-        invalid.errors.size shouldBe 3
-    }
-})
-```
-
-## Step 3: Run Tests - Verify FAIL
-
-```bash
-$ ./gradlew test
-
-RegistrationValidatorTest > valid registration returns Valid FAILED
-  kotlin.NotImplementedError: An operation is not implemented
-
-FAILED (5 tests, 0 passed, 5 failed)
-```
-
-✓ Tests fail as expected (NotImplementedError).
-
-## Step 4: Implement Minimal Code (GREEN)
-
-```kotlin
-// validator/RegistrationValidator.kt
-package com.example.validator
-
-private val EMAIL_REGEX = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
-private const val MIN_PASSWORD_LENGTH = 8
-
-fun validateRegistration(request: RegistrationRequest): ValidationResult {
-    val errors = buildList {
-        if (request.name.isBlank()) add("Name is required")
-        if (!EMAIL_REGEX.matches(request.email)) add("Invalid email format")
-        if (request.password.length < MIN_PASSWORD_LENGTH) add("Password must be at least $MIN_PASSWORD_LENGTH characters")
-    }
-
-    return if (errors.isEmpty()) ValidationResult.Valid
-    else ValidationResult.Invalid(errors)
-}
-```
-
-## Step 5: Run Tests - Verify PASS
-
-```bash
-$ ./gradlew test
-
-RegistrationValidatorTest > valid registration returns Valid PASSED
-RegistrationValidatorTest > blank name returns Invalid PASSED
-RegistrationValidatorTest > invalid email returns Invalid PASSED
-RegistrationValidatorTest > short password returns Invalid PASSED
-RegistrationValidatorTest > multiple errors returns all errors PASSED
-
-PASSED (5 tests, 5 passed, 0 failed)
-```
-
-✓ All tests passing!
-
-## Step 6: Check Coverage
-
-```bash
-$ ./gradlew koverHtmlReport
-
-Coverage: 100.0% of statements
-```
-
-✓ Coverage: 100%
-
-## TDD Complete!
-````
-
-## Test Patterns
-
-### StringSpec (Simplest)
+### StringSpec（最もシンプル）
 
 ```kotlin
 class CalculatorTest : StringSpec({
@@ -215,7 +45,7 @@ class CalculatorTest : StringSpec({
 })
 ```
 
-### BehaviorSpec (BDD)
+### BehaviorSpec（BDD）
 
 ```kotlin
 class OrderServiceTest : BehaviorSpec({
@@ -227,7 +57,7 @@ class OrderServiceTest : BehaviorSpec({
 })
 ```
 
-### Data-Driven Tests
+### データ駆動テスト
 
 ```kotlin
 class ParserTest : FunSpec({
@@ -239,7 +69,7 @@ class ParserTest : FunSpec({
 })
 ```
 
-### Coroutine Testing
+### コルーチンテスト
 
 ```kotlin
 class AsyncServiceTest : FunSpec({
@@ -252,61 +82,61 @@ class AsyncServiceTest : FunSpec({
 })
 ```
 
-## Coverage Commands
+## カバレッジコマンド
 
 ```bash
-# Run tests with coverage
+# カバレッジ付きテスト実行
 ./gradlew koverHtmlReport
 
-# Verify coverage thresholds
+# カバレッジ閾値の検証
 ./gradlew koverVerify
 
-# XML report for CI
+# CI 用 XML レポート
 ./gradlew koverXmlReport
 
-# Open HTML report
+# HTML レポートを開く
 open build/reports/kover/html/index.html
 
-# Run specific test class
+# 特定のテストクラスを実行
 ./gradlew test --tests "com.example.UserServiceTest"
 
-# Run with verbose output
+# 詳細出力で実行
 ./gradlew test --info
 ```
 
-## Coverage Targets
+## カバレッジ目標
 
-| Code Type | Target |
+| コードタイプ | 目標 |
 |-----------|--------|
-| Critical business logic | 100% |
-| Public APIs | 90%+ |
-| General code | 80%+ |
-| Generated code | Exclude |
+| 重要なビジネスロジック | 100% |
+| パブリック API | 90%+ |
+| 一般的なコード | 80%+ |
+| 生成されたコード | 除外 |
 
-## TDD Best Practices
+## TDD ベストプラクティス
 
-**DO:**
-- Write test FIRST, before any implementation
-- Run tests after each change
-- Use Kotest matchers for expressive assertions
-- Use MockK's `coEvery`/`coVerify` for suspend functions
-- Test behavior, not implementation details
-- Include edge cases (empty, null, max values)
+**推奨事項:**
+- 実装前にテストを最初に書く
+- 各変更後にテストを実行
+- 表現力豊かなアサーションのために Kotest マッチャーを使用
+- suspend 関数には MockK の `coEvery`/`coVerify` を使用
+- 実装の詳細ではなく動作をテスト
+- エッジケースを含める（空、null、最大値）
 
-**DON'T:**
-- Write implementation before tests
-- Skip the RED phase
-- Test private functions directly
-- Use `Thread.sleep()` in coroutine tests
-- Ignore flaky tests
+**避けるべき事項:**
+- テストの前に実装を書く
+- RED フェーズをスキップ
+- プライベート関数を直接テスト
+- コルーチンテストで `Thread.sleep()` を使用
+- 不安定なテストを無視
 
-## Related Commands
+## 関連コマンド
 
-- `/kotlin-build` - Fix build errors
-- `/kotlin-review` - Review code after implementation
-- `/verify` - Run full verification loop
+- `/kotlin-build` - ビルドエラーの修正
+- `/kotlin-review` - 実装後のコードレビュー
+- `/verify` - 完全な検証ループ
 
-## Related
+## 関連
 
 - Skill: `skills/kotlin-testing/`
 - Skill: `skills/tdd-workflow/`

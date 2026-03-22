@@ -1,54 +1,54 @@
 ---
 name: skill-health
-description: Show skill portfolio health dashboard with charts and analytics
+description: スキルポートフォリオのヘルスダッシュボードをチャートと分析付きで表示
 command: true
 ---
 
-# Skill Health Dashboard
+# Skill Health ダッシュボード
 
-Shows a comprehensive health dashboard for all skills in the portfolio with success rate sparklines, failure pattern clustering, pending amendments, and version history.
+成功率のスパークライン、障害パターンのクラスタリング、保留中の修正提案、バージョン履歴を含むスキルポートフォリオの包括的なヘルスダッシュボードを表示します。
 
-## Implementation
+## 実装
 
-Run the skill health CLI in dashboard mode:
+skill health CLI をダッシュボードモードで実行:
 
 ```bash
 ECC_ROOT="${CLAUDE_PLUGIN_ROOT:-$(node -e "var p=require('path'),f=require('fs'),h=require('os').homedir(),d=p.join(h,'.claude'),q=p.join('scripts','lib','utils.js');if(!f.existsSync(p.join(d,q))){try{var b=p.join(d,'plugins','cache','everything-claude-code');for(var o of f.readdirSync(b))for(var v of f.readdirSync(p.join(b,o))){var c=p.join(b,o,v);if(f.existsSync(p.join(c,q))){d=c;break}}}catch(x){}}console.log(d)")}"
 node "$ECC_ROOT/scripts/skills-health.js" --dashboard
 ```
 
-For a specific panel only:
+特定のパネルのみ:
 
 ```bash
 ECC_ROOT="${CLAUDE_PLUGIN_ROOT:-$(node -e "var p=require('path'),f=require('fs'),h=require('os').homedir(),d=p.join(h,'.claude'),q=p.join('scripts','lib','utils.js');if(!f.existsSync(p.join(d,q))){try{var b=p.join(d,'plugins','cache','everything-claude-code');for(var o of f.readdirSync(b))for(var v of f.readdirSync(p.join(b,o))){var c=p.join(b,o,v);if(f.existsSync(p.join(c,q))){d=c;break}}}catch(x){}}console.log(d)")}"
 node "$ECC_ROOT/scripts/skills-health.js" --dashboard --panel failures
 ```
 
-For machine-readable output:
+機械可読出力:
 
 ```bash
 ECC_ROOT="${CLAUDE_PLUGIN_ROOT:-$(node -e "var p=require('path'),f=require('fs'),h=require('os').homedir(),d=p.join(h,'.claude'),q=p.join('scripts','lib','utils.js');if(!f.existsSync(p.join(d,q))){try{var b=p.join(d,'plugins','cache','everything-claude-code');for(var o of f.readdirSync(b))for(var v of f.readdirSync(p.join(b,o))){var c=p.join(b,o,v);if(f.existsSync(p.join(c,q))){d=c;break}}}catch(x){}}console.log(d)")}"
 node "$ECC_ROOT/scripts/skills-health.js" --dashboard --json
 ```
 
-## Usage
+## 使用方法
 
 ```
-/skill-health                    # Full dashboard view
-/skill-health --panel failures   # Only failure clustering panel
-/skill-health --json             # Machine-readable JSON output
+/skill-health                    # 完全なダッシュボード表示
+/skill-health --panel failures   # 障害クラスタリングパネルのみ
+/skill-health --json             # 機械可読 JSON 出力
 ```
 
-## What to Do
+## 実行内容
 
-1. Run the skills-health.js script with --dashboard flag
-2. Display the output to the user
-3. If any skills are declining, highlight them and suggest running /evolve
-4. If there are pending amendments, suggest reviewing them
+1. skills-health.js スクリプトを --dashboard フラグで実行
+2. 出力をユーザーに表示
+3. 低下しているスキルがあればハイライトし /evolve の実行を提案
+4. 保留中の修正提案があればレビューを提案
 
-## Panels
+## パネル
 
-- **Success Rate (30d)** — Sparkline charts showing daily success rates per skill
-- **Failure Patterns** — Clustered failure reasons with horizontal bar chart
-- **Pending Amendments** — Amendment proposals awaiting review
-- **Version History** — Timeline of version snapshots per skill
+- **Success Rate (30d)** -- スキルごとの日次成功率スパークラインチャート
+- **Failure Patterns** -- クラスター化された障害理由の水平棒グラフ
+- **Pending Amendments** -- レビュー待ちの修正提案
+- **Version History** -- スキルごとのバージョンスナップショットのタイムライン

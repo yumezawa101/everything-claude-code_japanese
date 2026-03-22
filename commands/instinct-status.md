@@ -1,59 +1,86 @@
 ---
 name: instinct-status
-description: Show learned instincts (project + global) with confidence
+description: すべての学習済みインスティンクトと信頼度レベルを表示
 command: true
 ---
 
-# Instinct Status Command
+# インスティンクトステータスコマンド
 
-Shows learned instincts for the current project plus global instincts, grouped by domain.
+すべての学習済みインスティンクトを信頼度スコアとともに、ドメインごとにグループ化して表示します。
 
-## Implementation
+## 実装
 
-Run the instinct CLI using the plugin root path:
+プラグインルートパスを使用してインスティンクトCLIを実行します:
 
 ```bash
 python3 "${CLAUDE_PLUGIN_ROOT}/skills/continuous-learning-v2/scripts/instinct-cli.py" status
 ```
 
-Or if `CLAUDE_PLUGIN_ROOT` is not set (manual installation), use:
+または、`CLAUDE_PLUGIN_ROOT` が設定されていない場合（手動インストール）の場合は:
 
 ```bash
 python3 ~/.claude/skills/continuous-learning-v2/scripts/instinct-cli.py status
 ```
 
-## Usage
+## 使用方法
 
 ```
 /instinct-status
+/instinct-status --domain code-style
+/instinct-status --low-confidence
 ```
 
-## What to Do
+## 実行内容
 
-1. Detect current project context (git remote/path hash)
-2. Read project instincts from `~/.claude/homunculus/projects/<project-id>/instincts/`
-3. Read global instincts from `~/.claude/homunculus/instincts/`
-4. Merge with precedence rules (project overrides global when IDs collide)
-5. Display grouped by domain with confidence bars and observation stats
+1. `~/.claude/homunculus/instincts/personal/` からすべてのインスティンクトファイルを読み込む
+2. `~/.claude/homunculus/instincts/inherited/` から継承されたインスティンクトを読み込む
+3. ドメインごとにグループ化し、信頼度バーとともに表示
 
-## Output Format
+## 出力形式
 
 ```
-============================================================
-  INSTINCT STATUS - 12 total
-============================================================
+📊 Instinct Status
+==================
 
-  Project: my-app (a1b2c3d4e5f6)
-  Project instincts: 8
-  Global instincts:  4
+## Code Style (4 instincts)
 
-## PROJECT-SCOPED (my-app)
-  ### WORKFLOW (3)
-    ███████░░░  70%  grep-before-edit [project]
-              trigger: when modifying code
+### prefer-functional-style
+Trigger: when writing new functions
+Action: Use functional patterns over classes
+Confidence: ████████░░ 80%
+Source: session-observation | Last updated: 2025-01-22
 
-## GLOBAL (apply to all projects)
-  ### SECURITY (2)
-    █████████░  85%  validate-user-input [global]
-              trigger: when handling user input
+### use-path-aliases
+Trigger: when importing modules
+Action: Use @/ path aliases instead of relative imports
+Confidence: ██████░░░░ 60%
+Source: repo-analysis (github.com/acme/webapp)
+
+## Testing (2 instincts)
+
+### test-first-workflow
+Trigger: when adding new functionality
+Action: Write test first, then implementation
+Confidence: █████████░ 90%
+Source: session-observation
+
+## Workflow (3 instincts)
+
+### grep-before-edit
+Trigger: when modifying code
+Action: Search with Grep, confirm with Read, then Edit
+Confidence: ███████░░░ 70%
+Source: session-observation
+
+---
+Total: 9 instincts (4 personal, 5 inherited)
+Observer: Running (last analysis: 5 min ago)
 ```
+
+## フラグ
+
+- `--domain <name>`: ドメインでフィルタリング（code-style、testing、gitなど）
+- `--low-confidence`: 信頼度 < 0.5のインスティンクトのみを表示
+- `--high-confidence`: 信頼度 >= 0.7のインスティンクトのみを表示
+- `--source <type>`: ソースでフィルタリング（session-observation、repo-analysis、inherited）
+- `--json`: プログラムで使用するためにJSON形式で出力

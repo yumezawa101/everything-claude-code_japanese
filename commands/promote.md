@@ -1,41 +1,41 @@
 ---
 name: promote
-description: Promote project-scoped instincts to global scope
+description: プロジェクトスコープの instinct をグローバルスコープに昇格
 command: true
 ---
 
-# Promote Command
+# Promote コマンド
 
-Promote instincts from project scope to global scope in continuous-learning-v2.
+continuous-learning-v2 で instinct をプロジェクトスコープからグローバルスコープに昇格します。
 
-## Implementation
+## 実装
 
-Run the instinct CLI using the plugin root path:
+プラグインルートパスを使用して instinct CLI を実行:
 
 ```bash
 python3 "${CLAUDE_PLUGIN_ROOT}/skills/continuous-learning-v2/scripts/instinct-cli.py" promote [instinct-id] [--force] [--dry-run]
 ```
 
-Or if `CLAUDE_PLUGIN_ROOT` is not set (manual installation):
+または `CLAUDE_PLUGIN_ROOT` が設定されていない場合（手動インストール）:
 
 ```bash
 python3 ~/.claude/skills/continuous-learning-v2/scripts/instinct-cli.py promote [instinct-id] [--force] [--dry-run]
 ```
 
-## Usage
+## 使用方法
 
 ```bash
-/promote                      # Auto-detect promotion candidates
-/promote --dry-run            # Preview auto-promotion candidates
-/promote --force              # Promote all qualified candidates without prompt
-/promote grep-before-edit     # Promote one specific instinct from current project
+/promote                      # 昇格候補を自動検出
+/promote --dry-run            # 自動昇格候補をプレビュー
+/promote --force              # すべての適格候補をプロンプトなしで昇格
+/promote grep-before-edit     # 現在のプロジェクトから特定の instinct を昇格
 ```
 
-## What to Do
+## 実行内容
 
-1. Detect current project
-2. If `instinct-id` is provided, promote only that instinct (if present in current project)
-3. Otherwise, find cross-project candidates that:
-   - Appear in at least 2 projects
-   - Meet confidence threshold
-4. Write promoted instincts to `~/.claude/homunculus/instincts/personal/` with `scope: global`
+1. 現在のプロジェクトを検出
+2. `instinct-id` が指定された場合、その instinct のみを昇格（現在のプロジェクトに存在する場合）
+3. それ以外の場合、以下の条件を満たすクロスプロジェクト候補を検出:
+   - 少なくとも2つのプロジェクトに存在
+   - 信頼度閾値を満たす
+4. 昇格された instinct を `~/.claude/homunculus/instincts/personal/` に `scope: global` で書き込む

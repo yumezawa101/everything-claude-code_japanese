@@ -1,47 +1,47 @@
 ---
-description: Enforce TDD workflow for C++. Write GoogleTest tests first, then implement. Verify coverage with gcov/lcov.
+description: C++ の TDD ワークフローを適用します。GoogleTest テストを最初に記述し、その後実装します。gcov/lcov でカバレッジを確認します。
 ---
 
-# C++ TDD Command
+# C++ TDD コマンド
 
-This command enforces test-driven development methodology for C++ code using GoogleTest/GoogleMock with CMake/CTest.
+このコマンドは GoogleTest/GoogleMock と CMake/CTest を使用した C++ コードのテスト駆動開発手法を適用します。
 
-## What This Command Does
+## このコマンドの機能
 
-1. **Define Interfaces**: Scaffold class/function signatures first
-2. **Write Tests**: Create comprehensive GoogleTest test cases (RED)
-3. **Run Tests**: Verify tests fail for the right reason
-4. **Implement Code**: Write minimal code to pass (GREEN)
-5. **Refactor**: Improve while keeping tests green
-6. **Check Coverage**: Ensure 80%+ coverage
+1. **インターフェースの定義**: クラス/関数シグネチャを最初にスキャフォールディング
+2. **テストの作成**: 包括的な GoogleTest テストケースを作成（RED）
+3. **テストの実行**: テストが正しい理由で失敗することを確認
+4. **コードの実装**: テストをパスするための最小限のコードを記述（GREEN）
+5. **リファクタリング**: テストをグリーンに保ちながら改善
+6. **カバレッジの確認**: 80% 以上のカバレッジを保証
 
-## When to Use
+## 使用するタイミング
 
-Use `/cpp-test` when:
-- Implementing new C++ functions or classes
-- Adding test coverage to existing code
-- Fixing bugs (write failing test first)
-- Building critical business logic
-- Learning TDD workflow in C++
+以下の場合に `/cpp-test` を使用:
+- 新しい C++ 関数やクラスの実装時
+- 既存コードへのテストカバレッジ追加時
+- バグ修正時（失敗するテストを最初に作成）
+- 重要なビジネスロジックの構築時
+- C++ での TDD ワークフローの学習時
 
-## TDD Cycle
+## TDD サイクル
 
 ```
-RED     → Write failing GoogleTest test
-GREEN   → Implement minimal code to pass
-REFACTOR → Improve code, tests stay green
-REPEAT  → Next test case
+RED     → 失敗する GoogleTest テストを作成
+GREEN   → テストをパスするための最小限のコードを実装
+REFACTOR → コードを改善、テストはグリーンを保持
+REPEAT  → 次のテストケースへ
 ```
 
-## Example Session
+## セッション例
 
 ````
-User: /cpp-test I need a function to validate email addresses
+User: /cpp-test メールアドレスを検証する関数が必要です
 
 Agent:
-# TDD Session: Email Validator
+# TDD セッション: メールバリデーター
 
-## Step 1: Define Interface
+## ステップ 1: インターフェースの定義
 
 ```cpp
 // validator/email.hpp
@@ -57,7 +57,7 @@ enum class EmailError {
 std::expected<void, EmailError> validate_email(const std::string& email);
 ```
 
-## Step 2: Write Tests (RED)
+## ステップ 2: テストの作成（RED）
 
 ```cpp
 // validator/email_test.cpp
@@ -96,7 +96,7 @@ TEST(ValidateEmail, RejectsNoLocalPart) {
 }
 ```
 
-## Step 3: Run Tests - Verify FAIL
+## ステップ 3: テストの実行 - 失敗を確認
 
 ```bash
 $ cmake --build build && ctest --test-dir build --output-on-failure
@@ -107,9 +107,9 @@ $ cmake --build build && ctest --test-dir build --output-on-failure
 FAIL
 ```
 
-✓ Tests fail as expected (unimplemented).
+テストが期待通り失敗しました（未実装）。
 
-## Step 4: Implement Minimal Code (GREEN)
+## ステップ 4: 最小限のコード実装（GREEN）
 
 ```cpp
 // validator/email.cpp
@@ -128,7 +128,7 @@ std::expected<void, EmailError> validate_email(const std::string& email) {
 }
 ```
 
-## Step 5: Run Tests - Verify PASS
+## ステップ 5: テストの実行 - パスを確認
 
 ```bash
 $ cmake --build build && ctest --test-dir build --output-on-failure
@@ -138,9 +138,9 @@ $ cmake --build build && ctest --test-dir build --output-on-failure
 100% tests passed.
 ```
 
-✓ All tests passing!
+すべてのテストが合格！
 
-## Step 6: Check Coverage
+## ステップ 6: カバレッジの確認
 
 ```bash
 $ cmake -DCMAKE_CXX_FLAGS="--coverage" -B build && cmake --build build
@@ -151,14 +151,14 @@ $ lcov --list coverage.info
 validator/email.cpp     | 100%
 ```
 
-✓ Coverage: 100%
+カバレッジ: 100%
 
-## TDD Complete!
+## TDD 完了！
 ````
 
-## Test Patterns
+## テストパターン
 
-### Basic Tests
+### 基本テスト
 ```cpp
 TEST(SuiteName, TestName) {
     EXPECT_EQ(add(2, 3), 5);
@@ -168,7 +168,7 @@ TEST(SuiteName, TestName) {
 }
 ```
 
-### Fixtures
+### フィクスチャ
 ```cpp
 class DatabaseTest : public ::testing::Test {
 protected:
@@ -183,7 +183,7 @@ TEST_F(DatabaseTest, InsertsRecord) {
 }
 ```
 
-### Parameterized Tests
+### パラメータ化テスト
 ```cpp
 class PrimeTest : public ::testing::TestWithParam<std::pair<int, bool>> {};
 
@@ -199,53 +199,53 @@ INSTANTIATE_TEST_SUITE_P(Primes, PrimeTest, ::testing::Values(
 ));
 ```
 
-## Coverage Commands
+## カバレッジコマンド
 
 ```bash
-# Build with coverage
+# カバレッジ付きビルド
 cmake -DCMAKE_CXX_FLAGS="--coverage" -DCMAKE_EXE_LINKER_FLAGS="--coverage" -B build
 
-# Run tests
+# テスト実行
 cmake --build build && ctest --test-dir build
 
-# Generate coverage report
+# カバレッジレポート生成
 lcov --capture --directory build --output-file coverage.info
 lcov --remove coverage.info '/usr/*' --output-file coverage.info
 genhtml coverage.info --output-directory coverage_html
 ```
 
-## Coverage Targets
+## カバレッジ目標
 
-| Code Type | Target |
+| コードタイプ | 目標 |
 |-----------|--------|
-| Critical business logic | 100% |
-| Public APIs | 90%+ |
-| General code | 80%+ |
-| Generated code | Exclude |
+| 重要なビジネスロジック | 100% |
+| パブリック API | 90%+ |
+| 一般的なコード | 80%+ |
+| 生成されたコード | 除外 |
 
-## TDD Best Practices
+## TDD ベストプラクティス
 
-**DO:**
-- Write test FIRST, before any implementation
-- Run tests after each change
-- Use `EXPECT_*` (continues) over `ASSERT_*` (stops) when appropriate
-- Test behavior, not implementation details
-- Include edge cases (empty, null, max values, boundary conditions)
+**推奨事項:**
+- 実装前にテストを最初に書く
+- 各変更後にテストを実行
+- 適切な場合は `EXPECT_*`（続行）を `ASSERT_*`（停止）より優先
+- 実装の詳細ではなく動作をテスト
+- エッジケースを含める（空、null、最大値、境界条件）
 
-**DON'T:**
-- Write implementation before tests
-- Skip the RED phase
-- Test private methods directly (test through public API)
-- Use `sleep` in tests
-- Ignore flaky tests
+**避けるべき事項:**
+- テストの前に実装を書く
+- RED フェーズをスキップ
+- プライベートメソッドを直接テスト（パブリック API 経由でテスト）
+- テストで `sleep` を使用
+- 不安定なテストを無視
 
-## Related Commands
+## 関連コマンド
 
-- `/cpp-build` - Fix build errors
-- `/cpp-review` - Review code after implementation
-- `/verify` - Run full verification loop
+- `/cpp-build` - ビルドエラーの修正
+- `/cpp-review` - 実装後のコードレビュー
+- `/verify` - 完全な検証ループ
 
-## Related
+## 関連
 
 - Skill: `skills/cpp-testing/`
 - Skill: `skills/tdd-workflow/`

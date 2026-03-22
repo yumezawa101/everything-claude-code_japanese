@@ -1,26 +1,26 @@
-# Model Route Command
+# Model Route コマンド
 
-Recommend the best model tier for the current task by complexity and budget.
+複雑さと予算に基づいて、現在のタスクに最適なモデルティアを推奨します。
 
-## Usage
+## 使用方法
 
 `/model-route [task-description] [--budget low|med|high]`
 
-## Routing Heuristic
+## ルーティングヒューリスティック
 
-- `haiku`: deterministic, low-risk mechanical changes
-- `sonnet`: default for implementation and refactors
-- `opus`: architecture, deep review, ambiguous requirements
+- `haiku`: 決定論的でリスクの低い機械的変更
+- `sonnet`: 実装とリファクタリングのデフォルト
+- `opus`: アーキテクチャ、深いレビュー、曖昧な要件
 
-## Required Output
+## 必須出力
 
-- recommended model
-- confidence level
-- why this model fits
-- fallback model if first attempt fails
+- 推奨モデル
+- 信頼度レベル
+- このモデルが適する理由
+- 最初の試行が失敗した場合のフォールバックモデル
 
-## Arguments
+## 引数
 
 $ARGUMENTS:
-- `[task-description]` optional free-text
-- `--budget low|med|high` optional
+- `[task-description]` オプションのフリーテキスト
+- `--budget low|med|high` オプション

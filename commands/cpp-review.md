@@ -1,132 +1,132 @@
 ---
-description: Comprehensive C++ code review for memory safety, modern C++ idioms, concurrency, and security. Invokes the cpp-reviewer agent.
+description: メモリ安全性、モダン C++ イディオム、並行性、セキュリティについての包括的な C++ コードレビュー。cpp-reviewer エージェントを呼び出します。
 ---
 
 # C++ Code Review
 
-This command invokes the **cpp-reviewer** agent for comprehensive C++-specific code review.
+このコマンドは C++ 固有の包括的なコードレビューのために **cpp-reviewer** エージェントを呼び出します。
 
-## What This Command Does
+## このコマンドの機能
 
-1. **Identify C++ Changes**: Find modified `.cpp`, `.hpp`, `.cc`, `.h` files via `git diff`
-2. **Run Static Analysis**: Execute `clang-tidy` and `cppcheck`
-3. **Memory Safety Scan**: Check for raw new/delete, buffer overflows, use-after-free
-4. **Concurrency Review**: Analyze thread safety, mutex usage, data races
-5. **Modern C++ Check**: Verify code follows C++17/20 conventions and best practices
-6. **Generate Report**: Categorize issues by severity
+1. **C++ 変更の特定**: `git diff` で変更された `.cpp`、`.hpp`、`.cc`、`.h` ファイルを検出
+2. **静的解析の実行**: `clang-tidy` と `cppcheck` を実行
+3. **メモリ安全性スキャン**: 生の new/delete、バッファオーバーフロー、解放後使用をチェック
+4. **並行性レビュー**: スレッドセーフティ、mutex 使用、データ競合を分析
+5. **モダン C++ チェック**: コードが C++17/20 の慣習とベストプラクティスに従っていることを確認
+6. **レポート生成**: 問題を重大度別に分類
 
-## When to Use
+## 使用するタイミング
 
-Use `/cpp-review` when:
-- After writing or modifying C++ code
-- Before committing C++ changes
-- Reviewing pull requests with C++ code
-- Onboarding to a new C++ codebase
-- Checking for memory safety issues
+以下の場合に `/cpp-review` を使用:
+- C++ コードを作成または変更した後
+- C++ の変更をコミットする前
+- C++ コードを含むプルリクエストのレビュー時
+- 新しい C++ コードベースへのオンボーディング時
+- メモリ安全性の問題をチェックする場合
 
-## Review Categories
+## レビューカテゴリ
 
-### CRITICAL (Must Fix)
-- Raw `new`/`delete` without RAII
-- Buffer overflows and use-after-free
-- Data races without synchronization
-- Command injection via `system()`
-- Uninitialized variable reads
-- Null pointer dereferences
+### CRITICAL（必須修正）
+- RAII なしの生の `new`/`delete`
+- バッファオーバーフローと解放後使用
+- 同期化なしのデータ競合
+- `system()` によるコマンドインジェクション
+- 初期化されていない変数の読み取り
+- null ポインタの参照解除
 
-### HIGH (Should Fix)
-- Rule of Five violations
-- Missing `std::lock_guard` / `std::scoped_lock`
-- Detached threads without proper lifetime management
-- C-style casts instead of `static_cast`/`dynamic_cast`
-- Missing `const` correctness
+### HIGH（修正推奨）
+- Rule of Five 違反
+- `std::lock_guard` / `std::scoped_lock` の欠落
+- 適切なライフタイム管理なしのデタッチされたスレッド
+- `static_cast`/`dynamic_cast` の代わりに C スタイルキャスト
+- `const` 正確性の欠如
 
-### MEDIUM (Consider)
-- Unnecessary copies (pass by value instead of `const&`)
-- Missing `reserve()` on known-size containers
-- `using namespace std;` in headers
-- Missing `[[nodiscard]]` on important return values
-- Overly complex template metaprogramming
+### MEDIUM（検討）
+- 不要なコピー（`const&` の代わりに値渡し）
+- 既知サイズのコンテナで `reserve()` の欠落
+- ヘッダでの `using namespace std;`
+- 重要な戻り値に `[[nodiscard]]` の欠落
+- 過度に複雑なテンプレートメタプログラミング
 
-## Automated Checks Run
+## 実行される自動チェック
 
 ```bash
-# Static analysis
+# 静的解析
 clang-tidy --checks='*,-llvmlibc-*' src/*.cpp -- -std=c++17
 
-# Additional analysis
+# 追加解析
 cppcheck --enable=all --suppress=missingIncludeSystem src/
 
-# Build with warnings
+# 警告付きビルド
 cmake --build build -- -Wall -Wextra -Wpedantic
 ```
 
-## Example Usage
+## 使用例
 
 ```text
 User: /cpp-review
 
 Agent:
-# C++ Code Review Report
+# C++ コードレビューレポート
 
-## Files Reviewed
-- src/handler/user.cpp (modified)
-- src/service/auth.cpp (modified)
+## レビューされたファイル
+- src/handler/user.cpp (変更)
+- src/service/auth.cpp (変更)
 
-## Static Analysis Results
-✓ clang-tidy: 2 warnings
-✓ cppcheck: No issues
+## 静的解析結果
+✓ clang-tidy: 2件の警告
+✓ cppcheck: 問題なし
 
-## Issues Found
+## 発見された問題
 
-[CRITICAL] Memory Leak
+[CRITICAL] メモリリーク
 File: src/service/auth.cpp:45
-Issue: Raw `new` without matching `delete`
+Issue: 対応する `delete` のない生の `new`
 ```cpp
-auto* session = new Session(userId);  // Memory leak!
+auto* session = new Session(userId);  // メモリリーク！
 cache[userId] = session;
 ```
-Fix: Use `std::unique_ptr`
+Fix: `std::unique_ptr` を使用
 ```cpp
 auto session = std::make_unique<Session>(userId);
 cache[userId] = std::move(session);
 ```
 
-[HIGH] Missing const Reference
+[HIGH] const 参照の欠落
 File: src/handler/user.cpp:28
-Issue: Large object passed by value
+Issue: 大きなオブジェクトを値渡し
 ```cpp
-void processUser(User user) {  // Unnecessary copy
+void processUser(User user) {  // 不要なコピー
 ```
-Fix: Pass by const reference
+Fix: const 参照で渡す
 ```cpp
 void processUser(const User& user) {
 ```
 
-## Summary
+## サマリー
 - CRITICAL: 1
 - HIGH: 1
 - MEDIUM: 0
 
-Recommendation: ❌ Block merge until CRITICAL issue is fixed
+推奨: CRITICAL 問題が修正されるまでマージをブロック
 ```
 
-## Approval Criteria
+## 承認基準
 
-| Status | Condition |
+| ステータス | 条件 |
 |--------|-----------|
-| ✅ Approve | No CRITICAL or HIGH issues |
-| ⚠️ Warning | Only MEDIUM issues (merge with caution) |
-| ❌ Block | CRITICAL or HIGH issues found |
+| 承認 | CRITICAL または HIGH 問題なし |
+| 警告 | MEDIUM 問題のみ（注意してマージ） |
+| ブロック | CRITICAL または HIGH 問題が発見された |
 
-## Integration with Other Commands
+## 他のコマンドとの統合
 
-- Use `/cpp-test` first to ensure tests pass
-- Use `/cpp-build` if build errors occur
-- Use `/cpp-review` before committing
-- Use `/code-review` for non-C++ specific concerns
+- まず `/cpp-test` を使用してテストが合格することを確認
+- `/cpp-build` をビルドエラー発生時に使用
+- `/cpp-review` をコミット前に使用
+- `/code-review` を C++ 固有でない問題に使用
 
-## Related
+## 関連
 
 - Agent: `agents/cpp-reviewer.md`
 - Skills: `skills/cpp-coding-standards/`, `skills/cpp-testing/`

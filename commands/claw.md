@@ -1,51 +1,51 @@
 ---
-description: Start NanoClaw v2 — ECC's persistent, zero-dependency REPL with model routing, skill hot-load, branching, compaction, export, and metrics.
+description: NanoClaw v2 を起動します。ECC の永続的・ゼロ依存の REPL で、モデルルーティング、スキルのホットロード、ブランチ、圧縮、エクスポート、メトリクスに対応します。
 ---
 
-# Claw Command
+# Claw コマンド
 
-Start an interactive AI agent session with persistent markdown history and operational controls.
+永続的な Markdown 履歴と運用制御を備えたインタラクティブな AI エージェントセッションを開始します。
 
-## Usage
+## 使用方法
 
 ```bash
 node scripts/claw.js
 ```
 
-Or via npm:
+または npm 経由:
 
 ```bash
 npm run claw
 ```
 
-## Environment Variables
+## 環境変数
 
-| Variable | Default | Description |
+| 変数 | デフォルト | 説明 |
 |----------|---------|-------------|
-| `CLAW_SESSION` | `default` | Session name (alphanumeric + hyphens) |
-| `CLAW_SKILLS` | *(empty)* | Comma-separated skills loaded at startup |
-| `CLAW_MODEL` | `sonnet` | Default model for the session |
+| `CLAW_SESSION` | `default` | セッション名（英数字 + ハイフン） |
+| `CLAW_SKILLS` | *(空)* | 起動時に読み込むスキル（カンマ区切り） |
+| `CLAW_MODEL` | `sonnet` | セッションのデフォルトモデル |
 
-## REPL Commands
+## REPL コマンド
 
 ```text
-/help                          Show help
-/clear                         Clear current session history
-/history                       Print full conversation history
-/sessions                      List saved sessions
-/model [name]                  Show/set model
-/load <skill-name>             Hot-load a skill into context
-/branch <session-name>         Branch current session
-/search <query>                Search query across sessions
-/compact                       Compact old turns, keep recent context
-/export <md|json|txt> [path]   Export session
-/metrics                       Show session metrics
-exit                           Quit
+/help                          ヘルプを表示
+/clear                         現在のセッション履歴をクリア
+/history                       会話履歴全体を表示
+/sessions                      保存されたセッションを一覧表示
+/model [name]                  モデルを表示/設定
+/load <skill-name>             スキルをコンテキストにホットロード
+/branch <session-name>         現在のセッションをブランチ
+/search <query>                セッション横断でクエリを検索
+/compact                       古いターンを圧縮し、最近のコンテキストを保持
+/export <md|json|txt> [path]   セッションをエクスポート
+/metrics                       セッションメトリクスを表示
+exit                           終了
 ```
 
-## Notes
+## 注意事項
 
-- NanoClaw remains zero-dependency.
-- Sessions are stored at `~/.claude/claw/<session>.md`.
-- Compaction keeps the most recent turns and writes a compaction header.
-- Export supports markdown, JSON turns, and plain text.
+- NanoClaw はゼロ依存を維持します。
+- セッションは `~/.claude/claw/<session>.md` に保存されます。
+- 圧縮は最近のターンを保持し、圧縮ヘッダーを書き込みます。
+- エクスポートは Markdown、JSON ターン、プレーンテキストに対応します。

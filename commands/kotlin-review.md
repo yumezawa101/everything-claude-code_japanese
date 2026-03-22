@@ -1,140 +1,86 @@
 ---
-description: Comprehensive Kotlin code review for idiomatic patterns, null safety, coroutine safety, and security. Invokes the kotlin-reviewer agent.
+description: 慣用的なパターン、null 安全性、コルーチン安全性、セキュリティについての包括的な Kotlin コードレビュー。kotlin-reviewer エージェントを呼び出します。
 ---
 
 # Kotlin Code Review
 
-This command invokes the **kotlin-reviewer** agent for comprehensive Kotlin-specific code review.
+このコマンドは Kotlin 固有の包括的なコードレビューのために **kotlin-reviewer** エージェントを呼び出します。
 
-## What This Command Does
+## このコマンドの機能
 
-1. **Identify Kotlin Changes**: Find modified `.kt` and `.kts` files via `git diff`
-2. **Run Build & Static Analysis**: Execute `./gradlew build`, `detekt`, `ktlintCheck`
-3. **Security Scan**: Check for SQL injection, command injection, hardcoded secrets
-4. **Null Safety Review**: Analyze `!!` usage, platform type handling, unsafe casts
-5. **Coroutine Review**: Check structured concurrency, dispatcher usage, cancellation
-6. **Generate Report**: Categorize issues by severity
+1. **Kotlin 変更の特定**: `git diff` で変更された `.kt` および `.kts` ファイルを検出
+2. **ビルドと静的解析の実行**: `./gradlew build`、`detekt`、`ktlintCheck` を実行
+3. **セキュリティスキャン**: SQL インジェクション、コマンドインジェクション、ハードコードされた秘密情報をチェック
+4. **null 安全性レビュー**: `!!` の使用、プラットフォーム型の扱い、安全でないキャストを分析
+5. **コルーチンレビュー**: 構造化された並行性、ディスパッチャ使用、キャンセル処理をチェック
+6. **レポート生成**: 問題を重大度別に分類
 
-## When to Use
+## 使用するタイミング
 
-Use `/kotlin-review` when:
-- After writing or modifying Kotlin code
-- Before committing Kotlin changes
-- Reviewing pull requests with Kotlin code
-- Onboarding to a new Kotlin codebase
-- Learning idiomatic Kotlin patterns
+以下の場合に `/kotlin-review` を使用:
+- Kotlin コードを作成または変更した後
+- Kotlin の変更をコミットする前
+- Kotlin コードを含むプルリクエストのレビュー時
+- 新しい Kotlin コードベースへのオンボーディング時
+- 慣用的な Kotlin パターンの学習時
 
-## Review Categories
+## レビューカテゴリ
 
-### CRITICAL (Must Fix)
-- SQL/Command injection vulnerabilities
-- Force-unwrap `!!` without justification
-- Platform type null safety violations
-- GlobalScope usage (structured concurrency violation)
-- Hardcoded credentials
-- Unsafe deserialization
+### CRITICAL（必須修正）
+- SQL/コマンドインジェクションの脆弱性
+- 正当な理由のない `!!` の強制アンラップ
+- プラットフォーム型の null 安全性違反
+- GlobalScope の使用（構造化された並行性の違反）
+- ハードコードされた認証情報
+- 安全でないデシリアライゼーション
 
-### HIGH (Should Fix)
-- Mutable state where immutable suffices
-- Blocking calls inside coroutine context
-- Missing cancellation checks in long loops
-- Non-exhaustive `when` on sealed types
-- Large functions (>50 lines)
-- Deep nesting (>4 levels)
+### HIGH（修正推奨）
+- イミュータブルで十分な箇所でのミュータブル状態
+- コルーチンコンテキスト内でのブロッキング呼び出し
+- 長いループ内でのキャンセルチェックの欠落
+- sealed 型での非網羅的 `when`
+- 大きな関数（50行超）
+- 深いネスト（4レベル超）
 
-### MEDIUM (Consider)
-- Non-idiomatic Kotlin (Java-style patterns)
-- Missing trailing commas
-- Scope function misuse or nesting
-- Missing sequence for large collection chains
-- Redundant explicit types
+### MEDIUM（検討）
+- 非慣用的な Kotlin（Java スタイルのパターン）
+- トレーリングカンマの欠落
+- スコープ関数の誤用やネスト
+- 大きなコレクションチェーンでの sequence の欠落
+- 冗長な明示的型
 
-## Automated Checks Run
+## 実行される自動チェック
 
 ```bash
-# Build check
+# ビルドチェック
 ./gradlew build
 
-# Static analysis
+# 静的解析
 ./gradlew detekt
 
-# Formatting check
+# フォーマットチェック
 ./gradlew ktlintCheck
 
-# Tests
+# テスト
 ./gradlew test
 ```
 
-## Example Usage
+## 承認基準
 
-````text
-User: /kotlin-review
-
-Agent:
-# Kotlin Code Review Report
-
-## Files Reviewed
-- src/main/kotlin/com/example/service/UserService.kt (modified)
-- src/main/kotlin/com/example/routes/UserRoutes.kt (modified)
-
-## Static Analysis Results
-✓ Build: Successful
-✓ detekt: No issues
-⚠ ktlint: 2 formatting warnings
-
-## Issues Found
-
-[CRITICAL] Force-Unwrap Null Safety
-File: src/main/kotlin/com/example/service/UserService.kt:28
-Issue: Using !! on nullable repository result
-```kotlin
-val user = repository.findById(id)!!  // NPE risk
-```
-Fix: Use safe call with error handling
-```kotlin
-val user = repository.findById(id)
-    ?: throw UserNotFoundException("User $id not found")
-```
-
-[HIGH] GlobalScope Usage
-File: src/main/kotlin/com/example/routes/UserRoutes.kt:45
-Issue: Using GlobalScope breaks structured concurrency
-```kotlin
-GlobalScope.launch {
-    notificationService.sendWelcome(user)
-}
-```
-Fix: Use the call's coroutine scope
-```kotlin
-launch {
-    notificationService.sendWelcome(user)
-}
-```
-
-## Summary
-- CRITICAL: 1
-- HIGH: 1
-- MEDIUM: 0
-
-Recommendation: ❌ Block merge until CRITICAL issue is fixed
-````
-
-## Approval Criteria
-
-| Status | Condition |
+| ステータス | 条件 |
 |--------|-----------|
-| ✅ Approve | No CRITICAL or HIGH issues |
-| ⚠️ Warning | Only MEDIUM issues (merge with caution) |
-| ❌ Block | CRITICAL or HIGH issues found |
+| 承認 | CRITICAL または HIGH 問題なし |
+| 警告 | MEDIUM 問題のみ（注意してマージ） |
+| ブロック | CRITICAL または HIGH 問題が発見された |
 
-## Integration with Other Commands
+## 他のコマンドとの統合
 
-- Use `/kotlin-test` first to ensure tests pass
-- Use `/kotlin-build` if build errors occur
-- Use `/kotlin-review` before committing
-- Use `/code-review` for non-Kotlin-specific concerns
+- まず `/kotlin-test` を使用してテストが合格することを確認
+- `/kotlin-build` をビルドエラー発生時に使用
+- `/kotlin-review` をコミット前に使用
+- `/code-review` を Kotlin 固有でない問題に使用
 
-## Related
+## 関連
 
 - Agent: `agents/kotlin-reviewer.md`
 - Skills: `skills/kotlin-patterns/`, `skills/kotlin-testing/`

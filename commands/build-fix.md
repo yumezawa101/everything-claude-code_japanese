@@ -1,62 +1,62 @@
-# Build and Fix
+# ビルド修正
 
-Incrementally fix build and type errors with minimal, safe changes.
+ビルドおよび型エラーを最小限の安全な変更で段階的に修正します。
 
-## Step 1: Detect Build System
+## ステップ 1: ビルドシステムの検出
 
-Identify the project's build tool and run the build:
+プロジェクトのビルドツールを特定してビルドを実行:
 
-| Indicator | Build Command |
+| 指標 | ビルドコマンド |
 |-----------|---------------|
-| `package.json` with `build` script | `npm run build` or `pnpm build` |
-| `tsconfig.json` (TypeScript only) | `npx tsc --noEmit` |
+| `package.json` に `build` スクリプト | `npm run build` または `pnpm build` |
+| `tsconfig.json` (TypeScript のみ) | `npx tsc --noEmit` |
 | `Cargo.toml` | `cargo build 2>&1` |
 | `pom.xml` | `mvn compile` |
 | `build.gradle` | `./gradlew compileJava` |
 | `go.mod` | `go build ./...` |
-| `pyproject.toml` | `python -m py_compile` or `mypy .` |
+| `pyproject.toml` | `python -m py_compile` または `mypy .` |
 
-## Step 2: Parse and Group Errors
+## ステップ 2: エラーの解析とグループ化
 
-1. Run the build command and capture stderr
-2. Group errors by file path
-3. Sort by dependency order (fix imports/types before logic errors)
-4. Count total errors for progress tracking
+1. ビルドコマンドを実行して stderr をキャプチャ
+2. ファイルパス別にエラーをグループ化
+3. 依存関係の順序でソート（import/型をロジックエラーより先に修正）
+4. 進捗追跡のためにエラー総数をカウント
 
-## Step 3: Fix Loop (One Error at a Time)
+## ステップ 3: 修正ループ（一度に1つのエラー）
 
-For each error:
+各エラーについて:
 
-1. **Read the file** — Use Read tool to see error context (10 lines around the error)
-2. **Diagnose** — Identify root cause (missing import, wrong type, syntax error)
-3. **Fix minimally** — Use Edit tool for the smallest change that resolves the error
-4. **Re-run build** — Verify the error is gone and no new errors introduced
-5. **Move to next** — Continue with remaining errors
+1. **ファイルを読む** -- Read ツールでエラーのコンテキスト（エラー前後10行）を確認
+2. **診断** -- 根本原因を特定（import 欠落、型の不一致、構文エラー）
+3. **最小限の修正** -- Edit ツールでエラーを解決する最小の変更を適用
+4. **ビルド再実行** -- エラーが解消され新しいエラーが発生していないことを確認
+5. **次へ** -- 残りのエラーの修正を続行
 
-## Step 4: Guardrails
+## ステップ 4: ガードレール
 
-Stop and ask the user if:
-- A fix introduces **more errors than it resolves**
-- The **same error persists after 3 attempts** (likely a deeper issue)
-- The fix requires **architectural changes** (not just a build fix)
-- Build errors stem from **missing dependencies** (need `npm install`, `cargo add`, etc.)
+以下の場合は停止してユーザーに確認:
+- 修正が**解決するより多くのエラーを導入**する場合
+- **同じエラーが3回の試行後も持続**する場合（より深い問題の可能性）
+- 修正に**アーキテクチャの変更**が必要な場合（単なるビルド修正ではない）
+- ビルドエラーが**依存関係の欠落**に起因する場合（`npm install`、`cargo add` 等が必要）
 
-## Step 5: Summary
+## ステップ 5: サマリー
 
-Show results:
-- Errors fixed (with file paths)
-- Errors remaining (if any)
-- New errors introduced (should be zero)
-- Suggested next steps for unresolved issues
+結果を表示:
+- 修正されたエラー（ファイルパス付き）
+- 残存エラー（ある場合）
+- 新たに導入されたエラー（ゼロであるべき）
+- 未解決の問題に対する推奨次ステップ
 
-## Recovery Strategies
+## リカバリ戦略
 
-| Situation | Action |
+| 状況 | アクション |
 |-----------|--------|
-| Missing module/import | Check if package is installed; suggest install command |
-| Type mismatch | Read both type definitions; fix the narrower type |
-| Circular dependency | Identify cycle with import graph; suggest extraction |
-| Version conflict | Check `package.json` / `Cargo.toml` for version constraints |
-| Build tool misconfiguration | Read config file; compare with working defaults |
+| モジュール/import の欠落 | パッケージがインストールされているか確認し、インストールコマンドを提案 |
+| 型の不一致 | 両方の型定義を読み、より狭い型を修正 |
+| 循環依存 | import グラフでサイクルを特定し、抽出を提案 |
+| バージョン競合 | `package.json` / `Cargo.toml` のバージョン制約を確認 |
+| ビルドツールの設定ミス | 設定ファイルを読み、動作するデフォルトと比較 |
 
-Fix one error at a time for safety. Prefer minimal diffs over refactoring.
+安全のため一度に1つのエラーのみを修正。リファクタリングより最小限の差分を優先。

@@ -1,80 +1,28 @@
 # Refactor Clean
 
-Safely identify and remove dead code with test verification at every step.
+テスト検証でデッドコードを安全に特定して削除します:
 
-## Step 1: Detect Dead Code
+1. デッドコード分析ツールを実行:
+   - knip: 未使用のエクスポートとファイルを検出
+   - depcheck: 未使用の依存関係を検出
+   - ts-prune: 未使用のTypeScriptエクスポートを検出
 
-Run analysis tools based on project type:
+2. .reports/dead-code-analysis.mdに包括的なレポートを生成
 
-| Tool | What It Finds | Command |
-|------|--------------|---------|
-| knip | Unused exports, files, dependencies | `npx knip` |
-| depcheck | Unused npm dependencies | `npx depcheck` |
-| ts-prune | Unused TypeScript exports | `npx ts-prune` |
-| vulture | Unused Python code | `vulture src/` |
-| deadcode | Unused Go code | `deadcode ./...` |
-| cargo-udeps | Unused Rust dependencies | `cargo +nightly udeps` |
+3. 発見を重要度別に分類:
+   - SAFE: テストファイル、未使用のユーティリティ
+   - CAUTION: APIルート、コンポーネント
+   - DANGER: 設定ファイル、メインエントリーポイント
 
-If no tool is available, use Grep to find exports with zero imports:
-```
-# Find exports, then check if they're imported anywhere
-```
+4. 安全な削除のみを提案
 
-## Step 2: Categorize Findings
+5. 各削除の前に:
+   - 完全なテストスイートを実行
+   - テストが合格することを確認
+   - 変更を適用
+   - テストを再実行
+   - テストが失敗した場合はロールバック
 
-Sort findings into safety tiers:
+6. クリーンアップされたアイテムのサマリーを表示
 
-| Tier | Examples | Action |
-|------|----------|--------|
-| **SAFE** | Unused utilities, test helpers, internal functions | Delete with confidence |
-| **CAUTION** | Components, API routes, middleware | Verify no dynamic imports or external consumers |
-| **DANGER** | Config files, entry points, type definitions | Investigate before touching |
-
-## Step 3: Safe Deletion Loop
-
-For each SAFE item:
-
-1. **Run full test suite** — Establish baseline (all green)
-2. **Delete the dead code** — Use Edit tool for surgical removal
-3. **Re-run test suite** — Verify nothing broke
-4. **If tests fail** — Immediately revert with `git checkout -- <file>` and skip this item
-5. **If tests pass** — Move to next item
-
-## Step 4: Handle CAUTION Items
-
-Before deleting CAUTION items:
-- Search for dynamic imports: `import()`, `require()`, `__import__`
-- Search for string references: route names, component names in configs
-- Check if exported from a public package API
-- Verify no external consumers (check dependents if published)
-
-## Step 5: Consolidate Duplicates
-
-After removing dead code, look for:
-- Near-duplicate functions (>80% similar) — merge into one
-- Redundant type definitions — consolidate
-- Wrapper functions that add no value — inline them
-- Re-exports that serve no purpose — remove indirection
-
-## Step 6: Summary
-
-Report results:
-
-```
-Dead Code Cleanup
-──────────────────────────────
-Deleted:   12 unused functions
-           3 unused files
-           5 unused dependencies
-Skipped:   2 items (tests failed)
-Saved:     ~450 lines removed
-──────────────────────────────
-All tests passing ✅
-```
-
-## Rules
-
-- **Never delete without running tests first**
-- **One deletion at a time** — Atomic changes make rollback easy
-- **Skip if uncertain** — Better to keep dead code than break production
-- **Don't refactor while cleaning** — Separate concerns (clean first, refactor later)
+まずテストを実行せずにコードを削除しないでください!

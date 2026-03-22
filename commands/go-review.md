@@ -1,148 +1,87 @@
 ---
-description: Comprehensive Go code review for idiomatic patterns, concurrency safety, error handling, and security. Invokes the go-reviewer agent.
+description: 慣用的なパターン、並行性の安全性、エラーハンドリング、セキュリティについての包括的な Go コードレビュー。go-reviewer エージェントを呼び出します。
 ---
 
 # Go Code Review
 
-This command invokes the **go-reviewer** agent for comprehensive Go-specific code review.
+このコマンドは Go 固有の包括的なコードレビューのために **go-reviewer** エージェントを呼び出します。
 
-## What This Command Does
+## このコマンドの機能
 
-1. **Identify Go Changes**: Find modified `.go` files via `git diff`
-2. **Run Static Analysis**: Execute `go vet`, `staticcheck`, and `golangci-lint`
-3. **Security Scan**: Check for SQL injection, command injection, race conditions
-4. **Concurrency Review**: Analyze goroutine safety, channel usage, mutex patterns
-5. **Idiomatic Go Check**: Verify code follows Go conventions and best practices
-6. **Generate Report**: Categorize issues by severity
+1. **Go 変更の特定**: `git diff` で変更された `.go` ファイルを検出
+2. **静的解析の実行**: `go vet`、`staticcheck`、`golangci-lint` を実行
+3. **セキュリティスキャン**: SQL インジェクション、コマンドインジェクション、競合状態をチェック
+4. **並行性レビュー**: goroutine の安全性、チャネル使用、mutex パターンを分析
+5. **慣用的な Go チェック**: コードが Go の慣習とベストプラクティスに従っていることを確認
+6. **レポート生成**: 問題を重大度別に分類
 
-## When to Use
+## 使用するタイミング
 
-Use `/go-review` when:
-- After writing or modifying Go code
-- Before committing Go changes
-- Reviewing pull requests with Go code
-- Onboarding to a new Go codebase
-- Learning idiomatic Go patterns
+以下の場合に `/go-review` を使用:
+- Go コードを作成または変更した後
+- Go の変更をコミットする前
+- Go コードを含むプルリクエストのレビュー時
+- 新しい Go コードベースへのオンボーディング時
+- 慣用的な Go パターンの学習時
 
-## Review Categories
+## レビューカテゴリ
 
-### CRITICAL (Must Fix)
-- SQL/Command injection vulnerabilities
-- Race conditions without synchronization
-- Goroutine leaks
-- Hardcoded credentials
-- Unsafe pointer usage
-- Ignored errors in critical paths
+### CRITICAL（必須修正）
+- SQL/コマンドインジェクションの脆弱性
+- 同期化なしの競合状態
+- goroutine リーク
+- ハードコードされた認証情報
+- 安全でないポインタの使用
+- クリティカルパスでのエラーの無視
 
-### HIGH (Should Fix)
-- Missing error wrapping with context
-- Panic instead of error returns
-- Context not propagated
-- Unbuffered channels causing deadlocks
-- Interface not satisfied errors
-- Missing mutex protection
+### HIGH（修正推奨）
+- コンテキストなしのエラーラッピングの欠落
+- エラー戻り値の代わりにパニック
+- コンテキストが伝播されていない
+- デッドロックを引き起こすバッファなしチャネル
+- インターフェース未実装エラー
+- mutex による保護の欠落
 
-### MEDIUM (Consider)
-- Non-idiomatic code patterns
-- Missing godoc comments on exports
-- Inefficient string concatenation
-- Slice not preallocated
-- Table-driven tests not used
+### MEDIUM（検討）
+- 非慣用的なコードパターン
+- エクスポート時の godoc コメントの欠落
+- 非効率的な文字列連結
+- 事前割り当てされていないスライス
+- テーブル駆動テストが使用されていない
 
-## Automated Checks Run
+## 実行される自動チェック
 
 ```bash
-# Static analysis
+# 静的解析
 go vet ./...
 
-# Advanced checks (if installed)
+# 高度なチェック（インストールされている場合）
 staticcheck ./...
 golangci-lint run
 
-# Race detection
+# 競合検出
 go build -race ./...
 
-# Security vulnerabilities
+# セキュリティ脆弱性
 govulncheck ./...
 ```
 
-## Example Usage
+## 承認基準
 
-```text
-User: /go-review
-
-Agent:
-# Go Code Review Report
-
-## Files Reviewed
-- internal/handler/user.go (modified)
-- internal/service/auth.go (modified)
-
-## Static Analysis Results
-✓ go vet: No issues
-✓ staticcheck: No issues
-
-## Issues Found
-
-[CRITICAL] Race Condition
-File: internal/service/auth.go:45
-Issue: Shared map accessed without synchronization
-```go
-var cache = map[string]*Session{}  // Concurrent access!
-
-func GetSession(id string) *Session {
-    return cache[id]  // Race condition
-}
-```
-Fix: Use sync.RWMutex or sync.Map
-```go
-var (
-    cache   = map[string]*Session{}
-    cacheMu sync.RWMutex
-)
-
-func GetSession(id string) *Session {
-    cacheMu.RLock()
-    defer cacheMu.RUnlock()
-    return cache[id]
-}
-```
-
-[HIGH] Missing Error Context
-File: internal/handler/user.go:28
-Issue: Error returned without context
-```go
-return err  // No context
-```
-Fix: Wrap with context
-```go
-return fmt.Errorf("get user %s: %w", userID, err)
-```
-
-## Summary
-- CRITICAL: 1
-- HIGH: 1
-- MEDIUM: 0
-
-Recommendation: ❌ Block merge until CRITICAL issue is fixed
-```
-
-## Approval Criteria
-
-| Status | Condition |
+| ステータス | 条件 |
 |--------|-----------|
-| ✅ Approve | No CRITICAL or HIGH issues |
-| ⚠️ Warning | Only MEDIUM issues (merge with caution) |
-| ❌ Block | CRITICAL or HIGH issues found |
+| 承認 | CRITICAL または HIGH 問題なし |
+| 警告 | MEDIUM 問題のみ（注意してマージ） |
+| ブロック | CRITICAL または HIGH 問題が発見された |
 
-## Integration with Other Commands
+## 他のコマンドとの統合
 
-- Use `/go-test` first to ensure tests pass
-- Use `/go-build` if build errors occur
-- Use `/go-review` before committing
-- Use `/code-review` for non-Go specific concerns
+- まず `/go-test` を使用してテストが合格することを確認
+- `/go-build` をビルドエラー発生時に使用
+- `/go-review` をコミット前に使用
+- `/code-review` を Go 固有でない問題に使用
 
-## Related
+## 関連
 
 - Agent: `agents/go-reviewer.md`
 - Skills: `skills/golang-patterns/`, `skills/golang-testing/`

@@ -1,155 +1,99 @@
 ---
-description: Load the most recent session file from ~/.claude/sessions/ and resume work with full context from where the last session ended.
+description: ~/.claude/sessions/ から最新のセッションファイルを読み込み、前回のセッション終了時点の完全なコンテキストで作業を再開します。
 ---
 
-# Resume Session Command
+# Resume Session コマンド
 
-Load the last saved session state and orient fully before doing any work.
-This command is the counterpart to `/save-session`.
+最後に保存されたセッション状態を読み込み、作業を開始する前に完全に状況を把握します。
+このコマンドは `/save-session` の対となるものです。
 
-## When to Use
+## 使用するタイミング
 
-- Starting a new session to continue work from a previous day
-- After starting a fresh session due to context limits
-- When handing off a session file from another source (just provide the file path)
-- Any time you have a session file and want Claude to fully absorb it before proceeding
+- 前日の作業を続行するために新しいセッションを開始するとき
+- コンテキスト制限によりフレッシュなセッションを開始した後
+- 別のソースからセッションファイルを引き継いだとき（ファイルパスを指定）
+- セッションファイルがあり、Claude に完全に吸収させてから進めたいとき
 
-## Usage
-
-```
-/resume-session                                                      # loads most recent file in ~/.claude/sessions/
-/resume-session 2024-01-15                                           # loads most recent session for that date
-/resume-session ~/.claude/sessions/2024-01-15-session.tmp           # loads a specific legacy-format file
-/resume-session ~/.claude/sessions/2024-01-15-abc123de-session.tmp  # loads a current short-id session file
-```
-
-## Process
-
-### Step 1: Find the session file
-
-If no argument provided:
-
-1. Check `~/.claude/sessions/`
-2. Pick the most recently modified `*-session.tmp` file
-3. If the folder does not exist or has no matching files, tell the user:
-   ```
-   No session files found in ~/.claude/sessions/
-   Run /save-session at the end of a session to create one.
-   ```
-   Then stop.
-
-If an argument is provided:
-
-- If it looks like a date (`YYYY-MM-DD`), search `~/.claude/sessions/` for files matching
-  `YYYY-MM-DD-session.tmp` (legacy format) or `YYYY-MM-DD-<shortid>-session.tmp` (current format)
-  and load the most recently modified variant for that date
-- If it looks like a file path, read that file directly
-- If not found, report clearly and stop
-
-### Step 2: Read the entire session file
-
-Read the complete file. Do not summarize yet.
-
-### Step 3: Confirm understanding
-
-Respond with a structured briefing in this exact format:
+## 使用方法
 
 ```
-SESSION LOADED: [actual resolved path to the file]
+/resume-session                                                      # ~/.claude/sessions/ の最新ファイルを読み込み
+/resume-session 2024-01-15                                           # その日付の最新セッションを読み込み
+/resume-session ~/.claude/sessions/2024-01-15-session.tmp           # レガシー形式の特定ファイル
+/resume-session ~/.claude/sessions/2024-01-15-abc123de-session.tmp  # 現在の短縮 ID 形式のファイル
+```
+
+## プロセス
+
+### ステップ 1: セッションファイルを見つける
+
+引数なしの場合:
+1. `~/.claude/sessions/` を確認
+2. 最も最近変更された `*-session.tmp` ファイルを選択
+3. フォルダが存在しないか一致するファイルがない場合、ユーザーに通知して停止
+
+引数が指定された場合:
+- 日付形式 (`YYYY-MM-DD`) に見える場合、該当するファイルを検索し最も最近変更されたものを読み込む
+- ファイルパスに見える場合、そのファイルを直接読み取り
+- 見つからない場合、明確に報告して停止
+
+### ステップ 2: セッションファイル全体を読む
+
+ファイル全体を読み取る。まだ要約しない。
+
+### ステップ 3: 理解を確認
+
+構造化されたブリーフィングで応答:
+
+```
+SESSION LOADED: [ファイルへの実際のパス]
 ════════════════════════════════════════════════
 
-PROJECT: [project name / topic from file]
+PROJECT: [ファイルからのプロジェクト名/トピック]
 
-WHAT WE'RE BUILDING:
-[2-3 sentence summary in your own words]
+構築中のもの:
+[2-3文で要約]
 
-CURRENT STATE:
-✅ Working: [count] items confirmed
-🔄 In Progress: [list files that are in progress]
-🗒️ Not Started: [list planned but untouched]
+現在の状態:
+Working: [件数] 確認済み
+In Progress: [進行中のファイルリスト]
+Not Started: [計画済みだが未着手のリスト]
 
-WHAT NOT TO RETRY:
-[list every failed approach with its reason — this is critical]
+再試行すべきでないもの:
+[失敗したアプローチとその理由をすべてリスト]
 
-OPEN QUESTIONS / BLOCKERS:
-[list any blockers or unanswered questions]
+未解決の質問/ブロッカー:
+[ブロッカーや未回答の質問をリスト]
 
-NEXT STEP:
-[exact next step if defined in the file]
-[if not defined: "No next step defined — recommend reviewing 'What Has NOT Been Tried Yet' together before starting"]
+次のステップ:
+[ファイルで定義されている場合はその内容]
+[定義されていない場合: 推奨事項を提示]
 
 ════════════════════════════════════════════════
-Ready to continue. What would you like to do?
+続行する準備ができました。何をしますか？
 ```
 
-### Step 4: Wait for the user
+### ステップ 4: ユーザーを待つ
 
-Do NOT start working automatically. Do NOT touch any files. Wait for the user to say what to do next.
-
-If the next step is clearly defined in the session file and the user says "continue" or "yes" or similar — proceed with that exact next step.
-
-If no next step is defined — ask the user where to start, and optionally suggest an approach from the "What Has NOT Been Tried Yet" section.
+自動的に作業を開始しない。ファイルに触れない。ユーザーの指示を待つ。
 
 ---
 
-## Edge Cases
+## エッジケース
 
-**Multiple sessions for the same date** (`2024-01-15-session.tmp`, `2024-01-15-abc123de-session.tmp`):
-Load the most recently modified matching file for that date, regardless of whether it uses the legacy no-id format or the current short-id format.
+**同日の複数セッション:** その日付の最も最近変更されたファイルを読み込む。
 
-**Session file references files that no longer exist:**
-Note this during the briefing — "⚠️ `path/to/file.ts` referenced in session but not found on disk."
+**セッションファイルが存在しないファイルを参照:** ブリーフィング中に注記。
 
-**Session file is from more than 7 days ago:**
-Note the gap — "⚠️ This session is from N days ago (threshold: 7 days). Things may have changed." — then proceed normally.
+**7日以上前のセッションファイル:** ギャップを注記し通常通り進行。
 
-**User provides a file path directly (e.g., forwarded from a teammate):**
-Read it and follow the same briefing process — the format is the same regardless of source.
-
-**Session file is empty or malformed:**
-Report: "Session file found but appears empty or unreadable. You may need to create a new one with /save-session."
+**空または不正なセッションファイル:** 報告して停止。
 
 ---
 
-## Example Output
+## 注意事項
 
-```
-SESSION LOADED: /Users/you/.claude/sessions/2024-01-15-abc123de-session.tmp
-════════════════════════════════════════════════
-
-PROJECT: my-app — JWT Authentication
-
-WHAT WE'RE BUILDING:
-User authentication with JWT tokens stored in httpOnly cookies.
-Register and login endpoints are partially done. Route protection
-via middleware hasn't been started yet.
-
-CURRENT STATE:
-✅ Working: 3 items (register endpoint, JWT generation, password hashing)
-🔄 In Progress: app/api/auth/login/route.ts (token works, cookie not set yet)
-🗒️ Not Started: middleware.ts, app/login/page.tsx
-
-WHAT NOT TO RETRY:
-❌ Next-Auth — conflicts with custom Prisma adapter, threw adapter error on every request
-❌ localStorage for JWT — causes SSR hydration mismatch, incompatible with Next.js
-
-OPEN QUESTIONS / BLOCKERS:
-- Does cookies().set() work inside a Route Handler or only Server Actions?
-
-NEXT STEP:
-In app/api/auth/login/route.ts — set the JWT as an httpOnly cookie using
-cookies().set('token', jwt, { httpOnly: true, secure: true, sameSite: 'strict' })
-then test with Postman for a Set-Cookie header in the response.
-
-════════════════════════════════════════════════
-Ready to continue. What would you like to do?
-```
-
----
-
-## Notes
-
-- Never modify the session file when loading it — it's a read-only historical record
-- The briefing format is fixed — do not skip sections even if they are empty
-- "What Not To Retry" must always be shown, even if it just says "None" — it's too important to miss
-- After resuming, the user may want to run `/save-session` again at the end of the new session to create a new dated file
+- 読み込み時にセッションファイルを変更しない -- 読み取り専用の履歴記録
+- ブリーフィング形式は固定 -- セクションが空でもスキップしない
+- 「再試行すべきでないもの」は必ず表示 -- "なし" でも表示（見逃すには重要すぎる）
+- 再開後、ユーザーは新しいセッションの終わりに `/save-session` を再度実行する場合がある

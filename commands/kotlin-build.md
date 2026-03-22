@@ -1,174 +1,80 @@
 ---
-description: Fix Kotlin/Gradle build errors, compiler warnings, and dependency issues incrementally. Invokes the kotlin-build-resolver agent for minimal, surgical fixes.
+description: Kotlin/Gradle ビルドエラー、コンパイラ警告、依存関係の問題を段階的に修正します。最小限の外科的修正のために kotlin-build-resolver エージェントを呼び出します。
 ---
 
 # Kotlin Build and Fix
 
-This command invokes the **kotlin-build-resolver** agent to incrementally fix Kotlin build errors with minimal changes.
+このコマンドは **kotlin-build-resolver** エージェントを呼び出し、最小限の変更で Kotlin ビルドエラーを段階的に修正します。
 
-## What This Command Does
+## このコマンドの機能
 
-1. **Run Diagnostics**: Execute `./gradlew build`, `detekt`, `ktlintCheck`
-2. **Parse Errors**: Group by file and sort by severity
-3. **Fix Incrementally**: One error at a time
-4. **Verify Each Fix**: Re-run build after each change
-5. **Report Summary**: Show what was fixed and what remains
+1. **診断の実行**: `./gradlew build`、`detekt`、`ktlintCheck` を実行
+2. **エラーの解析**: ファイル別にグループ化し重大度順にソート
+3. **段階的修正**: 一度に1つのエラーを修正
+4. **各修正の検証**: 各変更後にビルドを再実行
+5. **サマリーの報告**: 修正されたものと残っているものを表示
 
-## When to Use
+## 使用するタイミング
 
-Use `/kotlin-build` when:
-- `./gradlew build` fails with errors
-- Kotlin compiler reports errors
-- `./gradlew detekt` reports violations
-- Gradle dependency resolution fails
-- After pulling changes that break the build
+以下の場合に `/kotlin-build` を使用:
+- `./gradlew build` がエラーで失敗する場合
+- Kotlin コンパイラがエラーを報告する場合
+- `./gradlew detekt` が違反を報告する場合
+- Gradle 依存関係の解決が失敗する場合
+- ビルドを壊す変更をプルした後
 
-## Diagnostic Commands Run
+## 実行される診断コマンド
 
 ```bash
-# Primary build check
+# プライマリビルドチェック
 ./gradlew build 2>&1
 
-# Static analysis
+# 静的解析
 ./gradlew detekt 2>&1 || echo "detekt not configured"
 ./gradlew ktlintCheck 2>&1 || echo "ktlint not configured"
 
-# Dependency issues
+# 依存関係の問題
 ./gradlew dependencies --configuration runtimeClasspath 2>&1 | head -100
 
-# Optional deep refresh when caches or dependency metadata are suspect
+# キャッシュや依存関係メタデータが疑わしい場合のディープリフレッシュ（オプション）
 ./gradlew build --refresh-dependencies
 ```
 
-## Example Session
+## 修正される一般的なエラー
 
-````text
-User: /kotlin-build
-
-Agent:
-# Kotlin Build Resolution
-
-## Initial Diagnostics
-
-```bash
-$ ./gradlew build
-e: src/main/kotlin/com/example/service/UserService.kt:25:15 Unresolved reference: UserRepository
-e: src/main/kotlin/com/example/routes/UserRoutes.kt:42:9 Type mismatch: inferred type is String but Int was expected
-e: src/main/kotlin/com/example/routes/UserRoutes.kt:58:5 'when' expression must be exhaustive
-```
-
-Errors found: 3
-
-## Fix 1: Unresolved Reference
-
-File: src/main/kotlin/com/example/service/UserService.kt:25
-Error: Unresolved reference: UserRepository
-Cause: Missing import
-
-```kotlin
-// Added import
-import com.example.repository.UserRepository
-```
-
-```bash
-$ ./gradlew build
-# 2 errors remaining
-```
-
-## Fix 2: Type Mismatch
-
-File: src/main/kotlin/com/example/routes/UserRoutes.kt:42
-Error: Type mismatch: inferred type is String but Int was expected
-
-```kotlin
-// Changed
-val count = call.parameters["count"]
-// To
-val count = call.parameters["count"]?.toIntOrNull()
-    ?: return@get call.respond(HttpStatusCode.BadRequest, "Invalid count")
-```
-
-```bash
-$ ./gradlew build
-# 1 error remaining
-```
-
-## Fix 3: Non-Exhaustive When
-
-File: src/main/kotlin/com/example/routes/UserRoutes.kt:58
-Error: 'when' expression must be exhaustive
-
-```kotlin
-// Added missing branch
-when (user.role) {
-    Role.ADMIN -> handleAdmin(user)
-    Role.USER -> handleUser(user)
-    Role.MODERATOR -> handleModerator(user) // Added
-}
-```
-
-```bash
-$ ./gradlew build
-# Build successful!
-```
-
-## Final Verification
-
-```bash
-$ ./gradlew detekt
-# No issues
-
-$ ./gradlew test
-# All tests passed
-```
-
-## Summary
-
-| Metric | Count |
-|--------|-------|
-| Build errors fixed | 3 |
-| Detekt issues fixed | 0 |
-| Files modified | 2 |
-| Remaining issues | 0 |
-
-Build Status: ✅ SUCCESS
-````
-
-## Common Errors Fixed
-
-| Error | Typical Fix |
+| エラー | 典型的な修正 |
 |-------|-------------|
-| `Unresolved reference: X` | Add import or dependency |
-| `Type mismatch` | Fix type conversion or assignment |
-| `'when' must be exhaustive` | Add missing sealed class branches |
-| `Suspend function can only be called from coroutine` | Add `suspend` modifier |
-| `Smart cast impossible` | Use local `val` or `let` |
-| `None of the following candidates is applicable` | Fix argument types |
-| `Could not resolve dependency` | Fix version or add repository |
+| `Unresolved reference: X` | import または依存関係を追加 |
+| `Type mismatch` | 型変換または代入を修正 |
+| `'when' must be exhaustive` | sealed class の欠落ブランチを追加 |
+| `Suspend function can only be called from coroutine` | `suspend` 修飾子を追加 |
+| `Smart cast impossible` | ローカル `val` または `let` を使用 |
+| `None of the following candidates is applicable` | 引数の型を修正 |
+| `Could not resolve dependency` | バージョンを修正またはリポジトリを追加 |
 
-## Fix Strategy
+## 修正戦略
 
-1. **Build errors first** - Code must compile
-2. **Detekt violations second** - Fix code quality issues
-3. **ktlint warnings third** - Fix formatting
-4. **One fix at a time** - Verify each change
-5. **Minimal changes** - Don't refactor, just fix
+1. **まずビルドエラー** - コードがコンパイルできる必要がある
+2. **次に Detekt 違反** - コード品質の問題を修正
+3. **最後に ktlint 警告** - フォーマットを修正
+4. **一度に1つの修正** - 各変更を検証
+5. **最小限の変更** - リファクタリングではなく修正のみ
 
-## Stop Conditions
+## 停止条件
 
-The agent will stop and report if:
-- Same error persists after 3 attempts
-- Fix introduces more errors
-- Requires architectural changes
-- Missing external dependencies
+以下の場合、エージェントは停止して報告:
+- 同じエラーが3回の試行後も持続
+- 修正がさらなるエラーを引き起こす
+- アーキテクチャの変更が必要
+- 外部依存関係が欠落
 
-## Related Commands
+## 関連コマンド
 
-- `/kotlin-test` - Run tests after build succeeds
-- `/kotlin-review` - Review code quality
-- `/verify` - Full verification loop
+- `/kotlin-test` - ビルド成功後にテストを実行
+- `/kotlin-review` - コード品質をレビュー
+- `/verify` - 完全な検証ループ
 
-## Related
+## 関連
 
 - Agent: `agents/kotlin-build-resolver.md`
 - Skill: `skills/kotlin-patterns/`

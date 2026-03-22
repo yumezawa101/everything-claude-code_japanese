@@ -1,187 +1,82 @@
 ---
-description: Fix Rust build errors, borrow checker issues, and dependency problems incrementally. Invokes the rust-build-resolver agent for minimal, surgical fixes.
+description: Rust ビルドエラー、借用チェッカーの問題、依存関係の問題を段階的に修正します。最小限の外科的修正のために rust-build-resolver エージェントを呼び出します。
 ---
 
 # Rust Build and Fix
 
-This command invokes the **rust-build-resolver** agent to incrementally fix Rust build errors with minimal changes.
+このコマンドは **rust-build-resolver** エージェントを呼び出し、最小限の変更で Rust ビルドエラーを段階的に修正します。
 
-## What This Command Does
+## このコマンドの機能
 
-1. **Run Diagnostics**: Execute `cargo check`, `cargo clippy`, `cargo fmt --check`
-2. **Parse Errors**: Identify error codes and affected files
-3. **Fix Incrementally**: One error at a time
-4. **Verify Each Fix**: Re-run `cargo check` after each change
-5. **Report Summary**: Show what was fixed and what remains
+1. **診断の実行**: `cargo check`、`cargo clippy`、`cargo fmt --check` を実行
+2. **エラーの解析**: エラーコードと影響を受けるファイルを特定
+3. **段階的修正**: 一度に1つのエラーを修正
+4. **各修正の検証**: 各変更後に `cargo check` を再実行
+5. **サマリーの報告**: 修正されたものと残っているものを表示
 
-## When to Use
+## 使用するタイミング
 
-Use `/rust-build` when:
-- `cargo build` or `cargo check` fails with errors
-- `cargo clippy` reports warnings
-- Borrow checker or lifetime errors block compilation
-- Cargo dependency resolution fails
-- After pulling changes that break the build
+以下の場合に `/rust-build` を使用:
+- `cargo build` または `cargo check` がエラーで失敗する場合
+- `cargo clippy` が警告を報告する場合
+- 借用チェッカーやライフタイムエラーがコンパイルをブロックしている場合
+- Cargo の依存関係解決が失敗する場合
+- ビルドを壊す変更をプルした後
 
-## Diagnostic Commands Run
+## 実行される診断コマンド
 
 ```bash
-# Primary build check
+# プライマリビルドチェック
 cargo check 2>&1
 
-# Lints and suggestions
+# リントと提案
 cargo clippy -- -D warnings 2>&1
 
-# Formatting check
+# フォーマットチェック
 cargo fmt --check 2>&1
 
-# Dependency issues
+# 依存関係の問題
 cargo tree --duplicates
 
-# Security audit (if available)
+# セキュリティ監査（利用可能な場合）
 if command -v cargo-audit >/dev/null; then cargo audit; else echo "cargo-audit not installed"; fi
 ```
 
-## Example Session
+## 修正される一般的なエラー
 
-````text
-User: /rust-build
-
-Agent:
-# Rust Build Resolution
-
-## Initial Diagnostics
-
-```bash
-$ cargo check
-error[E0502]: cannot borrow `map` as mutable because it is also borrowed as immutable
-  --> src/service/cache.rs:25:5
-error[E0308]: mismatched types
-  --> src/handler/api.rs:42:12
-error[E0425]: cannot find value `db` in this scope
-  --> src/handler/api.rs:58:9
-```
-
-Errors found: 3
-
-## Fix 1: Borrow Checker Error
-
-File: src/service/cache.rs:25
-Error: E0502 — cannot borrow `map` as mutable because also borrowed as immutable
-Cause: Immutable borrow still active during mutable insert
-
-```rust
-// Changed: restructured to end immutable borrow before mutable access
-if !map.contains_key("key") {
-    map.insert("key".into(), default);
-}
-```
-
-```bash
-$ cargo check
-# 2 errors remaining
-```
-
-## Fix 2: Type Mismatch
-
-File: src/handler/api.rs:42
-Error: E0308 — mismatched types: expected `usize`, found `&str`
-
-```rust
-// Changed
-let count = params.get("count");
-// To
-let count: usize = params.get("count")
-    .and_then(|s| s.parse().ok())
-    .unwrap_or(0);
-```
-
-```bash
-$ cargo check
-# 1 error remaining
-```
-
-## Fix 3: Unresolved Name
-
-File: src/handler/api.rs:58
-Error: E0425 — cannot find value `db` in this scope
-Cause: Missing import
-
-```rust
-// Added
-use crate::db;
-```
-
-```bash
-$ cargo check
-# Build successful!
-```
-
-## Final Verification
-
-```bash
-$ cargo clippy -- -D warnings
-# No warnings
-
-$ cargo test
-running 6 tests
-test service::cache::tests::test_insert ... ok
-test service::cache::tests::test_get ... ok
-test handler::api::tests::test_parse_count ... ok
-test handler::api::tests::test_missing_count ... ok
-test handler::api::tests::test_db_import ... ok
-test handler::api::tests::test_response ... ok
-
-test result: ok. 6 passed; 0 failed; 0 ignored
-```
-
-## Summary
-
-| Metric | Count |
-|--------|-------|
-| Build errors fixed | 3 |
-| Clippy warnings fixed | 0 |
-| Files modified | 2 |
-| Remaining issues | 0 |
-
-Build Status: SUCCESS
-````
-
-## Common Errors Fixed
-
-| Error | Typical Fix |
+| エラー | 典型的な修正 |
 |-------|-------------|
-| `cannot borrow as mutable` | Restructure to end immutable borrow first; clone only if justified |
-| `does not live long enough` | Use owned type or add lifetime annotation |
-| `cannot move out of` | Restructure to take ownership; clone only as last resort |
-| `mismatched types` | Add `.into()`, `as`, or explicit conversion |
-| `trait X not implemented` | Add `#[derive(Trait)]` or implement manually |
-| `unresolved import` | Add to Cargo.toml or fix `use` path |
-| `cannot find value` | Add import or fix path |
+| `cannot borrow as mutable` | 不変借用を先に終了するよう再構築；正当な場合のみ clone |
+| `does not live long enough` | 所有型を使用またはライフタイムアノテーションを追加 |
+| `cannot move out of` | 所有権を取得するよう再構築；clone は最後の手段 |
+| `mismatched types` | `.into()`、`as`、または明示的な変換を追加 |
+| `trait X not implemented` | `#[derive(Trait)]` を追加または手動で実装 |
+| `unresolved import` | Cargo.toml に追加または `use` パスを修正 |
+| `cannot find value` | import を追加またはパスを修正 |
 
-## Fix Strategy
+## 修正戦略
 
-1. **Build errors first** - Code must compile
-2. **Clippy warnings second** - Fix suspicious constructs
-3. **Formatting third** - `cargo fmt` compliance
-4. **One fix at a time** - Verify each change
-5. **Minimal changes** - Don't refactor, just fix
+1. **まずビルドエラー** - コードがコンパイルできる必要がある
+2. **次に Clippy 警告** - 疑わしい構造を修正
+3. **最後にフォーマット** - `cargo fmt` 準拠
+4. **一度に1つの修正** - 各変更を検証
+5. **最小限の変更** - リファクタリングではなく修正のみ
 
-## Stop Conditions
+## 停止条件
 
-The agent will stop and report if:
-- Same error persists after 3 attempts
-- Fix introduces more errors
-- Requires architectural changes
-- Borrow checker error requires redesigning data ownership
+以下の場合、エージェントは停止して報告:
+- 同じエラーが3回の試行後も持続
+- 修正がさらなるエラーを引き起こす
+- アーキテクチャの変更が必要
+- 借用チェッカーエラーがデータ所有権の再設計を必要とする
 
-## Related Commands
+## 関連コマンド
 
-- `/rust-test` - Run tests after build succeeds
-- `/rust-review` - Review code quality
-- `/verify` - Full verification loop
+- `/rust-test` - ビルド成功後にテストを実行
+- `/rust-review` - コード品質をレビュー
+- `/verify` - 完全な検証ループ
 
-## Related
+## 関連
 
 - Agent: `agents/rust-build-resolver.md`
 - Skill: `skills/rust-patterns/`

@@ -1,29 +1,29 @@
 ---
-description: Analyze context window usage across agents, skills, MCP servers, and rules to find optimization opportunities. Helps reduce token overhead and avoid performance warnings.
+description: エージェント、スキル、MCP サーバー、ルール全体のコンテキストウィンドウ使用量を分析し、最適化の機会を発見します。トークンオーバーヘッドの削減とパフォーマンス警告の回避に役立ちます。
 ---
 
 # Context Budget Optimizer
 
-Analyze your Claude Code setup's context window consumption and produce actionable recommendations to reduce token overhead.
+Claude Code セットアップのコンテキストウィンドウ消費を分析し、トークンオーバーヘッドを削減するための具体的な推奨事項を生成します。
 
-## Usage
+## 使用方法
 
 ```
 /context-budget [--verbose]
 ```
 
-- Default: summary with top recommendations
-- `--verbose`: full breakdown per component
+- デフォルト: サマリーとトップの推奨事項
+- `--verbose`: コンポーネントごとの詳細な内訳
 
 $ARGUMENTS
 
-## What to Do
+## 実行内容
 
-Run the **context-budget** skill (`skills/context-budget/SKILL.md`) with the following inputs:
+**context-budget** スキル (`skills/context-budget/SKILL.md`) を以下の入力で実行:
 
-1. Pass `--verbose` flag if present in `$ARGUMENTS`
-2. Assume a 200K context window (Claude Sonnet default) unless the user specifies otherwise
-3. Follow the skill's four phases: Inventory → Classify → Detect Issues → Report
-4. Output the formatted Context Budget Report to the user
+1. `$ARGUMENTS` に `--verbose` フラグがあれば渡す
+2. ユーザーが別途指定しない限り、200K コンテキストウィンドウ（Claude Sonnet デフォルト）を想定
+3. スキルの4フェーズに従う: インベントリ → 分類 → 問題検出 → レポート
+4. フォーマットされた Context Budget Report をユーザーに出力
 
-The skill handles all scanning logic, token estimation, issue detection, and report formatting.
+スキルがすべてのスキャンロジック、トークン推定、問題検出、レポートフォーマットを処理します。

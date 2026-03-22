@@ -1,70 +1,70 @@
 ---
-description: Fix Gradle build errors for Android and KMP projects
+description: Android および KMP プロジェクトの Gradle ビルドエラーを修正します
 ---
 
 # Gradle Build Fix
 
-Incrementally fix Gradle build and compilation errors for Android and Kotlin Multiplatform projects.
+Android および Kotlin Multiplatform プロジェクトの Gradle ビルド・コンパイルエラーを段階的に修正します。
 
-## Step 1: Detect Build Configuration
+## ステップ 1: ビルド設定の検出
 
-Identify the project type and run the appropriate build:
+プロジェクトタイプを特定し適切なビルドを実行:
 
-| Indicator | Build Command |
+| 指標 | ビルドコマンド |
 |-----------|---------------|
 | `build.gradle.kts` + `composeApp/` (KMP) | `./gradlew composeApp:compileKotlinMetadata 2>&1` |
 | `build.gradle.kts` + `app/` (Android) | `./gradlew app:compileDebugKotlin 2>&1` |
-| `settings.gradle.kts` with modules | `./gradlew assemble 2>&1` |
-| Detekt configured | `./gradlew detekt 2>&1` |
+| `settings.gradle.kts` にモジュール | `./gradlew assemble 2>&1` |
+| Detekt 設定済み | `./gradlew detekt 2>&1` |
 
-Also check `gradle.properties` and `local.properties` for configuration.
+`gradle.properties` と `local.properties` の設定も確認。
 
-## Step 2: Parse and Group Errors
+## ステップ 2: エラーの解析とグループ化
 
-1. Run the build command and capture output
-2. Separate Kotlin compilation errors from Gradle configuration errors
-3. Group by module and file path
-4. Sort: configuration errors first, then compilation errors by dependency order
+1. ビルドコマンドを実行して出力をキャプチャ
+2. Kotlin コンパイルエラーと Gradle 設定エラーを分離
+3. モジュールとファイルパスでグループ化
+4. ソート: 設定エラーを先に、次にコンパイルエラーを依存関係順に
 
-## Step 3: Fix Loop
+## ステップ 3: 修正ループ
 
-For each error:
+各エラーについて:
 
-1. **Read the file** — Full context around the error line
-2. **Diagnose** — Common categories:
-   - Missing import or unresolved reference
-   - Type mismatch or incompatible types
-   - Missing dependency in `build.gradle.kts`
-   - Expect/actual mismatch (KMP)
-   - Compose compiler error
-3. **Fix minimally** — Smallest change that resolves the error
-4. **Re-run build** — Verify fix and check for new errors
-5. **Continue** — Move to next error
+1. **ファイルを読む** -- エラー行の周辺コンテキスト全体
+2. **診断** -- 一般的なカテゴリ:
+   - import 欠落または未解決参照
+   - 型の不一致または互換性のない型
+   - `build.gradle.kts` の依存関係欠落
+   - expect/actual の不一致（KMP）
+   - Compose コンパイラエラー
+3. **最小限の修正** -- エラーを解決する最小の変更
+4. **ビルド再実行** -- 修正を確認し新しいエラーをチェック
+5. **続行** -- 次のエラーへ
 
-## Step 4: Guardrails
+## ステップ 4: ガードレール
 
-Stop and ask the user if:
-- Fix introduces more errors than it resolves
-- Same error persists after 3 attempts
-- Error requires adding new dependencies or changing module structure
-- Gradle sync itself fails (configuration-phase error)
-- Error is in generated code (Room, SQLDelight, KSP)
+以下の場合は停止してユーザーに確認:
+- 修正が解決するより多くのエラーを導入
+- 同じエラーが3回の試行後も持続
+- エラーに新しい依存関係の追加やモジュール構造の変更が必要
+- Gradle sync 自体が失敗（設定フェーズエラー）
+- エラーが生成コード内（Room、SQLDelight、KSP）
 
-## Step 5: Summary
+## ステップ 5: サマリー
 
-Report:
-- Errors fixed (module, file, description)
-- Errors remaining
-- New errors introduced (should be zero)
-- Suggested next steps
+報告:
+- 修正されたエラー（モジュール、ファイル、説明）
+- 残存エラー
+- 新たに導入されたエラー（ゼロであるべき）
+- 推奨次ステップ
 
-## Common Gradle/KMP Fixes
+## 一般的な Gradle/KMP 修正
 
-| Error | Fix |
+| エラー | 修正 |
 |-------|-----|
-| Unresolved reference in `commonMain` | Check if the dependency is in `commonMain.dependencies {}` |
-| Expect declaration without actual | Add `actual` implementation in each platform source set |
-| Compose compiler version mismatch | Align Kotlin and Compose compiler versions in `libs.versions.toml` |
-| Duplicate class | Check for conflicting dependencies with `./gradlew dependencies` |
-| KSP error | Run `./gradlew kspCommonMainKotlinMetadata` to regenerate |
-| Configuration cache issue | Check for non-serializable task inputs |
+| `commonMain` の未解決参照 | 依存関係が `commonMain.dependencies {}` にあるか確認 |
+| actual のない expect 宣言 | 各プラットフォームソースセットに `actual` 実装を追加 |
+| Compose コンパイラバージョンの不一致 | `libs.versions.toml` で Kotlin と Compose コンパイラバージョンを整合 |
+| 重複クラス | `./gradlew dependencies` で競合する依存関係を確認 |
+| KSP エラー | `./gradlew kspCommonMainKotlinMetadata` を実行して再生成 |
+| Configuration cache の問題 | シリアライズ不可能なタスク入力を確認 |

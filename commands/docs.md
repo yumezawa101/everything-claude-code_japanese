@@ -1,31 +1,31 @@
 ---
-description: Look up current documentation for a library or topic via Context7.
+description: Context7 を通じてライブラリやトピックの最新ドキュメントを検索します。
 ---
 
 # /docs
 
-## Purpose
+## 目的
 
-Look up up-to-date documentation for a library, framework, or API and return a summarized answer with relevant code snippets. Uses the Context7 MCP (resolve-library-id and query-docs) so answers reflect current docs, not training data.
+ライブラリ、フレームワーク、API の最新ドキュメントを検索し、関連するコードスニペット付きの要約された回答を返します。Context7 MCP (resolve-library-id と query-docs) を使用するため、回答はトレーニングデータではなく現在のドキュメントを反映します。
 
-## Usage
+## 使用方法
 
 ```
-/docs [library name] [question]
+/docs [ライブラリ名] [質問]
 ```
 
-Use quotes for multi-word arguments so they are parsed as a single token. Example: `/docs "Next.js" "How do I configure middleware?"`
+複数語の引数はクォートで囲み、単一トークンとして解析されるようにしてください。例: `/docs "Next.js" "ミドルウェアの設定方法は？"`
 
-If library or question is omitted, prompt the user for:
-1. The library or product name (e.g. Next.js, Prisma, Supabase).
-2. The specific question or task (e.g. "How do I set up middleware?", "Auth methods").
+ライブラリまたは質問が省略された場合、以下をユーザーに確認:
+1. ライブラリまたはプロダクト名（例: Next.js、Prisma、Supabase）
+2. 具体的な質問やタスク（例: "ミドルウェアの設定方法は？"、"認証メソッド"）
 
-## Workflow
+## ワークフロー
 
-1. **Resolve library ID** — Call the Context7 tool `resolve-library-id` with the library name and the user's question to get a Context7-compatible library ID (e.g. `/vercel/next.js`).
-2. **Query docs** — Call `query-docs` with that library ID and the user's question.
-3. **Summarize** — Return a concise answer and include relevant code examples from the fetched documentation. Mention the library (and version if relevant).
+1. **ライブラリ ID の解決** -- Context7 ツール `resolve-library-id` をライブラリ名とユーザーの質問で呼び出し、Context7 互換のライブラリ ID を取得（例: `/vercel/next.js`）
+2. **ドキュメントのクエリ** -- そのライブラリ ID とユーザーの質問で `query-docs` を呼び出し
+3. **要約** -- 簡潔な回答を返し、取得したドキュメントからの関連コード例を含める。ライブラリ（該当する場合はバージョン）を明記
 
-## Output
+## 出力
 
-The user receives a short, accurate answer backed by current docs, plus any code snippets that help. If Context7 is not available, say so and answer from training data with a note that docs may be outdated.
+ユーザーは最新ドキュメントに基づいた短く正確な回答と、有用なコードスニペットを受け取ります。Context7 が利用できない場合はその旨を伝え、トレーニングデータから回答しドキュメントが古い可能性がある旨を注記します。

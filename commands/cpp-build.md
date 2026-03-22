@@ -1,51 +1,51 @@
 ---
-description: Fix C++ build errors, CMake issues, and linker problems incrementally. Invokes the cpp-build-resolver agent for minimal, surgical fixes.
+description: C++ ビルドエラー、CMake の問題、リンカーの問題を段階的に修正します。最小限の外科的修正のために cpp-build-resolver エージェントを呼び出します。
 ---
 
 # C++ Build and Fix
 
-This command invokes the **cpp-build-resolver** agent to incrementally fix C++ build errors with minimal changes.
+このコマンドは **cpp-build-resolver** エージェントを呼び出し、最小限の変更で C++ ビルドエラーを段階的に修正します。
 
-## What This Command Does
+## このコマンドの機能
 
-1. **Run Diagnostics**: Execute `cmake --build`, `clang-tidy`, `cppcheck`
-2. **Parse Errors**: Group by file and sort by severity
-3. **Fix Incrementally**: One error at a time
-4. **Verify Each Fix**: Re-run build after each change
-5. **Report Summary**: Show what was fixed and what remains
+1. **診断の実行**: `cmake --build`、`clang-tidy`、`cppcheck` を実行
+2. **エラーの解析**: ファイル別にグループ化し重大度順にソート
+3. **段階的修正**: 一度に1つのエラーを修正
+4. **各修正の検証**: 各変更後にビルドを再実行
+5. **サマリーの報告**: 修正されたものと残っているものを表示
 
-## When to Use
+## 使用するタイミング
 
-Use `/cpp-build` when:
-- `cmake --build build` fails with errors
-- Linker errors (undefined references, multiple definitions)
-- Template instantiation failures
-- Include/dependency issues
-- After pulling changes that break the build
+以下の場合に `/cpp-build` を使用:
+- `cmake --build build` がエラーで失敗する場合
+- リンカーエラー（未定義参照、多重定義）
+- テンプレートインスタンス化の失敗
+- インクルード/依存関係の問題
+- ビルドを壊す変更をプルした後
 
-## Diagnostic Commands Run
+## 実行される診断コマンド
 
 ```bash
-# CMake configure
+# CMake 設定
 cmake -B build -S .
 
-# Build
+# ビルド
 cmake --build build 2>&1 | head -100
 
-# Static analysis (if available)
+# 静的解析（利用可能な場合）
 clang-tidy src/*.cpp -- -std=c++17
 cppcheck --enable=all src/
 ```
 
-## Example Session
+## セッション例
 
 ```text
 User: /cpp-build
 
 Agent:
-# C++ Build Resolution
+# C++ ビルド解決
 
-## Initial Diagnostics
+## 初期診断
 
 ```bash
 $ cmake --build build
@@ -54,42 +54,42 @@ src/handler/api.cpp:42:9: error: no matching function for call to 'process'
 src/handler/api.cpp:58:1: error: non-void function does not return a value
 ```
 
-Errors found: 3
+エラー検出: 3件
 
-## Fix 1: Undeclared Identifier
+## 修正 1: 未宣言の識別子
 
 File: src/service/user.cpp:25
 Error: use of undeclared identifier 'UserRepository'
-Cause: Missing include
+Cause: インクルード欠落
 
 ```cpp
-// Added include
+// インクルードを追加
 #include "repository/user_repository.hpp"
 ```
 
 ```bash
 $ cmake --build build
-# 2 errors remaining
+# 残り2件のエラー
 ```
 
-## Fix 2: No Matching Function
+## 修正 2: 一致する関数がない
 
 File: src/handler/api.cpp:42
 Error: no matching function for call to 'process'
 
 ```cpp
-// Changed
+// 変更前
 process(params.get("count"));
-// To
+// 変更後
 process(std::stoi(params.get("count")));
 ```
 
 ```bash
 $ cmake --build build
-# 1 error remaining
+# 残り1件のエラー
 ```
 
-## Fix 3: Missing Return
+## 修正 3: 戻り値の欠落
 
 File: src/handler/api.cpp:58
 Error: non-void function does not return a value
@@ -100,17 +100,17 @@ std::optional<User> getUser(const std::string& id) {
         return std::nullopt;
     }
     auto user = findUser(id);
-    // Added missing return
+    // 欠落していた戻り値を追加
     return user;
 }
 ```
 
 ```bash
 $ cmake --build build
-# Build successful!
+# ビルド成功！
 ```
 
-## Final Verification
+## 最終検証
 
 ```bash
 $ ctest --test-dir build --output-on-failure
@@ -120,54 +120,54 @@ Test project build
 All tests passed.
 ```
 
-## Summary
+## サマリー
 
-| Metric | Count |
+| 指標 | 件数 |
 |--------|-------|
-| Build errors fixed | 3 |
-| Linker errors fixed | 0 |
-| Files modified | 2 |
-| Remaining issues | 0 |
+| 修正されたビルドエラー | 3 |
+| 修正されたリンカーエラー | 0 |
+| 変更されたファイル | 2 |
+| 残存問題 | 0 |
 
-Build Status: ✅ SUCCESS
+ビルドステータス: SUCCESS
 ```
 
-## Common Errors Fixed
+## 修正される一般的なエラー
 
-| Error | Typical Fix |
+| エラー | 典型的な修正 |
 |-------|-------------|
-| `undeclared identifier` | Add `#include` or fix typo |
-| `no matching function` | Fix argument types or add overload |
-| `undefined reference` | Link library or add implementation |
-| `multiple definition` | Use `inline` or move to .cpp |
-| `incomplete type` | Replace forward decl with `#include` |
-| `no member named X` | Fix member name or include |
-| `cannot convert X to Y` | Add appropriate cast |
-| `CMake Error` | Fix CMakeLists.txt configuration |
+| `undeclared identifier` | `#include` を追加またはタイプミスを修正 |
+| `no matching function` | 引数の型を修正またはオーバーロードを追加 |
+| `undefined reference` | ライブラリをリンクまたは実装を追加 |
+| `multiple definition` | `inline` を使用または .cpp に移動 |
+| `incomplete type` | 前方宣言を `#include` に置換 |
+| `no member named X` | メンバー名を修正またはインクルードを追加 |
+| `cannot convert X to Y` | 適切なキャストを追加 |
+| `CMake Error` | CMakeLists.txt の設定を修正 |
 
-## Fix Strategy
+## 修正戦略
 
-1. **Compilation errors first** - Code must compile
-2. **Linker errors second** - Resolve undefined references
-3. **Warnings third** - Fix with `-Wall -Wextra`
-4. **One fix at a time** - Verify each change
-5. **Minimal changes** - Don't refactor, just fix
+1. **まずコンパイルエラー** - コードがコンパイルできる必要がある
+2. **次にリンカーエラー** - 未定義参照を解決
+3. **最後に警告** - `-Wall -Wextra` で修正
+4. **一度に1つの修正** - 各変更を検証
+5. **最小限の変更** - リファクタリングではなく修正のみ
 
-## Stop Conditions
+## 停止条件
 
-The agent will stop and report if:
-- Same error persists after 3 attempts
-- Fix introduces more errors
-- Requires architectural changes
-- Missing external dependencies
+以下の場合、エージェントは停止して報告:
+- 同じエラーが3回の試行後も持続
+- 修正がさらなるエラーを引き起こす
+- アーキテクチャの変更が必要
+- 外部依存関係が欠落
 
-## Related Commands
+## 関連コマンド
 
-- `/cpp-test` - Run tests after build succeeds
-- `/cpp-review` - Review code quality
-- `/verify` - Full verification loop
+- `/cpp-test` - ビルド成功後にテストを実行
+- `/cpp-review` - コード品質をレビュー
+- `/verify` - 完全な検証ループ
 
-## Related
+## 関連
 
 - Agent: `agents/cpp-build-resolver.md`
 - Skill: `skills/cpp-coding-standards/`

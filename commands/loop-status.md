@@ -1,24 +1,24 @@
-# Loop Status Command
+# Loop Status コマンド
 
-Inspect active loop state, progress, and failure signals.
+アクティブなループの状態、進捗、障害シグナルを確認します。
 
-## Usage
+## 使用方法
 
 `/loop-status [--watch]`
 
-## What to Report
+## 報告内容
 
-- active loop pattern
-- current phase and last successful checkpoint
-- failing checks (if any)
-- estimated time/cost drift
-- recommended intervention (continue/pause/stop)
+- アクティブなループパターン
+- 現在のフェーズと最後の成功チェックポイント
+- 失敗しているチェック（ある場合）
+- 推定時間/コストのドリフト
+- 推奨介入（続行/一時停止/停止）
 
-## Watch Mode
+## Watch モード
 
-When `--watch` is present, refresh status periodically and surface state changes.
+`--watch` が指定された場合、定期的にステータスを更新し状態変化を表示します。
 
-## Arguments
+## 引数
 
 $ARGUMENTS:
-- `--watch` optional
+- `--watch` オプション

@@ -1,193 +1,41 @@
 ---
-description: Enforce TDD workflow for Rust. Write tests first, then implement. Verify 80%+ coverage with cargo-llvm-cov.
+description: Rust の TDD ワークフローを適用します。テストを最初に記述し、その後実装します。cargo-llvm-cov で 80% 以上のカバレッジを確認します。
 ---
 
-# Rust TDD Command
+# Rust TDD コマンド
 
-This command enforces test-driven development methodology for Rust code using `#[test]`, rstest, proptest, and mockall.
+このコマンドは `#[test]`、rstest、proptest、mockall を使用した Rust コードのテスト駆動開発手法を適用します。
 
-## What This Command Does
+## このコマンドの機能
 
-1. **Define Types/Traits**: Scaffold function signatures with `todo!()`
-2. **Write Tests**: Create comprehensive test module (RED)
-3. **Run Tests**: Verify tests fail for the right reason
-4. **Implement Code**: Write minimal code to pass (GREEN)
-5. **Refactor**: Improve while keeping tests green
-6. **Check Coverage**: Ensure 80%+ coverage with cargo-llvm-cov
+1. **型/トレイトの定義**: `todo!()` で関数シグネチャをスキャフォールディング
+2. **テストの作成**: 包括的なテストモジュールを作成（RED）
+3. **テストの実行**: テストが正しい理由で失敗することを確認
+4. **コードの実装**: テストをパスするための最小限のコードを記述（GREEN）
+5. **リファクタリング**: テストをグリーンに保ちながら改善
+6. **カバレッジの確認**: cargo-llvm-cov で 80% 以上のカバレッジを保証
 
-## When to Use
+## 使用するタイミング
 
-Use `/rust-test` when:
-- Implementing new Rust functions, methods, or traits
-- Adding test coverage to existing Rust code
-- Fixing bugs (write failing test first)
-- Building critical business logic
-- Learning TDD workflow in Rust
+以下の場合に `/rust-test` を使用:
+- 新しい Rust 関数、メソッド、トレイトの実装時
+- 既存 Rust コードへのテストカバレッジ追加時
+- バグ修正時（失敗するテストを最初に作成）
+- 重要なビジネスロジックの構築時
+- Rust での TDD ワークフローの学習時
 
-## TDD Cycle
+## TDD サイクル
 
 ```
-RED     -> Write failing test first
-GREEN   -> Implement minimal code to pass
-REFACTOR -> Improve code, tests stay green
-REPEAT  -> Next test case
+RED     -> 失敗するテストを最初に作成
+GREEN   -> テストをパスするための最小限のコードを実装
+REFACTOR -> コードを改善、テストはグリーンを保持
+REPEAT  -> 次のテストケースへ
 ```
 
-## Example Session
+## テストパターン
 
-````text
-User: /rust-test I need a function to validate user registration
-
-Agent:
-# TDD Session: Registration Validator
-
-## Step 1: Define Interface
-
-```rust
-// src/validator.rs
-pub struct RegistrationRequest {
-    pub name: String,
-    pub email: String,
-    pub password: String,
-}
-
-pub enum ValidationResult {
-    Valid,
-    Invalid(Vec<String>),
-}
-
-pub fn validate_registration(request: &RegistrationRequest) -> ValidationResult {
-    todo!()
-}
-```
-
-## Step 2: Write Tests (RED)
-
-```rust
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn valid_registration_returns_valid() {
-        let request = RegistrationRequest {
-            name: "Alice".into(),
-            email: "alice@example.com".into(),
-            password: "SecureP@ss1".into(),
-        };
-        assert!(matches!(validate_registration(&request), ValidationResult::Valid));
-    }
-
-    #[test]
-    fn blank_name_returns_invalid() {
-        let request = RegistrationRequest {
-            name: "".into(),
-            email: "alice@example.com".into(),
-            password: "SecureP@ss1".into(),
-        };
-        match validate_registration(&request) {
-            ValidationResult::Invalid(errors) => {
-                assert!(errors.contains(&"Name is required".to_string()));
-            }
-            ValidationResult::Valid => panic!("expected Invalid"),
-        }
-    }
-
-    #[test]
-    fn invalid_email_returns_invalid() {
-        let request = RegistrationRequest {
-            name: "Alice".into(),
-            email: "not-an-email".into(),
-            password: "SecureP@ss1".into(),
-        };
-        assert!(matches!(
-            validate_registration(&request),
-            ValidationResult::Invalid(_)
-        ));
-    }
-
-    #[test]
-    fn short_password_returns_invalid() {
-        let request = RegistrationRequest {
-            name: "Alice".into(),
-            email: "alice@example.com".into(),
-            password: "short".into(),
-        };
-        assert!(matches!(
-            validate_registration(&request),
-            ValidationResult::Invalid(_)
-        ));
-    }
-}
-```
-
-## Step 3: Run Tests — Verify FAIL
-
-```bash
-$ cargo test
-running 4 tests
-test tests::valid_registration_returns_valid ... FAILED (not yet implemented)
-test tests::blank_name_returns_invalid ... FAILED
-test tests::invalid_email_returns_invalid ... FAILED
-test tests::short_password_returns_invalid ... FAILED
-```
-
-Tests fail as expected (todo! panic).
-
-## Step 4: Implement Minimal Code (GREEN)
-
-```rust
-pub fn validate_registration(request: &RegistrationRequest) -> ValidationResult {
-    let mut errors = Vec::new();
-
-    if request.name.trim().is_empty() {
-        errors.push("Name is required".into());
-    }
-    if !request.email.contains('@') {
-        errors.push("Invalid email format".into());
-    }
-    if request.password.len() < 8 {
-        errors.push("Password must be at least 8 characters".into());
-    }
-
-    if errors.is_empty() {
-        ValidationResult::Valid
-    } else {
-        ValidationResult::Invalid(errors)
-    }
-}
-```
-
-## Step 5: Run Tests — Verify PASS
-
-```bash
-$ cargo test
-running 4 tests
-test tests::valid_registration_returns_valid ... ok
-test tests::blank_name_returns_invalid ... ok
-test tests::invalid_email_returns_invalid ... ok
-test tests::short_password_returns_invalid ... ok
-
-test result: ok. 4 passed; 0 failed
-```
-
-All tests passing!
-
-## Step 6: Check Coverage
-
-```bash
-$ cargo llvm-cov
-Coverage: 100.0% of lines
-```
-
-Coverage: 100%
-
-## TDD Complete!
-````
-
-## Test Patterns
-
-### Unit Tests
+### 単体テスト
 
 ```rust
 #[cfg(test)]
@@ -208,7 +56,7 @@ mod tests {
 }
 ```
 
-### Parameterized Tests with rstest
+### rstest によるパラメータ化テスト
 
 ```rust
 use rstest::{rstest, fixture};
@@ -222,7 +70,7 @@ fn test_string_length(#[case] input: &str, #[case] expected: usize) {
 }
 ```
 
-### Async Tests
+### 非同期テスト
 
 ```rust
 #[tokio::test]
@@ -233,7 +81,7 @@ async fn fetches_data_successfully() {
 }
 ```
 
-### Property-Based Tests
+### プロパティベーステスト
 
 ```rust
 use proptest::prelude::*;
@@ -248,61 +96,61 @@ proptest! {
 }
 ```
 
-## Coverage Commands
+## カバレッジコマンド
 
 ```bash
-# Summary report
+# サマリーレポート
 cargo llvm-cov
 
-# HTML report
+# HTML レポート
 cargo llvm-cov --html
 
-# Fail if below threshold
+# 閾値未満で失敗
 cargo llvm-cov --fail-under-lines 80
 
-# Run specific test
+# 特定のテストを実行
 cargo test test_name
 
-# Run with output
+# 出力付きで実行
 cargo test -- --nocapture
 
-# Run without stopping on first failure
+# 最初の失敗で停止しない
 cargo test --no-fail-fast
 ```
 
-## Coverage Targets
+## カバレッジ目標
 
-| Code Type | Target |
+| コードタイプ | 目標 |
 |-----------|--------|
-| Critical business logic | 100% |
-| Public API | 90%+ |
-| General code | 80%+ |
-| Generated / FFI bindings | Exclude |
+| 重要なビジネスロジック | 100% |
+| パブリック API | 90%+ |
+| 一般的なコード | 80%+ |
+| 生成 / FFI バインディング | 除外 |
 
-## TDD Best Practices
+## TDD ベストプラクティス
 
-**DO:**
-- Write test FIRST, before any implementation
-- Run tests after each change
-- Use `assert_eq!` over `assert!` for better error messages
-- Use `?` in tests that return `Result` for cleaner output
-- Test behavior, not implementation
-- Include edge cases (empty, boundary, error paths)
+**推奨事項:**
+- 実装前にテストを最初に書く
+- 各変更後にテストを実行
+- より良いエラーメッセージのために `assert!` より `assert_eq!` を使用
+- テストが `Result` を返す場合、クリーンな出力のために `?` を使用
+- 実装ではなく動作をテスト
+- エッジケースを含める（空、境界、エラーパス）
 
-**DON'T:**
-- Write implementation before tests
-- Skip the RED phase
-- Use `#[should_panic]` when `Result::is_err()` works
-- Use `sleep()` in tests — use channels or `tokio::time::pause()`
-- Mock everything — prefer integration tests when feasible
+**避けるべき事項:**
+- テストの前に実装を書く
+- RED フェーズをスキップ
+- `Result::is_err()` が使える場合に `#[should_panic]` を使用
+- テストで `sleep()` を使用 -- チャネルや `tokio::time::pause()` を使用
+- すべてをモック化 -- 可能な場合は統合テストを優先
 
-## Related Commands
+## 関連コマンド
 
-- `/rust-build` - Fix build errors
-- `/rust-review` - Review code after implementation
-- `/verify` - Run full verification loop
+- `/rust-build` - ビルドエラーの修正
+- `/rust-review` - 実装後のコードレビュー
+- `/verify` - 完全な検証ループ
 
-## Related
+## 関連
 
 - Skill: `skills/rust-testing/`
 - Skill: `skills/rust-patterns/`

@@ -1,11 +1,11 @@
 ---
-description: "Scan skills to extract cross-cutting principles and distill them into rules"
+description: "スキルをスキャンして横断的な原則を抽出し、ルールに蒸留します"
 ---
 
-# /rules-distill — Distill Principles from Skills into Rules
+# /rules-distill -- スキルからルールへの原則蒸留
 
-Scan installed skills, extract cross-cutting principles, and distill them into rules.
+インストール済みスキルをスキャンし、横断的な原則を抽出してルールに蒸留します。
 
-## Process
+## プロセス
 
-Follow the full workflow defined in the `rules-distill` skill.
+`rules-distill` スキルで定義された完全なワークフローに従ってください。

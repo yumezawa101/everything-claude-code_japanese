@@ -1,106 +1,102 @@
----
-description: Sequential and tmux/worktree orchestration guidance for multi-agent workflows.
----
+# Orchestrateコマンド
 
-# Orchestrate Command
+複雑なタスクのための連続的なエージェントワークフロー。
 
-Sequential agent workflow for complex tasks.
+## 使用方法
 
-## Usage
+`/orchestrate [ワークフロータイプ] [タスク説明]`
 
-`/orchestrate [workflow-type] [task-description]`
-
-## Workflow Types
+## ワークフロータイプ
 
 ### feature
-Full feature implementation workflow:
+完全な機能実装ワークフロー:
 ```
 planner -> tdd-guide -> code-reviewer -> security-reviewer
 ```
 
 ### bugfix
-Bug investigation and fix workflow:
+バグ調査と修正ワークフロー:
 ```
-planner -> tdd-guide -> code-reviewer
+explorer -> tdd-guide -> code-reviewer
 ```
 
 ### refactor
-Safe refactoring workflow:
+安全なリファクタリングワークフロー:
 ```
 architect -> code-reviewer -> tdd-guide
 ```
 
 ### security
-Security-focused review:
+セキュリティ重視のレビュー:
 ```
 security-reviewer -> code-reviewer -> architect
 ```
 
-## Execution Pattern
+## 実行パターン
 
-For each agent in the workflow:
+ワークフロー内の各エージェントに対して:
 
-1. **Invoke agent** with context from previous agent
-2. **Collect output** as structured handoff document
-3. **Pass to next agent** in chain
-4. **Aggregate results** into final report
+1. 前のエージェントからのコンテキストで**エージェントを呼び出す**
+2. 出力を構造化されたハンドオフドキュメントとして**収集**
+3. チェーン内の**次のエージェントに渡す**
+4. 結果を最終レポートに**集約**
 
-## Handoff Document Format
+## ハンドオフドキュメント形式
 
-Between agents, create handoff document:
+エージェント間でハンドオフドキュメントを作成します:
 
 ```markdown
-## HANDOFF: [previous-agent] -> [next-agent]
+## HANDOFF: [前のエージェント] -> [次のエージェント]
 
-### Context
-[Summary of what was done]
+### コンテキスト
+[実行された内容の要約]
 
-### Findings
-[Key discoveries or decisions]
+### 発見事項
+[重要な発見または決定]
 
-### Files Modified
-[List of files touched]
+### 変更されたファイル
+[変更されたファイルのリスト]
 
-### Open Questions
-[Unresolved items for next agent]
+### 未解決の質問
+[次のエージェントのための未解決項目]
 
-### Recommendations
-[Suggested next steps]
+### 推奨事項
+[推奨される次のステップ]
 ```
 
-## Example: Feature Workflow
+## 例: 機能ワークフロー
 
 ```
 /orchestrate feature "Add user authentication"
 ```
 
-Executes:
+以下を実行します:
 
-1. **Planner Agent**
-   - Analyzes requirements
-   - Creates implementation plan
-   - Identifies dependencies
-   - Output: `HANDOFF: planner -> tdd-guide`
+1. **Plannerエージェント**
+   - 要件を分析
+   - 実装計画を作成
+   - 依存関係を特定
+   - 出力: `HANDOFF: planner -> tdd-guide`
 
-2. **TDD Guide Agent**
-   - Reads planner handoff
-   - Writes tests first
-   - Implements to pass tests
-   - Output: `HANDOFF: tdd-guide -> code-reviewer`
+2. **TDD Guideエージェント**
+   - プランナーのハンドオフを読み込む
+   - 最初にテストを記述
+   - テストに合格するように実装
+   - 出力: `HANDOFF: tdd-guide -> code-reviewer`
 
-3. **Code Reviewer Agent**
-   - Reviews implementation
-   - Checks for issues
-   - Suggests improvements
-   - Output: `HANDOFF: code-reviewer -> security-reviewer`
+3. **Code Reviewerエージェント**
+   - 実装をレビュー
+   - 問題をチェック
+   - 改善を提案
+   - 出力: `HANDOFF: code-reviewer -> security-reviewer`
 
-4. **Security Reviewer Agent**
-   - Security audit
-   - Vulnerability check
-   - Final approval
-   - Output: Final Report
+4. **Security Reviewerエージェント**
+   - セキュリティ監査
+   - 脆弱性チェック
+   - 最終承認
+   - 出力: 最終レポート
 
-## Final Report Format
+## 最終レポート形式
 
 ```
 ORCHESTRATION REPORT
@@ -111,121 +107,66 @@ Agents: planner -> tdd-guide -> code-reviewer -> security-reviewer
 
 SUMMARY
 -------
-[One paragraph summary]
+[1段落の要約]
 
 AGENT OUTPUTS
 -------------
-Planner: [summary]
-TDD Guide: [summary]
-Code Reviewer: [summary]
-Security Reviewer: [summary]
+Planner: [要約]
+TDD Guide: [要約]
+Code Reviewer: [要約]
+Security Reviewer: [要約]
 
 FILES CHANGED
 -------------
-[List all files modified]
+[変更されたすべてのファイルをリスト]
 
 TEST RESULTS
 ------------
-[Test pass/fail summary]
+[テスト合格/不合格の要約]
 
 SECURITY STATUS
 ---------------
-[Security findings]
+[セキュリティの発見事項]
 
 RECOMMENDATION
 --------------
-[SHIP / NEEDS WORK / BLOCKED]
+[リリース可 / 要修正 / ブロック中]
 ```
 
-## Parallel Execution
+## 並行実行
 
-For independent checks, run agents in parallel:
+独立したチェックの場合、エージェントを並行実行します:
 
 ```markdown
-### Parallel Phase
-Run simultaneously:
-- code-reviewer (quality)
-- security-reviewer (security)
-- architect (design)
+### 並行フェーズ
+同時に実行:
+- code-reviewer (品質)
+- security-reviewer (セキュリティ)
+- architect (設計)
 
-### Merge Results
-Combine outputs into single report
+### 結果のマージ
+出力を単一のレポートに結合
 ```
 
-For external tmux-pane workers with separate git worktrees, use `node scripts/orchestrate-worktrees.js plan.json --execute`. The built-in orchestration pattern stays in-process; the helper is for long-running or cross-harness sessions.
-
-When workers need to see dirty or untracked local files from the main checkout, add `seedPaths` to the plan file. ECC overlays only those selected paths into each worker worktree after `git worktree add`, which keeps the branch isolated while still exposing in-flight local scripts, plans, or docs.
-
-```json
-{
-  "sessionName": "workflow-e2e",
-  "seedPaths": [
-    "scripts/orchestrate-worktrees.js",
-    "scripts/lib/tmux-worktree-orchestrator.js",
-    ".claude/plan/workflow-e2e-test.json"
-  ],
-  "workers": [
-    { "name": "docs", "task": "Update orchestration docs." }
-  ]
-}
-```
-
-To export a control-plane snapshot for a live tmux/worktree session, run:
-
-```bash
-node scripts/orchestration-status.js .claude/plan/workflow-visual-proof.json
-```
-
-The snapshot includes session activity, tmux pane metadata, worker states, objectives, seeded overlays, and recent handoff summaries in JSON form.
-
-## Operator Command-Center Handoff
-
-When the workflow spans multiple sessions, worktrees, or tmux panes, append a control-plane block to the final handoff:
-
-```markdown
-CONTROL PLANE
--------------
-Sessions:
-- active session ID or alias
-- branch + worktree path for each active worker
-- tmux pane or detached session name when applicable
-
-Diffs:
-- git status summary
-- git diff --stat for touched files
-- merge/conflict risk notes
-
-Approvals:
-- pending user approvals
-- blocked steps awaiting confirmation
-
-Telemetry:
-- last activity timestamp or idle signal
-- estimated token or cost drift
-- policy events raised by hooks or reviewers
-```
-
-This keeps planner, implementer, reviewer, and loop workers legible from the operator surface.
-
-## Arguments
+## 引数
 
 $ARGUMENTS:
-- `feature <description>` - Full feature workflow
-- `bugfix <description>` - Bug fix workflow
-- `refactor <description>` - Refactoring workflow
-- `security <description>` - Security review workflow
-- `custom <agents> <description>` - Custom agent sequence
+- `feature <説明>` - 完全な機能ワークフロー
+- `bugfix <説明>` - バグ修正ワークフロー
+- `refactor <説明>` - リファクタリングワークフロー
+- `security <説明>` - セキュリティレビューワークフロー
+- `custom <エージェント> <説明>` - カスタムエージェントシーケンス
 
-## Custom Workflow Example
+## カスタムワークフローの例
 
 ```
 /orchestrate custom "architect,tdd-guide,code-reviewer" "Redesign caching layer"
 ```
 
-## Tips
+## ヒント
 
-1. **Start with planner** for complex features
-2. **Always include code-reviewer** before merge
-3. **Use security-reviewer** for auth/payment/PII
-4. **Keep handoffs concise** - focus on what next agent needs
-5. **Run verification** between agents if needed
+1. 複雑な機能には**plannerから始める**
+2. マージ前に**常にcode-reviewerを含める**
+3. 認証/決済/個人情報には**security-reviewerを使用**
+4. **ハンドオフを簡潔に保つ** - 次のエージェントが必要とするものに焦点を当てる
+5. 必要に応じて**エージェント間で検証を実行**
