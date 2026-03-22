@@ -50,6 +50,9 @@ cp -r everything-claude-code_japanese/rules/common/* ~/.claude/rules/
 cp -r everything-claude-code_japanese/rules/typescript/* ~/.claude/rules/
 cp -r everything-claude-code_japanese/rules/python/* ~/.claude/rules/
 cp -r everything-claude-code_japanese/rules/golang/* ~/.claude/rules/
+
+# クローンしたリポジトリを削除
+rm -rf everything-claude-code_japanese
 ```
 
 ### ステップ 3: 使用開始
