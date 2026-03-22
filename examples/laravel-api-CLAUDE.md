@@ -1,27 +1,27 @@
-# Laravel API — Project CLAUDE.md
+# Laravel API -- プロジェクト CLAUDE.md
 
-> Real-world example for a Laravel API with PostgreSQL, Redis, and queues.
-> Copy this to your project root and customize for your service.
+> Laravel API + PostgreSQL + Redis + キューの実践的な例。
+> プロジェクトルートにコピーして、サービスに合わせてカスタマイズしてください。
 
-## Project Overview
+## プロジェクト概要
 
-**Stack:** PHP 8.2+, Laravel 11.x, PostgreSQL, Redis, Horizon, PHPUnit/Pest, Docker Compose
+**技術スタック:** PHP 8.2+, Laravel 11.x, PostgreSQL, Redis, Horizon, PHPUnit/Pest, Docker Compose
 
-**Architecture:** Modular Laravel app with controllers -> services -> actions, Eloquent ORM, queues for async work, Form Requests for validation, and API Resources for consistent JSON responses.
+**アーキテクチャ:** コントローラ -> サービス -> アクションのモジュラー Laravel アプリ。Eloquent ORM、非同期処理にキュー、バリデーションに Form Request、一貫した JSON レスポンスに API Resources。
 
-## Critical Rules
+## 重要なルール
 
-### PHP Conventions
+### PHP の規約
 
-- `declare(strict_types=1)` in all PHP files
-- Use typed properties and return types everywhere
-- Prefer `final` classes for services and actions
-- No `dd()` or `dump()` in committed code
-- Formatting via Laravel Pint (PSR-12)
+- すべての PHP ファイルで `declare(strict_types=1)`
+- すべてに型付きプロパティと戻り値型を使用
+- サービスとアクションには `final` クラスを推奨
+- コミットされたコードに `dd()` や `dump()` 禁止
+- Laravel Pint（PSR-12）でフォーマット
 
-### API Response Envelope
+### API レスポンスエンベロープ
 
-All API responses use a consistent envelope:
+すべての API レスポンスに一貫したエンベロープを使用:
 
 ```json
 {
@@ -32,38 +32,38 @@ All API responses use a consistent envelope:
 }
 ```
 
-### Database
+### データベース
 
-- Migrations committed to git
-- Use Eloquent or query builder (no raw SQL unless parameterized)
-- Index any column used in `where` or `orderBy`
-- Avoid mutating model instances in services; prefer create/update through repositories or query builders
+- マイグレーションは git にコミット
+- Eloquent またはクエリビルダを使用（raw SQL はパラメータ化されたもののみ）
+- `where` や `orderBy` で使用するカラムにインデックス
+- サービス内でモデルインスタンスの変更を避ける。repository またはクエリビルダ経由の create/update を推奨
 
-### Authentication
+### 認証
 
-- API auth via Sanctum
-- Use policies for model-level authorization
-- Enforce auth in controllers and services
+- Sanctum による API 認証
+- モデルレベルの認可にはポリシーを使用
+- コントローラとサービスで認証を強制
 
-### Validation
+### バリデーション
 
-- Use Form Requests for validation
-- Transform input to DTOs for business logic
-- Never trust request payloads for derived fields
+- バリデーションには Form Request を使用
+- ビジネスロジック用に入力を DTO に変換
+- 派生フィールドのリクエストペイロードを決して信頼しない
 
-### Error Handling
+### エラーハンドリング
 
-- Throw domain exceptions in services
-- Map exceptions to HTTP responses in `bootstrap/app.php` via `withExceptions`
-- Never expose internal errors to clients
+- サービスでドメイン例外をスロー
+- `bootstrap/app.php` の `withExceptions` で例外を HTTP レスポンスにマッピング
+- 内部エラーをクライアントに露出させない
 
-### Code Style
+### コードスタイル
 
-- No emojis in code or comments
-- Max line length: 120 characters
-- Controllers are thin; services and actions hold business logic
+- コードやコメントに絵文字禁止
+- 最大行長: 120 文字
+- コントローラは薄く。サービスとアクションにビジネスロジック
 
-## File Structure
+## ファイル構造
 
 ```
 app/
@@ -92,9 +92,9 @@ routes/
   web.php
 ```
 
-## Key Patterns
+## 主要パターン
 
-### Service Layer
+### サービスレイヤー
 
 ```php
 <?php
@@ -122,7 +122,7 @@ final class OrderService
 }
 ```
 
-### Controller Pattern
+### コントローラパターン
 
 ```php
 <?php
@@ -147,7 +147,7 @@ final class OrdersController extends Controller
 }
 ```
 
-### Policy Pattern
+### ポリシーパターン
 
 ```php
 <?php
@@ -223,7 +223,7 @@ final class OrderResource extends JsonResource
 }
 ```
 
-### Queue Job
+### キュージョブ
 
 ```php
 <?php
@@ -252,7 +252,7 @@ final class SendOrderConfirmation implements ShouldQueue
 }
 ```
 
-### Test Pattern (Pest)
+### テストパターン（Pest）
 
 ```php
 <?php
@@ -281,7 +281,7 @@ test('user can place order', function () {
 });
 ```
 
-### Test Pattern (PHPUnit)
+### テストパターン（PHPUnit）
 
 ```php
 <?php

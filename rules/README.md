@@ -1,11 +1,12 @@
-# Rules
-## Structure
+# ルール
 
-Rules are organized into a **common** layer plus **language-specific** directories:
+## 構造
+
+ルールは **common** レイヤーと **言語固有** ディレクトリで構成されています:
 
 ```
 rules/
-├── common/          # Language-agnostic principles (always install)
+├── common/          # 言語に依存しない原則（常にインストール）
 │   ├── coding-style.md
 │   ├── git-workflow.md
 │   ├── testing.md
@@ -14,93 +15,92 @@ rules/
 │   ├── hooks.md
 │   ├── agents.md
 │   └── security.md
-├── typescript/      # TypeScript/JavaScript specific
-├── python/          # Python specific
-├── golang/          # Go specific
-├── swift/           # Swift specific
-└── php/             # PHP specific
+├── typescript/      # TypeScript/JavaScript 固有
+├── python/          # Python 固有
+├── golang/          # Go 固有
+├── swift/           # Swift 固有
+└── php/             # PHP 固有
 ```
 
-- **common/** contains universal principles — no language-specific code examples.
-- **Language directories** extend the common rules with framework-specific patterns, tools, and code examples. Each file references its common counterpart.
+- **common/** には普遍的な原則が含まれています。言語固有のコード例は含みません。
+- **言語ディレクトリ** は common ルールをフレームワーク固有のパターン、ツール、コード例で拡張します。各ファイルは対応する common ファイルを参照します。
 
-## Installation
+## インストール
 
-### Option 1: Install Script (Recommended)
+### オプション 1: インストールスクリプト（推奨）
 
 ```bash
-# Install common + one or more language-specific rule sets
+# common + 1つ以上の言語固有ルールセットをインストール
 ./install.sh typescript
 ./install.sh python
 ./install.sh golang
 ./install.sh swift
 ./install.sh php
 
-# Install multiple languages at once
+# 複数の言語を一度にインストール
 ./install.sh typescript python
 ```
 
-### Option 2: Manual Installation
+### オプション 2: 手動インストール
 
-> **Important:** Copy entire directories — do NOT flatten with `/*`.
-> Common and language-specific directories contain files with the same names.
-> Flattening them into one directory causes language-specific files to overwrite
-> common rules, and breaks the relative `../common/` references used by
-> language-specific files.
+> **重要:** ディレクトリ全体をコピーしてください。`/*` でフラット化しないでください。
+> Common と言語固有ディレクトリには同じ名前のファイルが含まれています。
+> それらを 1 つのディレクトリにフラット化すると、言語固有ファイルが common ルールを上書きし、
+> 言語固有ファイルが使用する相対パス `../common/` の参照が壊れます。
 
 ```bash
-# Install common rules (required for all projects)
+# common ルールをインストール（すべてのプロジェクトに必須）
 cp -r rules/common ~/.claude/rules/common
 
-# Install language-specific rules based on your project's tech stack
+# プロジェクトの技術スタックに応じて言語固有ルールをインストール
 cp -r rules/typescript ~/.claude/rules/typescript
 cp -r rules/python ~/.claude/rules/python
 cp -r rules/golang ~/.claude/rules/golang
 cp -r rules/swift ~/.claude/rules/swift
 cp -r rules/php ~/.claude/rules/php
 
-# Attention ! ! ! Configure according to your actual project requirements; the configuration here is for reference only.
+# 注意！実際のプロジェクト要件に応じて設定してください。ここでの設定は参考例です。
 ```
 
-## Rules vs Skills
+## ルール vs スキル
 
-- **Rules** define standards, conventions, and checklists that apply broadly (e.g., "80% test coverage", "no hardcoded secrets").
-- **Skills** (`skills/` directory) provide deep, actionable reference material for specific tasks (e.g., `python-patterns`, `golang-testing`).
+- **ルール** は広範に適用される標準、規約、チェックリストを定義します（例: 「80% テストカバレッジ」、「ハードコードされたシークレットなし」）。
+- **スキル** （`skills/` ディレクトリ）は特定のタスクに対する詳細で実行可能な参考資料を提供します（例: `python-patterns`、`golang-testing`）。
 
-Language-specific rule files reference relevant skills where appropriate. Rules tell you *what* to do; skills tell you *how* to do it.
+言語固有のルールファイルは必要に応じて関連するスキルを参照します。ルールは *何を* するかを示し、スキルは *どのように* するかを示します。
 
-## Adding a New Language
+## 新しい言語の追加
 
-To add support for a new language (e.g., `rust/`):
+新しい言語（例: `rust/`）のサポートを追加するには:
 
-1. Create a `rules/rust/` directory
-2. Add files that extend the common rules:
-   - `coding-style.md` — formatting tools, idioms, error handling patterns
-   - `testing.md` — test framework, coverage tools, test organization
-   - `patterns.md` — language-specific design patterns
-   - `hooks.md` — PostToolUse hooks for formatters, linters, type checkers
-   - `security.md` — secret management, security scanning tools
-3. Each file should start with:
+1. `rules/rust/` ディレクトリを作成
+2. common ルールを拡張するファイルを追加:
+   - `coding-style.md` -- フォーマットツール、イディオム、エラーハンドリングパターン
+   - `testing.md` -- テストフレームワーク、カバレッジツール、テスト構成
+   - `patterns.md` -- 言語固有の設計パターン
+   - `hooks.md` -- フォーマッタ、リンター、型チェッカー用の PostToolUse フック
+   - `security.md` -- シークレット管理、セキュリティスキャンツール
+3. 各ファイルは次の内容で始めてください:
    ```
-   > This file extends [common/xxx.md](../common/xxx.md) with <Language> specific content.
+   > このファイルは [common/xxx.md](../common/xxx.md) を <言語> 固有のコンテンツで拡張します。
    ```
-4. Reference existing skills if available, or create new ones under `skills/`.
+4. 利用可能な既存のスキルを参照するか、`skills/` 配下に新しいものを作成してください。
 
-## Rule Priority
+## ルールの優先順位
 
-When language-specific rules and common rules conflict, **language-specific rules take precedence** (specific overrides general). This follows the standard layered configuration pattern (similar to CSS specificity or `.gitignore` precedence).
+言語固有ルールと common ルールが競合する場合、**言語固有ルールが優先** されます（具体的なものが一般的なものを上書き）。これは標準的な階層型設定パターン（CSS の詳細度や `.gitignore` の優先順位と同様）に従います。
 
-- `rules/common/` defines universal defaults applicable to all projects.
-- `rules/golang/`, `rules/python/`, `rules/swift/`, `rules/php/`, `rules/typescript/`, etc. override those defaults where language idioms differ.
+- `rules/common/` はすべてのプロジェクトに適用される普遍的なデフォルトを定義します。
+- `rules/golang/`、`rules/python/`、`rules/swift/`、`rules/php/`、`rules/typescript/` などは、言語のイディオムが異なる場合にデフォルトを上書きします。
 
-### Example
+### 例
 
-`common/coding-style.md` recommends immutability as a default principle. A language-specific `golang/coding-style.md` can override this:
+`common/coding-style.md` はデフォルト原則として不変性を推奨しています。言語固有の `golang/coding-style.md` はこれを上書きできます:
 
-> Idiomatic Go uses pointer receivers for struct mutation — see [common/coding-style.md](../common/coding-style.md) for the general principle, but Go-idiomatic mutation is preferred here.
+> Go のイディオムでは構造体のミューテーションにポインタレシーバを使用します -- 一般原則は [common/coding-style.md](../common/coding-style.md) を参照してください。ただし、ここでは Go のイディオムに沿ったミューテーションを優先します。
 
-### Common rules with override notes
+### 上書き注記のある common ルール
 
-Rules in `rules/common/` that may be overridden by language-specific files are marked with:
+`rules/common/` 内で言語固有ファイルによって上書きされる可能性のあるルールには次の注記が付いています:
 
-> **Language note**: This rule may be overridden by language-specific rules for languages where this pattern is not idiomatic.
+> **言語に関する注記**: このルールは、このパターンがイディオムに沿わない言語の言語固有ルールによって上書きされる場合があります。

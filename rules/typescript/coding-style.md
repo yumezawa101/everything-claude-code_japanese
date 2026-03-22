@@ -5,27 +5,27 @@ paths:
   - "**/*.js"
   - "**/*.jsx"
 ---
-# TypeScript/JavaScript Coding Style
+# TypeScript/JavaScript コーディングスタイル
 
-> This file extends [common/coding-style.md](../common/coding-style.md) with TypeScript/JavaScript specific content.
+> このファイルは [common/coding-style.md](../common/coding-style.md) を TypeScript/JavaScript 固有のコンテンツで拡張します。
 
-## Types and Interfaces
+## 型とインターフェース
 
-Use types to make public APIs, shared models, and component props explicit, readable, and reusable.
+パブリック API、共有モデル、コンポーネント props を明示的で読みやすく再利用可能にするために型を使用します。
 
-### Public APIs
+### パブリック API
 
-- Add parameter and return types to exported functions, shared utilities, and public class methods
-- Let TypeScript infer obvious local variable types
-- Extract repeated inline object shapes into named types or interfaces
+- エクスポートされた関数、共有ユーティリティ、パブリッククラスメソッドにはパラメータ型と戻り値型を追加
+- 明らかなローカル変数の型は TypeScript に推論させる
+- 繰り返し使用するインラインオブジェクト形状は名前付き型やインターフェースに抽出
 
 ```typescript
-// WRONG: Exported function without explicit types
+// 誤り: エクスポート関数に明示的な型がない
 export function formatUser(user) {
   return `${user.firstName} ${user.lastName}`
 }
 
-// CORRECT: Explicit types on public APIs
+// 正解: パブリック API には明示的な型
 interface User {
   firstName: string
   lastName: string
@@ -36,11 +36,11 @@ export function formatUser(user: User): string {
 }
 ```
 
-### Interfaces vs. Type Aliases
+### Interface と Type Alias
 
-- Use `interface` for object shapes that may be extended or implemented
-- Use `type` for unions, intersections, tuples, mapped types, and utility types
-- Prefer string literal unions over `enum` unless an `enum` is required for interoperability
+- 拡張または実装される可能性のあるオブジェクト形状には `interface` を使用
+- ユニオン、インターセクション、タプル、マップ型、ユーティリティ型には `type` を使用
+- 相互運用性のために `enum` が必要でない限り、文字列リテラルユニオンを優先
 
 ```typescript
 interface User {
@@ -54,19 +54,19 @@ type UserWithRole = User & {
 }
 ```
 
-### Avoid `any`
+### `any` の回避
 
-- Avoid `any` in application code
-- Use `unknown` for external or untrusted input, then narrow it safely
-- Use generics when a value's type depends on the caller
+- アプリケーションコードで `any` を使用しない
+- 外部または信頼できない入力には `unknown` を使用し、安全にナローイングする
+- 値の型が呼び出し元に依存する場合はジェネリクスを使用
 
 ```typescript
-// WRONG: any removes type safety
+// 誤り: any は型安全性を失わせる
 function getErrorMessage(error: any) {
   return error.message
 }
 
-// CORRECT: unknown forces safe narrowing
+// 正解: unknown は安全なナローイングを強制する
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) {
     return error.message
@@ -78,9 +78,9 @@ function getErrorMessage(error: unknown): string {
 
 ### React Props
 
-- Define component props with a named `interface` or `type`
-- Type callback props explicitly
-- Do not use `React.FC` unless there is a specific reason to do so
+- コンポーネント props は名前付き `interface` または `type` で定義
+- コールバック props は明示的に型付け
+- 特別な理由がない限り `React.FC` は使用しない
 
 ```typescript
 interface User {
@@ -98,10 +98,10 @@ function UserCard({ user, onSelect }: UserCardProps) {
 }
 ```
 
-### JavaScript Files
+### JavaScript ファイル
 
-- In `.js` and `.jsx` files, use JSDoc when types improve clarity and a TypeScript migration is not practical
-- Keep JSDoc aligned with runtime behavior
+- `.js` と `.jsx` ファイルでは、型が明確さを向上させ TypeScript への移行が実用的でない場合に JSDoc を使用
+- JSDoc はランタイムの挙動と一致させる
 
 ```javascript
 /**
@@ -113,9 +113,9 @@ export function formatUser(user) {
 }
 ```
 
-## Immutability
+## 不変性
 
-Use spread operator for immutable updates:
+スプレッド演算子を使用して不変な更新を行う:
 
 ```typescript
 interface User {
@@ -123,13 +123,13 @@ interface User {
   name: string
 }
 
-// WRONG: Mutation
+// 誤り: ミューテーション
 function updateUser(user: User, name: string): User {
   user.name = name // MUTATION!
   return user
 }
 
-// CORRECT: Immutability
+// 正解: 不変性
 function updateUser(user: Readonly<User>, name: string): User {
   return {
     ...user,
@@ -138,9 +138,9 @@ function updateUser(user: Readonly<User>, name: string): User {
 }
 ```
 
-## Error Handling
+## エラーハンドリング
 
-Use async/await with try-catch and narrow unknown errors safely:
+async/await と try-catch を使用し、unknown エラーを安全にナローイングする:
 
 ```typescript
 interface User {
@@ -175,9 +175,9 @@ async function loadUser(userId: string): Promise<User> {
 }
 ```
 
-## Input Validation
+## 入力バリデーション
 
-Use Zod for schema-based validation and infer types from the schema:
+Zod でスキーマベースのバリデーションを行い、スキーマから型を推論する:
 
 ```typescript
 import { z } from 'zod'
@@ -194,6 +194,6 @@ const validated: UserInput = userSchema.parse(input)
 
 ## Console.log
 
-- No `console.log` statements in production code
-- Use proper logging libraries instead
-- See hooks for automatic detection
+- 本番コードで `console.log` を使用しない
+- 代わりに適切なロギングライブラリを使用
+- 自動検出については hooks を参照

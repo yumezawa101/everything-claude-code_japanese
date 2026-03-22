@@ -7,16 +7,16 @@ paths:
 ---
 # TypeScript/JavaScript Hooks
 
-> This file extends [common/hooks.md](../common/hooks.md) with TypeScript/JavaScript specific content.
+> このファイルは [common/hooks.md](../common/hooks.md) を TypeScript/JavaScript 固有のコンテンツで拡張します。
 
 ## PostToolUse Hooks
 
-Configure in `~/.claude/settings.json`:
+`~/.claude/settings.json` で設定:
 
-- **Prettier**: Auto-format JS/TS files after edit
-- **TypeScript check**: Run `tsc` after editing `.ts`/`.tsx` files
-- **console.log warning**: Warn about `console.log` in edited files
+- **Prettier**: 編集後に JS/TS ファイルを自動フォーマット
+- **TypeScript チェック**: `.ts`/`.tsx` ファイル編集後に `tsc` を実行
+- **console.log 警告**: 編集されたファイル内の `console.log` について警告
 
 ## Stop Hooks
 
-- **console.log audit**: Check all modified files for `console.log` before session ends
+- **console.log 監査**: セッション終了前にすべての変更ファイルで `console.log` をチェック

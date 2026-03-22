@@ -5,14 +5,14 @@ paths:
   - "**/*.js"
   - "**/*.jsx"
 ---
-# TypeScript/JavaScript Testing
+# TypeScript/JavaScript テスト
 
-> This file extends [common/testing.md](../common/testing.md) with TypeScript/JavaScript specific content.
+> このファイルは [common/testing.md](../common/testing.md) を TypeScript/JavaScript 固有のコンテンツで拡張します。
 
-## E2E Testing
+## E2E テスト
 
-Use **Playwright** as the E2E testing framework for critical user flows.
+重要なユーザーフローには **Playwright** を E2E テストフレームワークとして使用。
 
-## Agent Support
+## Agent サポート
 
-- **e2e-runner** - Playwright E2E testing specialist
+- **e2e-runner** - Playwright E2E テストのスペシャリスト

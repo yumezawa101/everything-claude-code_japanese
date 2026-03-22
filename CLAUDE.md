@@ -1,60 +1,60 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+このファイルは、このリポジトリでコードを扱う際の Claude Code (claude.ai/code) へのガイダンスを提供します。
 
-## Project Overview
+## プロジェクト概要
 
-This is a **Claude Code plugin** - a collection of production-ready agents, skills, hooks, commands, rules, and MCP configurations. The project provides battle-tested workflows for software development using Claude Code.
+これは **Claude Code プラグイン** です。本番環境対応の agent、スキル、hooks、コマンド、ルール、MCP 設定のコレクションです。Claude Code を使用したソフトウェア開発のための実戦で検証済みのワークフローを提供します。
 
-## Running Tests
+## テストの実行
 
 ```bash
-# Run all tests
+# すべてのテストを実行
 node tests/run-all.js
 
-# Run individual test files
+# 個別のテストファイルを実行
 node tests/lib/utils.test.js
 node tests/lib/package-manager.test.js
 node tests/hooks/hooks.test.js
 ```
 
-## Architecture
+## アーキテクチャ
 
-The project is organized into several core components:
+プロジェクトはいくつかのコアコンポーネントで構成されています:
 
-- **agents/** - Specialized subagents for delegation (planner, code-reviewer, tdd-guide, etc.)
-- **skills/** - Workflow definitions and domain knowledge (coding standards, patterns, testing)
-- **commands/** - Slash commands invoked by users (/tdd, /plan, /e2e, etc.)
-- **hooks/** - Trigger-based automations (session persistence, pre/post-tool hooks)
-- **rules/** - Always-follow guidelines (security, coding style, testing requirements)
-- **mcp-configs/** - MCP server configurations for external integrations
-- **scripts/** - Cross-platform Node.js utilities for hooks and setup
-- **tests/** - Test suite for scripts and utilities
+- **agents/** - 委譲用の専門サブ agent（planner、code-reviewer、tdd-guide など）
+- **skills/** - ワークフロー定義とドメイン知識（コーディング標準、パターン、テスト）
+- **commands/** - ユーザーが呼び出すスラッシュコマンド（/tdd、/plan、/e2e など）
+- **hooks/** - トリガーベースの自動化（セッション永続化、pre/post ツールフック）
+- **rules/** - 常に従うガイドライン（セキュリティ、コーディングスタイル、テスト要件）
+- **mcp-configs/** - 外部統合用の MCP サーバー設定
+- **scripts/** - hooks とセットアップ用のクロスプラットフォーム Node.js ユーティリティ
+- **tests/** - スクリプトとユーティリティのテストスイート
 
-## Key Commands
+## 主要コマンド
 
-- `/tdd` - Test-driven development workflow
-- `/plan` - Implementation planning
-- `/e2e` - Generate and run E2E tests
-- `/code-review` - Quality review
-- `/build-fix` - Fix build errors
-- `/learn` - Extract patterns from sessions
-- `/skill-create` - Generate skills from git history
+- `/tdd` - テスト駆動開発ワークフロー
+- `/plan` - 実装計画
+- `/e2e` - E2E テストの生成と実行
+- `/code-review` - 品質レビュー
+- `/build-fix` - ビルドエラーの修正
+- `/learn` - セッションからパターンを抽出
+- `/skill-create` - git 履歴からスキルを生成
 
-## Development Notes
+## 開発に関する注意事項
 
-- Package manager detection: npm, pnpm, yarn, bun (configurable via `CLAUDE_PACKAGE_MANAGER` env var or project config)
-- Cross-platform: Windows, macOS, Linux support via Node.js scripts
-- Agent format: Markdown with YAML frontmatter (name, description, tools, model)
-- Skill format: Markdown with clear sections for when to use, how it works, examples
-- Hook format: JSON with matcher conditions and command/notification hooks
+- パッケージマネージャ検出: npm, pnpm, yarn, bun（`CLAUDE_PACKAGE_MANAGER` 環境変数またはプロジェクト設定で設定可能）
+- クロスプラットフォーム: Node.js スクリプトによる Windows、macOS、Linux サポート
+- Agent 形式: YAML frontmatter 付き Markdown（name, description, tools, model）
+- スキル形式: 明確なセクションを持つ Markdown（使用タイミング、仕組み、例）
+- Hook 形式: マッチャー条件と command/notification hooks を持つ JSON
 
-## Contributing
+## コントリビューション
 
-Follow the formats in CONTRIBUTING.md:
-- Agents: Markdown with frontmatter (name, description, tools, model)
-- Skills: Clear sections (When to Use, How It Works, Examples)
-- Commands: Markdown with description frontmatter
-- Hooks: JSON with matcher and hooks array
+CONTRIBUTING.md の形式に従ってください:
+- Agent: frontmatter 付き Markdown（name, description, tools, model）
+- スキル: 明確なセクション（使用タイミング、仕組み、例）
+- コマンド: description frontmatter 付き Markdown
+- Hook: マッチャーと hooks 配列を持つ JSON
 
-File naming: lowercase with hyphens (e.g., `python-reviewer.md`, `tdd-workflow.md`)
+ファイル命名: 小文字のハイフン区切り（例: `python-reviewer.md`、`tdd-workflow.md`）

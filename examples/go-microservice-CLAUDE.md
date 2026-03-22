@@ -1,46 +1,46 @@
-# Go Microservice — Project CLAUDE.md
+# Go マイクロサービス -- プロジェクト CLAUDE.md
 
-> Real-world example for a Go microservice with PostgreSQL, gRPC, and Docker.
-> Copy this to your project root and customize for your service.
+> Go マイクロサービス + PostgreSQL + gRPC + Docker の実践的な例。
+> プロジェクトルートにコピーして、サービスに合わせてカスタマイズしてください。
 
-## Project Overview
+## プロジェクト概要
 
-**Stack:** Go 1.22+, PostgreSQL, gRPC + REST (grpc-gateway), Docker, sqlc (type-safe SQL), Wire (dependency injection)
+**技術スタック:** Go 1.22+, PostgreSQL, gRPC + REST (grpc-gateway), Docker, sqlc（型安全 SQL）, Wire（依存性注入）
 
-**Architecture:** Clean architecture with domain, repository, service, and handler layers. gRPC as primary transport with REST gateway for external clients.
+**アーキテクチャ:** domain、repository、service、handler レイヤーによるクリーンアーキテクチャ。プライマリトランスポートに gRPC、外部クライアント向けに REST ゲートウェイ。
 
-## Critical Rules
+## 重要なルール
 
-### Go Conventions
+### Go の規約
 
-- Follow Effective Go and the Go Code Review Comments guide
-- Use `errors.New` / `fmt.Errorf` with `%w` for wrapping — never string matching on errors
-- No `init()` functions — explicit initialization in `main()` or constructors
-- No global mutable state — pass dependencies via constructors
-- Context must be the first parameter and propagated through all layers
+- Effective Go と Go Code Review Comments ガイドに従う
+- `errors.New` / `fmt.Errorf` に `%w` でラップ -- エラーの文字列マッチングは禁止
+- `init()` 関数禁止 -- `main()` またはコンストラクタで明示的に初期化
+- グローバルなミュータブル状態禁止 -- コンストラクタ経由で依存性を渡す
+- Context は最初のパラメータとしてすべてのレイヤーを通じて伝播
 
-### Database
+### データベース
 
-- All queries in `queries/` as plain SQL — sqlc generates type-safe Go code
-- Migrations in `migrations/` using golang-migrate — never alter the database directly
-- Use transactions for multi-step operations via `pgx.Tx`
-- All queries must use parameterized placeholders (`$1`, `$2`) — never string formatting
+- すべてのクエリは `queries/` にプレーン SQL として記述 -- sqlc が型安全な Go コードを生成
+- マイグレーションは `migrations/` に golang-migrate を使用 -- データベースを直接変更しない
+- 複数ステップ操作にはトランザクションを使用（`pgx.Tx`）
+- すべてのクエリはパラメータ化プレースホルダ（`$1`, `$2`）を使用 -- 文字列フォーマット禁止
 
-### Error Handling
+### エラーハンドリング
 
-- Return errors, don't panic — panics are only for truly unrecoverable situations
-- Wrap errors with context: `fmt.Errorf("creating user: %w", err)`
-- Define sentinel errors in `domain/errors.go` for business logic
-- Map domain errors to gRPC status codes in the handler layer
+- エラーを返す、panic しない -- panic は本当に回復不能な状況のみ
+- コンテキスト付きでエラーをラップ: `fmt.Errorf("creating user: %w", err)`
+- ビジネスロジック用のセンチネルエラーを `domain/errors.go` に定義
+- handler レイヤーでドメインエラーを gRPC ステータスコードにマッピング
 
 ```go
-// Domain layer — sentinel errors
+// Domain レイヤー -- センチネルエラー
 var (
     ErrUserNotFound  = errors.New("user not found")
     ErrEmailTaken    = errors.New("email already registered")
 )
 
-// Handler layer — map to gRPC status
+// Handler レイヤー -- gRPC ステータスへのマッピング
 func toGRPCError(err error) error {
     switch {
     case errors.Is(err, domain.ErrUserNotFound):
@@ -53,51 +53,51 @@ func toGRPCError(err error) error {
 }
 ```
 
-### Code Style
+### コードスタイル
 
-- No emojis in code or comments
-- Exported types and functions must have doc comments
-- Keep functions under 50 lines — extract helpers
-- Use table-driven tests for all logic with multiple cases
-- Prefer `struct{}` for signal channels, not `bool`
+- コードやコメントに絵文字禁止
+- エクスポートされた型と関数にはドキュメントコメント必須
+- 関数は 50 行未満に -- ヘルパーを抽出
+- 複数ケースのあるすべてのロジックにテーブル駆動テストを使用
+- シグナルチャネルには `bool` ではなく `struct{}` を使用
 
-## File Structure
+## ファイル構造
 
 ```
 cmd/
   server/
-    main.go              # Entrypoint, Wire injection, graceful shutdown
+    main.go              # エントリポイント、Wire インジェクション、グレースフルシャットダウン
 internal/
-  domain/                # Business types and interfaces
-    user.go              # User entity and repository interface
-    errors.go            # Sentinel errors
-  service/               # Business logic
+  domain/                # ビジネス型とインターフェース
+    user.go              # User エンティティと repository インターフェース
+    errors.go            # センチネルエラー
+  service/               # ビジネスロジック
     user_service.go
     user_service_test.go
-  repository/            # Data access (sqlc-generated + custom)
+  repository/            # データアクセス（sqlc 生成 + カスタム）
     postgres/
       user_repo.go
-      user_repo_test.go  # Integration tests with testcontainers
-  handler/               # gRPC + REST handlers
+      user_repo_test.go  # testcontainers による統合テスト
+  handler/               # gRPC + REST ハンドラ
     grpc/
       user_handler.go
     rest/
       user_handler.go
-  config/                # Configuration loading
+  config/                # 設定ロード
     config.go
-proto/                   # Protobuf definitions
+proto/                   # Protobuf 定義
   user/v1/
     user.proto
-queries/                 # SQL queries for sqlc
+queries/                 # sqlc 用 SQL クエリ
   user.sql
-migrations/              # Database migrations
+migrations/              # データベースマイグレーション
   001_create_users.up.sql
   001_create_users.down.sql
 ```
 
-## Key Patterns
+## 主要パターン
 
-### Repository Interface
+### Repository インターフェース
 
 ```go
 type UserRepository interface {
@@ -109,7 +109,7 @@ type UserRepository interface {
 }
 ```
 
-### Service with Dependency Injection
+### 依存性注入付きサービス
 
 ```go
 type UserService struct {
@@ -149,7 +149,7 @@ func (s *UserService) Create(ctx context.Context, req CreateUserRequest) (*domai
 }
 ```
 
-### Table-Driven Tests
+### テーブル駆動テスト
 
 ```go
 func TestUserService_Create(t *testing.T) {
@@ -196,72 +196,72 @@ func TestUserService_Create(t *testing.T) {
 }
 ```
 
-## Environment Variables
+## 環境変数
 
 ```bash
-# Database
+# データベース
 DATABASE_URL=postgres://user:pass@localhost:5432/myservice?sslmode=disable
 
 # gRPC
 GRPC_PORT=50051
 REST_PORT=8080
 
-# Auth
-JWT_SECRET=           # Load from vault in production
+# 認証
+JWT_SECRET=           # 本番では vault からロード
 TOKEN_EXPIRY=24h
 
-# Observability
+# 可観測性
 LOG_LEVEL=info        # debug, info, warn, error
-OTEL_ENDPOINT=        # OpenTelemetry collector
+OTEL_ENDPOINT=        # OpenTelemetry コレクタ
 ```
 
-## Testing Strategy
+## テスト戦略
 
 ```bash
-/go-test             # TDD workflow for Go
-/go-review           # Go-specific code review
-/go-build            # Fix build errors
+/go-test             # Go 用 TDD ワークフロー
+/go-review           # Go 固有のコードレビュー
+/go-build            # ビルドエラーの修正
 ```
 
-### Test Commands
+### テストコマンド
 
 ```bash
-# Unit tests (fast, no external deps)
+# ユニットテスト（高速、外部依存なし）
 go test ./internal/... -short -count=1
 
-# Integration tests (requires Docker for testcontainers)
+# 統合テスト（testcontainers に Docker が必要）
 go test ./internal/repository/... -count=1 -timeout 120s
 
-# All tests with coverage
+# カバレッジ付き全テスト
 go test ./... -coverprofile=coverage.out -count=1
-go tool cover -func=coverage.out  # summary
-go tool cover -html=coverage.out  # browser
+go tool cover -func=coverage.out  # サマリー
+go tool cover -html=coverage.out  # ブラウザ
 
-# Race detector
+# 競合検出器
 go test ./... -race -count=1
 ```
 
-## ECC Workflow
+## ECC ワークフロー
 
 ```bash
-# Planning
+# 計画
 /plan "Add rate limiting to user endpoints"
 
-# Development
-/go-test                  # TDD with Go-specific patterns
+# 開発
+/go-test                  # Go 固有パターンの TDD
 
-# Review
-/go-review                # Go idioms, error handling, concurrency
-/security-scan            # Secrets and vulnerabilities
+# レビュー
+/go-review                # Go イディオム、エラーハンドリング、並行性
+/security-scan            # シークレットと脆弱性
 
-# Before merge
+# マージ前
 go vet ./...
 staticcheck ./...
 ```
 
-## Git Workflow
+## Git ワークフロー
 
-- `feat:` new features, `fix:` bug fixes, `refactor:` code changes
-- Feature branches from `main`, PRs required
-- CI: `go vet`, `staticcheck`, `go test -race`, `golangci-lint`
-- Deploy: Docker image built in CI, deployed to Kubernetes
+- `feat:` 新機能、`fix:` バグ修正、`refactor:` コード変更
+- `main` からフィーチャーブランチ、PR 必須
+- CI: `go vet`、`staticcheck`、`go test -race`、`golangci-lint`
+- デプロイ: CI で Docker イメージをビルド、Kubernetes にデプロイ

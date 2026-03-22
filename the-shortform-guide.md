@@ -1,54 +1,54 @@
-# The Shorthand Guide to Everything Claude Code
+# Everything Claude Code 簡潔ガイド
 
 ![Header: Anthropic Hackathon Winner - Tips & Tricks for Claude Code](./assets/images/shortform/00-header.png)
 
 ---
 
-**Been an avid Claude Code user since the experimental rollout in Feb, and won the Anthropic x Forum Ventures hackathon with [zenith.chat](https://zenith.chat) alongside [@DRodriguezFX](https://x.com/DRodriguezFX) - completely using Claude Code.**
+**2月のエクスペリメンタルロールアウト以来、熱心な Claude Code ユーザーです。[@DRodriguezFX](https://x.com/DRodriguezFX) と共に [zenith.chat](https://zenith.chat) で Anthropic x Forum Ventures ハッカソンに優勝しました。すべて Claude Code のみで構築。**
 
-Here's my complete setup after 10 months of daily use: skills, hooks, subagents, MCPs, plugins, and what actually works.
+10ヶ月間毎日使用した後の完全なセットアップを紹介します: スキル、hooks、サブ agent、MCP、プラグイン、そして実際に効果があったもの。
 
 ---
 
-## Skills and Commands
+## スキルとコマンド
 
-Skills operate like rules, constricted to certain scopes and workflows. They're shorthand to prompts when you need to execute a particular workflow.
+スキルはルールと似た動作をしますが、特定のスコープとワークフローに限定されます。特定のワークフローを実行する必要があるときのプロンプトの短縮形です。
 
-After a long session of coding with Opus 4.5, you want to clean out dead code and loose .md files? Run `/refactor-clean`. Need testing? `/tdd`, `/e2e`, `/test-coverage`. Skills can also include codemaps - a way for Claude to quickly navigate your codebase without burning context on exploration.
+Opus 4.5 での長いコーディングセッション後にデッドコードと不要な .md ファイルを整理したい場合、`/refactor-clean` を実行。テストが必要なら `/tdd`、`/e2e`、`/test-coverage`。スキルにはコードマップも含められます。Claude がコンテキストを消費せずにコードベースを素早くナビゲートする方法です。
 
 ![Terminal showing chained commands](./assets/images/shortform/02-chaining-commands.jpeg)
-*Chaining commands together*
+*コマンドの連鎖実行*
 
-Commands are skills executed via slash commands. They overlap but are stored differently:
+コマンドはスラッシュコマンドで実行されるスキルです。重複していますが、保存場所が異なります:
 
-- **Skills**: `~/.claude/skills/` - broader workflow definitions
-- **Commands**: `~/.claude/commands/` - quick executable prompts
+- **スキル**: `~/.claude/skills/` - より広範なワークフロー定義
+- **コマンド**: `~/.claude/commands/` - 即座に実行可能なプロンプト
 
 ```bash
-# Example skill structure
+# スキル構造の例
 ~/.claude/skills/
-  pmx-guidelines.md      # Project-specific patterns
-  coding-standards.md    # Language best practices
-  tdd-workflow/          # Multi-file skill with README.md
-  security-review/       # Checklist-based skill
+  pmx-guidelines.md      # プロジェクト固有のパターン
+  coding-standards.md    # 言語のベストプラクティス
+  tdd-workflow/          # 複数ファイルのスキル（README.md付き）
+  security-review/       # チェックリストベースのスキル
 ```
 
 ---
 
 ## Hooks
 
-Hooks are trigger-based automations that fire on specific events. Unlike skills, they're constricted to tool calls and lifecycle events.
+Hooks は特定のイベントで発火するトリガーベースの自動化です。スキルとは異なり、ツール呼び出しとライフサイクルイベントに限定されます。
 
-**Hook Types:**
+**Hook タイプ:**
 
-1. **PreToolUse** - Before a tool executes (validation, reminders)
-2. **PostToolUse** - After a tool finishes (formatting, feedback loops)
-3. **UserPromptSubmit** - When you send a message
-4. **Stop** - When Claude finishes responding
-5. **PreCompact** - Before context compaction
-6. **Notification** - Permission requests
+1. **PreToolUse** - ツール実行前（バリデーション、リマインダー）
+2. **PostToolUse** - ツール完了後（フォーマット、フィードバックループ）
+3. **UserPromptSubmit** - メッセージ送信時
+4. **Stop** - Claude がレスポンスを完了した時
+5. **PreCompact** - コンテキスト圧縮前
+6. **Notification** - パーミッションリクエスト
 
-**Example: tmux reminder before long-running commands**
+**例: 長時間実行コマンド前の tmux リマインダー**
 
 ```json
 {
@@ -67,249 +67,249 @@ Hooks are trigger-based automations that fire on specific events. Unlike skills,
 ```
 
 ![PostToolUse hook feedback](./assets/images/shortform/03-posttooluse-hook.png)
-*Example of what feedback you get in Claude Code, while running a PostToolUse hook*
+*PostToolUse hook 実行時の Claude Code でのフィードバック例*
 
-**Pro tip:** Use the `hookify` plugin to create hooks conversationally instead of writing JSON manually. Run `/hookify` and describe what you want.
+**上級テクニック:** `hookify` プラグインを使えば、JSON を手書きする代わりに会話形式で hooks を作成できます。`/hookify` を実行して、やりたいことを説明するだけです。
 
 ---
 
-## Subagents
+## サブ agent
 
-Subagents are processes your orchestrator (main Claude) can delegate tasks to with limited scopes. They can run in background or foreground, freeing up context for the main agent.
+サブ agent は、オーケストレーター（メインの Claude）が限定されたスコープでタスクを委譲できるプロセスです。バックグラウンドまたはフォアグラウンドで実行でき、メイン agent のコンテキストを解放します。
 
-Subagents work nicely with skills - a subagent capable of executing a subset of your skills can be delegated tasks and use those skills autonomously. They can also be sandboxed with specific tool permissions.
+サブ agent はスキルとうまく連携します。スキルのサブセットを実行できるサブ agent にタスクを委譲し、それらのスキルを自律的に使用させることができます。特定のツールパーミッションでサンドボックス化も可能です。
 
 ```bash
-# Example subagent structure
+# サブ agent 構造の例
 ~/.claude/agents/
-  planner.md           # Feature implementation planning
-  architect.md         # System design decisions
-  tdd-guide.md         # Test-driven development
-  code-reviewer.md     # Quality/security review
-  security-reviewer.md # Vulnerability analysis
+  planner.md           # 機能実装の計画
+  architect.md         # システム設計の意思決定
+  tdd-guide.md         # テスト駆動開発
+  code-reviewer.md     # 品質/セキュリティレビュー
+  security-reviewer.md # 脆弱性分析
   build-error-resolver.md
   e2e-runner.md
   refactor-cleaner.md
 ```
 
-Configure allowed tools, MCPs, and permissions per subagent for proper scoping.
+サブ agent ごとに許可するツール、MCP、パーミッションを設定して適切にスコープを定義します。
 
 ---
 
-## Rules and Memory
+## ルールとメモリ
 
-Your `.rules` folder holds `.md` files with best practices Claude should ALWAYS follow. Two approaches:
+`.rules` フォルダには、Claude が常に従うべきベストプラクティスの `.md` ファイルが格納されます。2つのアプローチ:
 
-1. **Single CLAUDE.md** - Everything in one file (user or project level)
-2. **Rules folder** - Modular `.md` files grouped by concern
+1. **単一の CLAUDE.md** - すべてを1つのファイルに（ユーザーまたはプロジェクトレベル）
+2. **ルールフォルダ** - 関心事別にグループ化されたモジュラー `.md` ファイル
 
 ```bash
 ~/.claude/rules/
-  security.md      # No hardcoded secrets, validate inputs
-  coding-style.md  # Immutability, file organization
-  testing.md       # TDD workflow, 80% coverage
-  git-workflow.md  # Commit format, PR process
-  agents.md        # When to delegate to subagents
-  performance.md   # Model selection, context management
+  security.md      # ハードコードされたシークレット禁止、入力バリデーション
+  coding-style.md  # 不変性、ファイル構成
+  testing.md       # TDD ワークフロー、80% カバレッジ
+  git-workflow.md  # コミット形式、PR プロセス
+  agents.md        # サブ agent への委譲タイミング
+  performance.md   # モデル選択、コンテキスト管理
 ```
 
-**Example rules:**
+**ルールの例:**
 
-- No emojis in codebase
-- Refrain from purple hues in frontend
-- Always test code before deployment
-- Prioritize modular code over mega-files
-- Never commit console.logs
+- コードベースに絵文字を使わない
+- フロントエンドで紫系の色を避ける
+- デプロイ前に必ずテストする
+- メガファイルよりモジュラーなコードを優先
+- console.log をコミットしない
 
 ---
 
-## MCPs (Model Context Protocol)
+## MCP (Model Context Protocol)
 
-MCPs connect Claude to external services directly. Not a replacement for APIs - it's a prompt-driven wrapper around them, allowing more flexibility in navigating information.
+MCP は Claude を外部サービスに直接接続します。API の代替ではなく、API のプロンプト駆動型ラッパーで、情報のナビゲーションにより柔軟性をもたらします。
 
-**Example:** Supabase MCP lets Claude pull specific data, run SQL directly upstream without copy-paste. Same for databases, deployment platforms, etc.
+**例:** Supabase MCP により、Claude は特定のデータを取得し、コピー&ペーストなしで直接上流に SQL を実行できます。データベース、デプロイプラットフォームなども同様です。
 
 ![Supabase MCP listing tables](./assets/images/shortform/04-supabase-mcp.jpeg)
-*Example of the Supabase MCP listing the tables within the public schema*
+*Supabase MCP が public スキーマ内のテーブルを一覧表示する例*
 
-**Chrome in Claude:** is a built-in plugin MCP that lets Claude autonomously control your browser - clicking around to see how things work.
+**Chrome in Claude:** Claude が自律的にブラウザを制御し、動作を確認できるビルトインプラグイン MCP です。
 
-**CRITICAL: Context Window Management**
+**重要: コンテキストウィンドウ管理**
 
-Be picky with MCPs. I keep all MCPs in user config but **disable everything unused**. Navigate to `/plugins` and scroll down or run `/mcp`.
+MCP は厳選してください。すべての MCP をユーザー設定に保持しますが、**未使用のものはすべて無効にします**。`/plugins` に移動してスクロールするか、`/mcp` を実行します。
 
 ![/plugins interface](./assets/images/shortform/05-plugins-interface.jpeg)
-*Using /plugins to navigate to MCPs to see which ones are currently installed and their status*
+*/plugins でインストール済み MCP とそのステータスを確認*
 
-Your 200k context window before compacting might only be 70k with too many tools enabled. Performance degrades significantly.
+圧縮前の 200k コンテキストウィンドウが、有効なツールが多すぎると 70k しか使えないかもしれません。パフォーマンスが大幅に低下します。
 
-**Rule of thumb:** Have 20-30 MCPs in config, but keep under 10 enabled / under 80 tools active.
+**経験則:** 設定に 20-30 の MCP を入れつつ、有効は 10 以下 / アクティブなツールは 80 以下に。
 
 ```bash
-# Check enabled MCPs
+# 有効な MCP を確認
 /mcp
 
-# Disable unused ones in ~/.claude.json under projects.disabledMcpServers
+# 未使用のものを無効化（~/.claude.json の projects.disabledMcpServers 内）
 ```
 
 ---
 
-## Plugins
+## プラグイン
 
-Plugins package tools for easy installation instead of tedious manual setup. A plugin can be a skill + MCP combined, or hooks/tools bundled together.
+プラグインは面倒な手動セットアップの代わりに、ツールを簡単にインストールするためにパッケージ化されたものです。プラグインはスキル + MCP の組み合わせや、hooks/ツールのバンドルになり得ます。
 
-**Installing plugins:**
+**プラグインのインストール:**
 
 ```bash
-# Add a marketplace
-# mgrep plugin by @mixedbread-ai
+# マーケットプレイスを追加
+# @mixedbread-ai による mgrep プラグイン
 claude plugin marketplace add https://github.com/mixedbread-ai/mgrep
 
-# Open Claude, run /plugins, find new marketplace, install from there
+# Claude を開いて /plugins を実行し、新しいマーケットプレイスを見つけてインストール
 ```
 
 ![Marketplaces tab showing mgrep](./assets/images/shortform/06-marketplaces-mgrep.jpeg)
-*Displaying the newly installed Mixedbread-Grep marketplace*
+*新しくインストールした Mixedbread-Grep マーケットプレイスの表示*
 
-**LSP Plugins** are particularly useful if you run Claude Code outside editors frequently. Language Server Protocol gives Claude real-time type checking, go-to-definition, and intelligent completions without needing an IDE open.
+**LSP プラグイン** は、エディタの外で Claude Code を頻繁に実行する場合に特に便利です。Language Server Protocol により、IDE を開かなくてもリアルタイムの型チェック、定義へのジャンプ、インテリジェントな補完が可能です。
 
 ```bash
-# Enabled plugins example
-typescript-lsp@claude-plugins-official  # TypeScript intelligence
-pyright-lsp@claude-plugins-official     # Python type checking
-hookify@claude-plugins-official         # Create hooks conversationally
-mgrep@Mixedbread-Grep                   # Better search than ripgrep
+# 有効なプラグインの例
+typescript-lsp@claude-plugins-official  # TypeScript インテリジェンス
+pyright-lsp@claude-plugins-official     # Python 型チェック
+hookify@claude-plugins-official         # 会話形式で hooks を作成
+mgrep@Mixedbread-Grep                   # ripgrep より優れた検索
 ```
 
-Same warning as MCPs - watch your context window.
+MCP と同じ注意 - コンテキストウィンドウに気をつけてください。
 
 ---
 
-## Tips and Tricks
+## ヒントとテクニック
 
-### Keyboard Shortcuts
+### キーボードショートカット
 
-- `Ctrl+U` - Delete entire line (faster than backspace spam)
-- `!` - Quick bash command prefix
-- `@` - Search for files
-- `/` - Initiate slash commands
-- `Shift+Enter` - Multi-line input
-- `Tab` - Toggle thinking display
-- `Esc Esc` - Interrupt Claude / restore code
+- `Ctrl+U` - 行全体を削除（バックスペース連打より速い）
+- `!` - 即座の bash コマンドプレフィックス
+- `@` - ファイル検索
+- `/` - スラッシュコマンドの開始
+- `Shift+Enter` - 複数行入力
+- `Tab` - 思考表示の切り替え
+- `Esc Esc` - Claude の中断 / コード復元
 
-### Parallel Workflows
+### 並列ワークフロー
 
-- **Fork** (`/fork`) - Fork conversations to do non-overlapping tasks in parallel instead of spamming queued messages
-- **Git Worktrees** - For overlapping parallel Claudes without conflicts. Each worktree is an independent checkout
+- **Fork** (`/fork`) - 重複しないタスクを並列実行するために会話を分岐（キューイングされたメッセージを連打する代わりに）
+- **Git Worktree** - コンフリクトなしに並列 Claude を使用。各 worktree は独立したチェックアウト
 
 ```bash
 git worktree add ../feature-branch feature-branch
-# Now run separate Claude instances in each worktree
+# 各 worktree で個別の Claude インスタンスを実行
 ```
 
-### tmux for Long-Running Commands
+### 長時間実行コマンド用の tmux
 
-Stream and watch logs/bash processes Claude runs:
+Claude が実行するログ/bash プロセスをストリーミングおよび監視:
 
 <https://github.com/user-attachments/assets/shortform/07-tmux-video.mp4>
 
 ```bash
 tmux new -s dev
-# Claude runs commands here, you can detach and reattach
+# Claude がここでコマンドを実行、デタッチ/再アタッチ可能
 tmux attach -t dev
 ```
 
 ### mgrep > grep
 
-`mgrep` is a significant improvement from ripgrep/grep. Install via plugin marketplace, then use the `/mgrep` skill. Works with both local search and web search.
+`mgrep` は ripgrep/grep からの大幅な改善です。プラグインマーケットプレイスからインストールし、`/mgrep` スキルを使用。ローカル検索と Web 検索の両方に対応。
 
 ```bash
-mgrep "function handleSubmit"  # Local search
-mgrep --web "Next.js 15 app router changes"  # Web search
+mgrep "function handleSubmit"  # ローカル検索
+mgrep --web "Next.js 15 app router changes"  # Web 検索
 ```
 
-### Other Useful Commands
+### その他の便利なコマンド
 
-- `/rewind` - Go back to a previous state
-- `/statusline` - Customize with branch, context %, todos
-- `/checkpoints` - File-level undo points
-- `/compact` - Manually trigger context compaction
+- `/rewind` - 以前の状態に戻る
+- `/statusline` - ブランチ、コンテキスト %、todo でカスタマイズ
+- `/checkpoints` - ファイルレベルの undo ポイント
+- `/compact` - コンテキスト圧縮を手動トリガー
 
 ### GitHub Actions CI/CD
 
-Set up code review on your PRs with GitHub Actions. Claude can review PRs automatically when configured.
+GitHub Actions で PR にコードレビューを設定。設定すれば Claude が自動で PR をレビューできます。
 
 ![Claude bot approving a PR](./assets/images/shortform/08-github-pr-review.jpeg)
-*Claude approving a bug fix PR*
+*Claude がバグ修正 PR を承認*
 
-### Sandboxing
+### サンドボックス
 
-Use sandbox mode for risky operations - Claude runs in restricted environment without affecting your actual system.
+リスクのある操作にはサンドボックスモードを使用。Claude は実際のシステムに影響を与えない制限された環境で実行されます。
 
 ---
 
-## On Editors
+## エディタについて
 
-Your editor choice significantly impacts Claude Code workflow. While Claude Code works from any terminal, pairing it with a capable editor unlocks real-time file tracking, quick navigation, and integrated command execution.
+エディタの選択は Claude Code のワークフローに大きく影響します。Claude Code はどのターミナルからでも動作しますが、優れたエディタと組み合わせることでリアルタイムのファイル追跡、素早いナビゲーション、統合コマンド実行が可能になります。
 
-### Zed (My Preference)
+### Zed（私の推奨）
 
-I use [Zed](https://zed.dev) - written in Rust, so it's genuinely fast. Opens instantly, handles massive codebases without breaking a sweat, and barely touches system resources.
+[Zed](https://zed.dev) を使用しています。Rust 製なので本当に高速。即座に起動し、大規模コードベースもストレスなく処理し、システムリソースをほとんど消費しません。
 
-**Why Zed + Claude Code is a great combo:**
+**Zed + Claude Code が優れた組み合わせである理由:**
 
-- **Speed** - Rust-based performance means no lag when Claude is rapidly editing files. Your editor keeps up
-- **Agent Panel Integration** - Zed's Claude integration lets you track file changes in real-time as Claude edits. Jump between files Claude references without leaving the editor
-- **CMD+Shift+R Command Palette** - Quick access to all your custom slash commands, debuggers, build scripts in a searchable UI
-- **Minimal Resource Usage** - Won't compete with Claude for RAM/CPU during heavy operations. Important when running Opus
-- **Vim Mode** - Full vim keybindings if that's your thing
+- **速度** - Rust ベースのパフォーマンスにより、Claude がファイルを高速編集してもラグなし。エディタが追従
+- **Agent パネル統合** - Zed の Claude 統合で、Claude が編集するファイルの変更をリアルタイムで追跡。Claude が参照するファイル間をエディタを離れずにジャンプ
+- **CMD+Shift+R コマンドパレット** - カスタムスラッシュコマンド、デバッガ、ビルドスクリプトへの検索可能な UI からのクイックアクセス
+- **最小リソース使用量** - 負荷の高い操作中も Claude と RAM/CPU を奪い合わない。Opus 実行時に重要
+- **Vim モード** - お好みなら完全な Vim キーバインディング
 
 ![Zed Editor with custom commands](./assets/images/shortform/09-zed-editor.jpeg)
-*Zed Editor with custom commands dropdown using CMD+Shift+R. Following mode shown as the bullseye in the bottom right.*
+*CMD+Shift+R でカスタムコマンドドロップダウンを表示する Zed エディタ。右下にフォローモード（ブルズアイ）を表示。*
 
-**Editor-Agnostic Tips:**
+**エディタに依存しないヒント:**
 
-1. **Split your screen** - Terminal with Claude Code on one side, editor on the other
-2. **Ctrl + G** - quickly open the file Claude is currently working on in Zed
-3. **Auto-save** - Enable autosave so Claude's file reads are always current
-4. **Git integration** - Use editor's git features to review Claude's changes before committing
-5. **File watchers** - Most editors auto-reload changed files, verify this is enabled
+1. **画面を分割** - 片側に Claude Code のターミナル、もう片側にエディタ
+2. **Ctrl + G** - Zed で Claude が現在作業中のファイルをすぐに開く
+3. **自動保存** - 自動保存を有効にして Claude のファイル読み取りを常に最新に
+4. **Git 統合** - エディタの Git 機能で Claude の変更をコミット前にレビュー
+5. **ファイルウォッチャー** - ほとんどのエディタは変更されたファイルを自動リロード、有効になっているか確認
 
 ### VSCode / Cursor
 
-This is also a viable choice and works well with Claude Code. You can use it in either terminal format, with automatic sync with your editor using `\ide` enabling LSP functionality (somewhat redundant with plugins now). Or you can opt for the extension which is more integrated with the Editor and has a matching UI.
+これも良い選択で、Claude Code との相性も良好です。ターミナル形式で使用でき、`\ide` でエディタとの自動同期が有効になり LSP 機能が使えます（プラグインの登場で冗長になりつつあります）。または、エディタにより統合され、マッチする UI を持つ拡張機能を選択できます。
 
 ![VS Code Claude Code Extension](./assets/images/shortform/10-vscode-extension.jpeg)
-*The VS Code extension provides a native graphical interface for Claude Code, integrated directly into your IDE.*
+*VS Code 拡張機能は、Claude Code のネイティブグラフィカルインターフェースを IDE に直接統合して提供します。*
 
 ---
 
-## My Setup
+## 私のセットアップ
 
-### Plugins
+### プラグイン
 
-**Installed:** (I usually only have 4-5 of these enabled at a time)
+**インストール済み:**（通常、同時に 4-5 個のみ有効にしています）
 
 ```markdown
-ralph-wiggum@claude-code-plugins       # Loop automation
-frontend-design@claude-code-plugins    # UI/UX patterns
-commit-commands@claude-code-plugins    # Git workflow
-security-guidance@claude-code-plugins  # Security checks
-pr-review-toolkit@claude-code-plugins  # PR automation
-typescript-lsp@claude-plugins-official # TS intelligence
-hookify@claude-plugins-official        # Hook creation
+ralph-wiggum@claude-code-plugins       # ループ自動化
+frontend-design@claude-code-plugins    # UI/UX パターン
+commit-commands@claude-code-plugins    # Git ワークフロー
+security-guidance@claude-code-plugins  # セキュリティチェック
+pr-review-toolkit@claude-code-plugins  # PR 自動化
+typescript-lsp@claude-plugins-official # TS インテリジェンス
+hookify@claude-plugins-official        # Hook 作成
 code-simplifier@claude-plugins-official
 feature-dev@claude-code-plugins
 explanatory-output-style@claude-code-plugins
 code-review@claude-code-plugins
-context7@claude-plugins-official       # Live documentation
-pyright-lsp@claude-plugins-official    # Python types
-mgrep@Mixedbread-Grep                  # Better search
+context7@claude-plugins-official       # ライブドキュメント
+pyright-lsp@claude-plugins-official    # Python 型
+mgrep@Mixedbread-Grep                  # 高機能検索
 ```
 
-### MCP Servers
+### MCP サーバー
 
-**Configured (User Level):**
+**設定済み（ユーザーレベル）:**
 
 ```json
 {
@@ -337,82 +337,82 @@ mgrep@Mixedbread-Grep                  # Better search
 }
 ```
 
-This is the key - I have 14 MCPs configured but only ~5-6 enabled per project. Keeps context window healthy.
+ポイントは、14 の MCP を設定しつつプロジェクトごとに約 5-6 個のみ有効にしていること。コンテキストウィンドウを健全に保ちます。
 
-### Key Hooks
+### 主要 Hooks
 
 ```json
 {
   "PreToolUse": [
-    { "matcher": "npm|pnpm|yarn|cargo|pytest", "hooks": ["tmux reminder"] },
-    { "matcher": "Write && .md file", "hooks": ["block unless README/CLAUDE"] },
-    { "matcher": "git push", "hooks": ["open editor for review"] }
+    { "matcher": "npm|pnpm|yarn|cargo|pytest", "hooks": ["tmux リマインダー"] },
+    { "matcher": "Write && .md ファイル", "hooks": ["README/CLAUDE 以外はブロック"] },
+    { "matcher": "git push", "hooks": ["レビュー用にエディタを開く"] }
   ],
   "PostToolUse": [
     { "matcher": "Edit && .ts/.tsx/.js/.jsx", "hooks": ["prettier --write"] },
     { "matcher": "Edit && .ts/.tsx", "hooks": ["tsc --noEmit"] },
-    { "matcher": "Edit", "hooks": ["grep console.log warning"] }
+    { "matcher": "Edit", "hooks": ["grep console.log 警告"] }
   ],
   "Stop": [
-    { "matcher": "*", "hooks": ["check modified files for console.log"] }
+    { "matcher": "*", "hooks": ["変更ファイルの console.log チェック"] }
   ]
 }
 ```
 
-### Custom Status Line
+### カスタムステータスライン
 
-Shows user, directory, git branch with dirty indicator, context remaining %, model, time, and todo count:
+ユーザー、ディレクトリ、ダーティインジケータ付き git ブランチ、残りコンテキスト %、モデル、時刻、todo 数を表示:
 
 ![Custom status line](./assets/images/shortform/11-statusline.jpeg)
-*Example statusline in my Mac root directory*
+*Mac ルートディレクトリでのステータスライン例*
 
 ```
 affoon:~ ctx:65% Opus 4.5 19:52
 ▌▌ plan mode on (shift+tab to cycle)
 ```
 
-### Rules Structure
+### ルール構造
 
 ```
 ~/.claude/rules/
-  security.md      # Mandatory security checks
-  coding-style.md  # Immutability, file size limits
-  testing.md       # TDD, 80% coverage
-  git-workflow.md  # Conventional commits
-  agents.md        # Subagent delegation rules
-  patterns.md      # API response formats
-  performance.md   # Model selection (Haiku vs Sonnet vs Opus)
-  hooks.md         # Hook documentation
+  security.md      # 必須セキュリティチェック
+  coding-style.md  # 不変性、ファイルサイズ制限
+  testing.md       # TDD、80% カバレッジ
+  git-workflow.md  # Conventional Commits
+  agents.md        # サブ agent 委譲ルール
+  patterns.md      # API レスポンス形式
+  performance.md   # モデル選択（Haiku vs Sonnet vs Opus）
+  hooks.md         # Hook ドキュメント
 ```
 
-### Subagents
+### サブ agent
 
 ```
 ~/.claude/agents/
-  planner.md           # Break down features
-  architect.md         # System design
-  tdd-guide.md         # Write tests first
-  code-reviewer.md     # Quality review
-  security-reviewer.md # Vulnerability scan
+  planner.md           # 機能の分解
+  architect.md         # システム設計
+  tdd-guide.md         # テストを先に書く
+  code-reviewer.md     # 品質レビュー
+  security-reviewer.md # 脆弱性スキャン
   build-error-resolver.md
-  e2e-runner.md        # Playwright tests
-  refactor-cleaner.md  # Dead code removal
-  doc-updater.md       # Keep docs synced
+  e2e-runner.md        # Playwright テスト
+  refactor-cleaner.md  # デッドコード除去
+  doc-updater.md       # ドキュメント同期
 ```
 
 ---
 
-## Key Takeaways
+## 主なポイント
 
-1. **Don't overcomplicate** - treat configuration like fine-tuning, not architecture
-2. **Context window is precious** - disable unused MCPs and plugins
-3. **Parallel execution** - fork conversations, use git worktrees
-4. **Automate the repetitive** - hooks for formatting, linting, reminders
-5. **Scope your subagents** - limited tools = focused execution
+1. **複雑にしすぎない** - 設定はアーキテクチャではなくファインチューニングのように扱う
+2. **コンテキストウィンドウは貴重** - 未使用の MCP とプラグインを無効化
+3. **並列実行** - 会話を分岐、git worktree を活用
+4. **繰り返し作業を自動化** - フォーマット、リンティング、リマインダーに hooks を使用
+5. **サブ agent のスコープを限定** - 限定されたツール = 集中した実行
 
 ---
 
-## References
+## 参考資料
 
 - [Plugins Reference](https://code.claude.com/docs/en/plugins-reference)
 - [Hooks Documentation](https://code.claude.com/docs/en/hooks)
@@ -424,8 +424,8 @@ affoon:~ ctx:65% Opus 4.5 19:52
 
 ---
 
-**Note:** This is a subset of detail. See the [Longform Guide](./the-longform-guide.md) for advanced patterns.
+**注意:** これは詳細の一部です。高度なパターンについては[ロングフォームガイド](./the-longform-guide.md)を参照してください。
 
 ---
 
-*Won the Anthropic x Forum Ventures hackathon in NYC building [zenith.chat](https://zenith.chat) with [@DRodriguezFX](https://x.com/DRodriguezFX)*
+*NYC で [@DRodriguezFX](https://x.com/DRodriguezFX) と共に [zenith.chat](https://zenith.chat) を構築し、Anthropic x Forum Ventures ハッカソンに優勝*

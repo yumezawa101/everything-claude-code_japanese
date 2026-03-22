@@ -1,54 +1,54 @@
-# Django REST API — Project CLAUDE.md
+# Django REST API -- プロジェクト CLAUDE.md
 
-> Real-world example for a Django REST Framework API with PostgreSQL and Celery.
-> Copy this to your project root and customize for your service.
+> Django REST Framework + PostgreSQL + Celery を使用した実践的な例。
+> プロジェクトルートにコピーして、サービスに合わせてカスタマイズしてください。
 
-## Project Overview
+## プロジェクト概要
 
-**Stack:** Python 3.12+, Django 5.x, Django REST Framework, PostgreSQL, Celery + Redis, pytest, Docker Compose
+**技術スタック:** Python 3.12+, Django 5.x, Django REST Framework, PostgreSQL, Celery + Redis, pytest, Docker Compose
 
-**Architecture:** Domain-driven design with apps per business domain. DRF for API layer, Celery for async tasks, pytest for testing. All endpoints return JSON — no template rendering.
+**アーキテクチャ:** ビジネスドメインごとのアプリによるドメイン駆動設計。API レイヤーに DRF、非同期タスクに Celery、テストに pytest。すべてのエンドポイントは JSON を返す -- テンプレートレンダリングなし。
 
-## Critical Rules
+## 重要なルール
 
-### Python Conventions
+### Python の規約
 
-- Type hints on all function signatures — use `from __future__ import annotations`
-- No `print()` statements — use `logging.getLogger(__name__)`
-- f-strings for string formatting, never `%` or `.format()`
-- Use `pathlib.Path` not `os.path` for file operations
-- Imports sorted with isort: stdlib, third-party, local (enforced by ruff)
+- すべての関数シグネチャに型ヒント -- `from __future__ import annotations` を使用
+- `print()` 文禁止 -- `logging.getLogger(__name__)` を使用
+- 文字列フォーマットは f-string、`%` や `.format()` は使わない
+- ファイル操作には `os.path` ではなく `pathlib.Path` を使用
+- import の整列は isort: 標準ライブラリ、サードパーティ、ローカル（ruff で強制）
 
-### Database
+### データベース
 
-- All queries use Django ORM — raw SQL only with `.raw()` and parameterized queries
-- Migrations committed to git — never use `--fake` in production
-- Use `select_related()` and `prefetch_related()` to prevent N+1 queries
-- All models must have `created_at` and `updated_at` auto-fields
-- Indexes on any field used in `filter()`, `order_by()`, or `WHERE` clauses
+- すべてのクエリに Django ORM を使用 -- raw SQL は `.raw()` とパラメータ化クエリでのみ
+- マイグレーションは git にコミット -- 本番で `--fake` を絶対に使わない
+- N+1 クエリ防止に `select_related()` と `prefetch_related()` を使用
+- すべてのモデルに `created_at` と `updated_at` 自動フィールドが必須
+- `filter()`、`order_by()`、`WHERE` 句で使用するフィールドにはインデックス
 
 ```python
-# BAD: N+1 query
+# BAD: N+1 クエリ
 orders = Order.objects.all()
 for order in orders:
-    print(order.customer.name)  # hits DB for each order
+    print(order.customer.name)  # 各注文でDBにアクセス
 
-# GOOD: Single query with join
+# GOOD: JOIN による単一クエリ
 orders = Order.objects.select_related("customer").all()
 ```
 
-### Authentication
+### 認証
 
-- JWT via `djangorestframework-simplejwt` — access token (15 min) + refresh token (7 days)
-- Permission classes on every view — never rely on default
-- Use `IsAuthenticated` as base, add custom permissions for object-level access
-- Token blacklisting enabled for logout
+- `djangorestframework-simplejwt` による JWT -- アクセストークン（15分） + リフレッシュトークン（7日）
+- すべてのビューにパーミッションクラス -- デフォルトに依存しない
+- ベースに `IsAuthenticated` を使用、オブジェクトレベルアクセスにはカスタムパーミッションを追加
+- ログアウト用にトークンブラックリストを有効化
 
-### Serializers
+### シリアライザ
 
-- Use `ModelSerializer` for simple CRUD, `Serializer` for complex validation
-- Separate read and write serializers when input/output shapes differ
-- Validate at serializer level, not in views — views should be thin
+- シンプルな CRUD には `ModelSerializer`、複雑なバリデーションには `Serializer`
+- 入力/出力の形状が異なる場合は読み取りと書き込みのシリアライザを分離
+- ビューではなくシリアライザレベルでバリデーション -- ビューは薄くする
 
 ```python
 class CreateOrderSerializer(serializers.Serializer):
@@ -69,11 +69,11 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         fields = ["id", "customer", "product", "quantity", "total", "status", "created_at"]
 ```
 
-### Error Handling
+### エラーハンドリング
 
-- Use DRF exception handler for consistent error responses
-- Custom exceptions for business logic in `core/exceptions.py`
-- Never expose internal error details to clients
+- 一貫したエラーレスポンスに DRF 例外ハンドラを使用
+- ビジネスロジック用のカスタム例外を `core/exceptions.py` に
+- 内部エラーの詳細をクライアントに露出させない
 
 ```python
 # core/exceptions.py
@@ -85,63 +85,63 @@ class InsufficientStockError(APIException):
     default_code = "insufficient_stock"
 ```
 
-### Code Style
+### コードスタイル
 
-- No emojis in code or comments
-- Max line length: 120 characters (enforced by ruff)
-- Classes: PascalCase, functions/variables: snake_case, constants: UPPER_SNAKE_CASE
-- Views are thin — business logic lives in service functions or model methods
+- コードやコメントに絵文字禁止
+- 最大行長: 120 文字（ruff で強制）
+- クラス: PascalCase、関数/変数: snake_case、定数: UPPER_SNAKE_CASE
+- ビューは薄く -- ビジネスロジックはサービス関数またはモデルメソッドに
 
-## File Structure
+## ファイル構造
 
 ```
 config/
   settings/
-    base.py              # Shared settings
-    local.py             # Dev overrides (DEBUG=True)
-    production.py        # Production settings
-  urls.py                # Root URL config
-  celery.py              # Celery app configuration
+    base.py              # 共有設定
+    local.py             # 開発用オーバーライド（DEBUG=True）
+    production.py        # 本番設定
+  urls.py                # ルート URL 設定
+  celery.py              # Celery アプリ設定
 apps/
-  accounts/              # User auth, registration, profile
+  accounts/              # ユーザー認証、登録、プロフィール
     models.py
     serializers.py
     views.py
-    services.py          # Business logic
+    services.py          # ビジネスロジック
     tests/
       test_views.py
       test_services.py
-      factories.py       # Factory Boy factories
-  orders/                # Order management
+      factories.py       # Factory Boy ファクトリ
+  orders/                # 注文管理
     models.py
     serializers.py
     views.py
     services.py
-    tasks.py             # Celery tasks
+    tasks.py             # Celery タスク
     tests/
-  products/              # Product catalog
+  products/              # 商品カタログ
     models.py
     serializers.py
     views.py
     tests/
 core/
-  exceptions.py          # Custom API exceptions
-  permissions.py         # Shared permission classes
-  pagination.py          # Custom pagination
-  middleware.py          # Request logging, timing
+  exceptions.py          # カスタム API 例外
+  permissions.py         # 共有パーミッションクラス
+  pagination.py          # カスタムページネーション
+  middleware.py          # リクエストログ、タイミング
   tests/
 ```
 
-## Key Patterns
+## 主要パターン
 
-### Service Layer
+### サービスレイヤー
 
 ```python
 # apps/orders/services.py
 from django.db import transaction
 
 def create_order(*, customer, product_id: uuid.UUID, quantity: int) -> Order:
-    """Create an order with stock validation and payment hold."""
+    """在庫バリデーションと支払い保留付きで注文を作成。"""
     product = Product.objects.select_for_update().get(id=product_id)
 
     if product.stock < quantity:
@@ -157,12 +157,12 @@ def create_order(*, customer, product_id: uuid.UUID, quantity: int) -> Order:
         product.stock -= quantity
         product.save(update_fields=["stock", "updated_at"])
 
-    # Async: send confirmation email
+    # 非同期: 確認メールを送信
     send_order_confirmation.delay(order.id)
     return order
 ```
 
-### View Pattern
+### ビューパターン
 
 ```python
 # apps/orders/views.py
@@ -192,7 +192,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer.instance = order
 ```
 
-### Test Pattern (pytest + Factory Boy)
+### テストパターン（pytest + Factory Boy）
 
 ```python
 # apps/orders/tests/factories.py
@@ -243,7 +243,7 @@ class TestCreateOrder:
         assert response.status_code == 401
 ```
 
-## Environment Variables
+## 環境変数
 
 ```bash
 # Django
@@ -251,58 +251,58 @@ SECRET_KEY=
 DEBUG=False
 ALLOWED_HOSTS=api.example.com
 
-# Database
+# データベース
 DATABASE_URL=postgres://user:pass@localhost:5432/myapp
 
-# Redis (Celery broker + cache)
+# Redis（Celery ブローカー + キャッシュ）
 REDIS_URL=redis://localhost:6379/0
 
 # JWT
-JWT_ACCESS_TOKEN_LIFETIME=15       # minutes
-JWT_REFRESH_TOKEN_LIFETIME=10080   # minutes (7 days)
+JWT_ACCESS_TOKEN_LIFETIME=15       # 分
+JWT_REFRESH_TOKEN_LIFETIME=10080   # 分（7日）
 
-# Email
+# メール
 EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
 EMAIL_HOST=smtp.example.com
 ```
 
-## Testing Strategy
+## テスト戦略
 
 ```bash
-# Run all tests
+# すべてのテストを実行
 pytest --cov=apps --cov-report=term-missing
 
-# Run specific app tests
+# 特定のアプリテストを実行
 pytest apps/orders/tests/ -v
 
-# Run with parallel execution
+# 並列実行
 pytest -n auto
 
-# Only failing tests from last run
+# 前回実行で失敗したテストのみ
 pytest --lf
 ```
 
-## ECC Workflow
+## ECC ワークフロー
 
 ```bash
-# Planning
+# 計画
 /plan "Add order refund system with Stripe integration"
 
-# Development with TDD
-/tdd                    # pytest-based TDD workflow
+# TDD で開発
+/tdd                    # pytest ベースの TDD ワークフロー
 
-# Review
-/python-review          # Python-specific code review
-/security-scan          # Django security audit
-/code-review            # General quality check
+# レビュー
+/python-review          # Python 固有のコードレビュー
+/security-scan          # Django セキュリティ監査
+/code-review            # 一般的な品質チェック
 
-# Verification
-/verify                 # Build, lint, test, security scan
+# 検証
+/verify                 # ビルド、lint、テスト、セキュリティスキャン
 ```
 
-## Git Workflow
+## Git ワークフロー
 
-- `feat:` new features, `fix:` bug fixes, `refactor:` code changes
-- Feature branches from `main`, PRs required
-- CI: ruff (lint + format), mypy (types), pytest (tests), safety (dep check)
-- Deploy: Docker image, managed via Kubernetes or Railway
+- `feat:` 新機能、`fix:` バグ修正、`refactor:` コード変更
+- `main` からフィーチャーブランチ、PR 必須
+- CI: ruff（lint + format）、mypy（型）、pytest（テスト）、safety（依存関係チェック）
+- デプロイ: Docker イメージ、Kubernetes または Railway で管理

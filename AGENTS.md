@@ -1,160 +1,160 @@
-# Everything Claude Code (ECC) — Agent Instructions
+# Everything Claude Code (ECC) -- Agent 指示書
 
-This is a **production-ready AI coding plugin** providing 28 specialized agents, 116 skills, 59 commands, and automated hook workflows for software development.
+これは **本番環境対応の AI コーディングプラグイン** で、28 の専門 agent、116 のスキル、59 のコマンド、および自動化された hook ワークフローをソフトウェア開発向けに提供します。
 
-**Version:** 1.9.0
+**バージョン:** 1.9.0
 
-## Core Principles
+## コア原則
 
-1. **Agent-First** — Delegate to specialized agents for domain tasks
-2. **Test-Driven** — Write tests before implementation, 80%+ coverage required
-3. **Security-First** — Never compromise on security; validate all inputs
-4. **Immutability** — Always create new objects, never mutate existing ones
-5. **Plan Before Execute** — Plan complex features before writing code
+1. **Agent ファースト** -- ドメインタスクは専門 agent に委譲
+2. **テスト駆動** -- 実装前にテストを書く、80% 以上のカバレッジ必須
+3. **セキュリティファースト** -- セキュリティで妥協しない、すべての入力をバリデート
+4. **不変性** -- 常に新しいオブジェクトを作成、既存のものを変更しない
+5. **実行前に計画** -- 複雑な機能はコードを書く前に計画
 
-## Available Agents
+## 利用可能な Agent
 
-| Agent | Purpose | When to Use |
+| Agent | 目的 | 使用タイミング |
 |-------|---------|-------------|
-| planner | Implementation planning | Complex features, refactoring |
-| architect | System design and scalability | Architectural decisions |
-| tdd-guide | Test-driven development | New features, bug fixes |
-| code-reviewer | Code quality and maintainability | After writing/modifying code |
-| security-reviewer | Vulnerability detection | Before commits, sensitive code |
-| build-error-resolver | Fix build/type errors | When build fails |
-| e2e-runner | End-to-end Playwright testing | Critical user flows |
-| refactor-cleaner | Dead code cleanup | Code maintenance |
-| doc-updater | Documentation and codemaps | Updating docs |
-| docs-lookup | Documentation and API reference research | Library/API documentation questions |
-| cpp-reviewer | C++ code review | C++ projects |
-| cpp-build-resolver | C++ build errors | C++ build failures |
-| go-reviewer | Go code review | Go projects |
-| go-build-resolver | Go build errors | Go build failures |
-| kotlin-reviewer | Kotlin code review | Kotlin/Android/KMP projects |
-| kotlin-build-resolver | Kotlin/Gradle build errors | Kotlin build failures |
-| database-reviewer | PostgreSQL/Supabase specialist | Schema design, query optimization |
-| python-reviewer | Python code review | Python projects |
-| java-reviewer | Java and Spring Boot code review | Java/Spring Boot projects |
-| java-build-resolver | Java/Maven/Gradle build errors | Java build failures |
-| chief-of-staff | Communication triage and drafts | Multi-channel email, Slack, LINE, Messenger |
-| loop-operator | Autonomous loop execution | Run loops safely, monitor stalls, intervene |
-| harness-optimizer | Harness config tuning | Reliability, cost, throughput |
-| rust-reviewer | Rust code review | Rust projects |
-| rust-build-resolver | Rust build errors | Rust build failures |
-| pytorch-build-resolver | PyTorch runtime/CUDA/training errors | PyTorch build/training failures |
-| typescript-reviewer | TypeScript/JavaScript code review | TypeScript/JavaScript projects |
+| planner | 実装計画 | 複雑な機能、リファクタリング |
+| architect | システム設計とスケーラビリティ | アーキテクチャの意思決定 |
+| tdd-guide | テスト駆動開発 | 新機能、バグ修正 |
+| code-reviewer | コード品質と保守性 | コード記述/変更後 |
+| security-reviewer | 脆弱性検出 | コミット前、機密コード |
+| build-error-resolver | ビルド/型エラーの修正 | ビルド失敗時 |
+| e2e-runner | Playwright E2E テスト | 重要なユーザーフロー |
+| refactor-cleaner | デッドコードクリーンアップ | コードメンテナンス |
+| doc-updater | ドキュメントとコードマップ | ドキュメント更新 |
+| docs-lookup | ドキュメントと API リファレンス調査 | ライブラリ/API ドキュメントの質問 |
+| cpp-reviewer | C++ コードレビュー | C++ プロジェクト |
+| cpp-build-resolver | C++ ビルドエラー | C++ ビルド失敗 |
+| go-reviewer | Go コードレビュー | Go プロジェクト |
+| go-build-resolver | Go ビルドエラー | Go ビルド失敗 |
+| kotlin-reviewer | Kotlin コードレビュー | Kotlin/Android/KMP プロジェクト |
+| kotlin-build-resolver | Kotlin/Gradle ビルドエラー | Kotlin ビルド失敗 |
+| database-reviewer | PostgreSQL/Supabase スペシャリスト | スキーマ設計、クエリ最適化 |
+| python-reviewer | Python コードレビュー | Python プロジェクト |
+| java-reviewer | Java と Spring Boot コードレビュー | Java/Spring Boot プロジェクト |
+| java-build-resolver | Java/Maven/Gradle ビルドエラー | Java ビルド失敗 |
+| chief-of-staff | コミュニケーショントリアージとドラフト | マルチチャネル Email、Slack、LINE、Messenger |
+| loop-operator | 自律ループ実行 | ループの安全な実行、停滞監視、介入 |
+| harness-optimizer | ハーネス設定チューニング | 信頼性、コスト、スループット |
+| rust-reviewer | Rust コードレビュー | Rust プロジェクト |
+| rust-build-resolver | Rust ビルドエラー | Rust ビルド失敗 |
+| pytorch-build-resolver | PyTorch ランタイム/CUDA/トレーニングエラー | PyTorch ビルド/トレーニング失敗 |
+| typescript-reviewer | TypeScript/JavaScript コードレビュー | TypeScript/JavaScript プロジェクト |
 
-## Agent Orchestration
+## Agent オーケストレーション
 
-Use agents proactively without user prompt:
-- Complex feature requests → **planner**
-- Code just written/modified → **code-reviewer**
-- Bug fix or new feature → **tdd-guide**
-- Architectural decision → **architect**
-- Security-sensitive code → **security-reviewer**
-- Multi-channel communication triage → **chief-of-staff**
-- Autonomous loops / loop monitoring → **loop-operator**
-- Harness config reliability and cost → **harness-optimizer**
+ユーザープロンプトなしで能動的に agent を使用:
+- 複雑な機能リクエスト → **planner**
+- コード記述/変更直後 → **code-reviewer**
+- バグ修正または新機能 → **tdd-guide**
+- アーキテクチャの意思決定 → **architect**
+- セキュリティ上重要なコード → **security-reviewer**
+- マルチチャネルコミュニケーショントリアージ → **chief-of-staff**
+- 自律ループ / ループ監視 → **loop-operator**
+- ハーネス設定の信頼性とコスト → **harness-optimizer**
 
-Use parallel execution for independent operations — launch multiple agents simultaneously.
+独立した操作には並列実行を使用 -- 複数の agent を同時に起動。
 
-## Security Guidelines
+## セキュリティガイドライン
 
-**Before ANY commit:**
-- No hardcoded secrets (API keys, passwords, tokens)
-- All user inputs validated
-- SQL injection prevention (parameterized queries)
-- XSS prevention (sanitized HTML)
-- CSRF protection enabled
-- Authentication/authorization verified
-- Rate limiting on all endpoints
-- Error messages don't leak sensitive data
+**すべてのコミット前に:**
+- ハードコードされたシークレットがない（API キー、パスワード、トークン）
+- すべてのユーザー入力がバリデートされている
+- SQL インジェクション防止（パラメータ化クエリ）
+- XSS 防止（HTML サニタイズ）
+- CSRF 保護が有効
+- 認証/認可が検証済み
+- すべてのエンドポイントにレート制限
+- エラーメッセージが機密データを漏洩しない
 
-**Secret management:** NEVER hardcode secrets. Use environment variables or a secret manager. Validate required secrets at startup. Rotate any exposed secrets immediately.
+**シークレット管理:** シークレットを決してハードコードしない。環境変数またはシークレットマネージャを使用。起動時に必須シークレットをバリデート。露出したシークレットは即座にローテーション。
 
-**If security issue found:** STOP → use security-reviewer agent → fix CRITICAL issues → rotate exposed secrets → review codebase for similar issues.
+**セキュリティ問題が見つかった場合:** 停止 → security-reviewer agent を使用 → CRITICAL な問題を修正 → 露出したシークレットをローテーション → 類似の問題についてコードベースをレビュー。
 
-## Coding Style
+## コーディングスタイル
 
-**Immutability (CRITICAL):** Always create new objects, never mutate. Return new copies with changes applied.
+**不変性（重要）:** 常に新しいオブジェクトを作成、決してミューテーションしない。変更を適用した新しいコピーを返す。
 
-**File organization:** Many small files over few large ones. 200-400 lines typical, 800 max. Organize by feature/domain, not by type. High cohesion, low coupling.
+**ファイル構成:** 少数の大きなファイルより多数の小さなファイル。通常 200-400 行、最大 800 行。型ではなく機能/ドメインごとに整理。高凝集、低結合。
 
-**Error handling:** Handle errors at every level. Provide user-friendly messages in UI code. Log detailed context server-side. Never silently swallow errors.
+**エラーハンドリング:** すべてのレベルでエラーを処理。UI コードではユーザーフレンドリーなメッセージ。サーバー側では詳細なコンテキストをログ。エラーを黙って無視しない。
 
-**Input validation:** Validate all user input at system boundaries. Use schema-based validation. Fail fast with clear messages. Never trust external data.
+**入力バリデーション:** システム境界ですべてのユーザー入力をバリデート。スキーマベースのバリデーションを使用。明確なメッセージで早期に失敗。外部データを決して信頼しない。
 
-**Code quality checklist:**
-- Functions small (<50 lines), files focused (<800 lines)
-- No deep nesting (>4 levels)
-- Proper error handling, no hardcoded values
-- Readable, well-named identifiers
+**コード品質チェックリスト:**
+- 関数は小さく（50 行未満）、ファイルは焦点を絞る（800 行未満）
+- 深いネストなし（4 レベル以下）
+- 適切なエラーハンドリング、ハードコードされた値なし
+- 読みやすく適切に命名された識別子
 
-## Testing Requirements
+## テスト要件
 
-**Minimum coverage: 80%**
+**最小カバレッジ: 80%**
 
-Test types (all required):
-1. **Unit tests** — Individual functions, utilities, components
-2. **Integration tests** — API endpoints, database operations
-3. **E2E tests** — Critical user flows
+テストタイプ（すべて必須）:
+1. **ユニットテスト** -- 個別の関数、ユーティリティ、コンポーネント
+2. **統合テスト** -- API エンドポイント、データベース操作
+3. **E2E テスト** -- 重要なユーザーフロー
 
-**TDD workflow (mandatory):**
-1. Write test first (RED) — test should FAIL
-2. Write minimal implementation (GREEN) — test should PASS
-3. Refactor (IMPROVE) — verify coverage 80%+
+**TDD ワークフロー（必須）:**
+1. まずテストを書く（RED） -- テストは失敗するはず
+2. 最小限の実装を書く（GREEN） -- テストはパスするはず
+3. リファクタリング（IMPROVE） -- カバレッジ 80% 以上を確認
 
-Troubleshoot failures: check test isolation → verify mocks → fix implementation (not tests, unless tests are wrong).
+失敗のトラブルシューティング: テストの分離を確認 → モックを検証 → 実装を修正（テストが間違っている場合を除き、テストではなく実装を修正）。
 
-## Development Workflow
+## 開発ワークフロー
 
-1. **Plan** — Use planner agent, identify dependencies and risks, break into phases
-2. **TDD** — Use tdd-guide agent, write tests first, implement, refactor
-3. **Review** — Use code-reviewer agent immediately, address CRITICAL/HIGH issues
-4. **Capture knowledge in the right place**
-   - Personal debugging notes, preferences, and temporary context → auto memory
-   - Team/project knowledge (architecture decisions, API changes, runbooks) → the project's existing docs structure
-   - If the current task already produces the relevant docs or code comments, do not duplicate the same information elsewhere
-   - If there is no obvious project doc location, ask before creating a new top-level file
-5. **Commit** — Conventional commits format, comprehensive PR summaries
+1. **計画** -- planner agent を使用、依存関係とリスクを特定、フェーズに分解
+2. **TDD** -- tdd-guide agent を使用、テストを先に書く、実装、リファクタリング
+3. **レビュー** -- 直ちに code-reviewer agent を使用、CRITICAL/HIGH の問題に対処
+4. **ナレッジキャプチャ**
+   - 個人的なデバッグメモ、好み、一時的なコンテキスト → 自動メモリ
+   - チーム/プロジェクトの知識（アーキテクチャ決定、API 変更、ランブック） → プロジェクトの既存ドキュメント構造
+   - 現在のタスクが既に関連するドキュメントやコードコメントを生成している場合、同じ情報を別の場所に重複させない
+   - 明確なプロジェクトドキュメントの場所がない場合、新しいトップレベルファイルを作成する前に確認する
+5. **コミット** -- Conventional Commits 形式、包括的な PR サマリー
 
-## Git Workflow
+## Git ワークフロー
 
-**Commit format:** `<type>: <description>` — Types: feat, fix, refactor, docs, test, chore, perf, ci
+**コミット形式:** `<type>: <description>` -- タイプ: feat, fix, refactor, docs, test, chore, perf, ci
 
-**PR workflow:** Analyze full commit history → draft comprehensive summary → include test plan → push with `-u` flag.
+**PR ワークフロー:** 完全なコミット履歴を分析 → 包括的なサマリーをドラフト → テストプランを含める → `-u` フラグでプッシュ。
 
-## Architecture Patterns
+## アーキテクチャパターン
 
-**API response format:** Consistent envelope with success indicator, data payload, error message, and pagination metadata.
+**API レスポンス形式:** 成功インジケータ、データペイロード、エラーメッセージ、ページネーションメタデータを含む一貫したエンベロープ。
 
-**Repository pattern:** Encapsulate data access behind standard interface (findAll, findById, create, update, delete). Business logic depends on abstract interface, not storage mechanism.
+**Repository パターン:** 標準インターフェース（findAll, findById, create, update, delete）の背後にデータアクセスをカプセル化。ビジネスロジックはストレージメカニズムではなく抽象インターフェースに依存。
 
-**Skeleton projects:** Search for battle-tested templates, evaluate with parallel agents (security, extensibility, relevance), clone best match, iterate within proven structure.
+**スケルトンプロジェクト:** 実績のあるテンプレートを検索、並列 agent で評価（セキュリティ、拡張性、関連性）、最適なものをクローン、実績のある構造の中で反復開発。
 
-## Performance
+## パフォーマンス
 
-**Context management:** Avoid last 20% of context window for large refactoring and multi-file features. Lower-sensitivity tasks (single edits, docs, simple fixes) tolerate higher utilization.
+**コンテキスト管理:** 大規模リファクタリングやマルチファイル機能ではコンテキストウィンドウの最後の 20% を避ける。感度が低いタスク（単一ファイル編集、ドキュメント、単純な修正）はより高い利用率を許容。
 
-**Build troubleshooting:** Use build-error-resolver agent → analyze errors → fix incrementally → verify after each fix.
+**ビルドのトラブルシューティング:** build-error-resolver agent を使用 → エラーを分析 → インクリメンタルに修正 → 各修正後に検証。
 
-## Project Structure
+## プロジェクト構造
 
 ```
-agents/          — 28 specialized subagents
-skills/          — 115 workflow skills and domain knowledge
-commands/        — 59 slash commands
-hooks/           — Trigger-based automations
-rules/           — Always-follow guidelines (common + per-language)
-scripts/         — Cross-platform Node.js utilities
-mcp-configs/     — 14 MCP server configurations
-tests/           — Test suite
+agents/          -- 28 の専門サブ agent
+skills/          -- 115 のワークフロースキルとドメイン知識
+commands/        -- 59 のスラッシュコマンド
+hooks/           -- トリガーベースの自動化
+rules/           -- 常に従うガイドライン（common + 言語別）
+scripts/         -- クロスプラットフォーム Node.js ユーティリティ
+mcp-configs/     -- 14 の MCP サーバー設定
+tests/           -- テストスイート
 ```
 
-## Success Metrics
+## 成功指標
 
-- All tests pass with 80%+ coverage
-- No security vulnerabilities
-- Code is readable and maintainable
-- Performance is acceptable
-- User requirements are met
+- すべてのテストが 80% 以上のカバレッジでパス
+- セキュリティ脆弱性なし
+- コードが読みやすく保守しやすい
+- パフォーマンスが許容範囲内
+- ユーザー要件を満たしている

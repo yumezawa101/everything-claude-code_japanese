@@ -1,47 +1,47 @@
-# Rust API Service — Project CLAUDE.md
+# Rust API サービス -- プロジェクト CLAUDE.md
 
-> Real-world example for a Rust API service with Axum, PostgreSQL, and Docker.
-> Copy this to your project root and customize for your service.
+> Rust API サービス + Axum + PostgreSQL + Docker の実践的な例。
+> プロジェクトルートにコピーして、サービスに合わせてカスタマイズしてください。
 
-## Project Overview
+## プロジェクト概要
 
-**Stack:** Rust 1.78+, Axum (web framework), SQLx (async database), PostgreSQL, Tokio (async runtime), Docker
+**技術スタック:** Rust 1.78+, Axum（Web フレームワーク）, SQLx（非同期データベース）, PostgreSQL, Tokio（非同期ランタイム）, Docker
 
-**Architecture:** Layered architecture with handler → service → repository separation. Axum for HTTP, SQLx for type-checked SQL at compile time, Tower middleware for cross-cutting concerns.
+**アーキテクチャ:** handler → service → repository の分離によるレイヤードアーキテクチャ。HTTP に Axum、コンパイル時に型チェックされる SQL に SQLx、横断的関心事に Tower ミドルウェア。
 
-## Critical Rules
+## 重要なルール
 
-### Rust Conventions
+### Rust の規約
 
-- Use `thiserror` for library errors, `anyhow` only in binary crates or tests
-- No `.unwrap()` or `.expect()` in production code — propagate errors with `?`
-- Prefer `&str` over `String` in function parameters; return `String` when ownership transfers
-- Use `clippy` with `#![deny(clippy::all, clippy::pedantic)]` — fix all warnings
-- Derive `Debug` on all public types; derive `Clone`, `PartialEq` only when needed
-- No `unsafe` blocks unless justified with a `// SAFETY:` comment
+- ライブラリエラーには `thiserror`、`anyhow` はバイナリクレートまたはテストのみ
+- 本番コードで `.unwrap()` や `.expect()` 禁止 -- `?` でエラーを伝播
+- 関数パラメータでは `String` より `&str` を推奨。所有権が移転する場合に `String` を返す
+- `clippy` を `#![deny(clippy::all, clippy::pedantic)]` で使用 -- すべての警告を修正
+- すべてのパブリック型に `Debug` を derive。`Clone`、`PartialEq` は必要な場合のみ
+- `// SAFETY:` コメントによる正当化なしに `unsafe` ブロック禁止
 
-### Database
+### データベース
 
-- All queries use SQLx `query!` or `query_as!` macros — compile-time verified against the schema
-- Migrations in `migrations/` using `sqlx migrate` — never alter the database directly
-- Use `sqlx::Pool<Postgres>` as shared state — never create connections per request
-- All queries use parameterized placeholders (`$1`, `$2`) — never string formatting
+- すべてのクエリに SQLx の `query!` または `query_as!` マクロを使用 -- スキーマに対してコンパイル時検証
+- マイグレーションは `migrations/` に `sqlx migrate` を使用 -- データベースを直接変更しない
+- 共有状態として `sqlx::Pool<Postgres>` を使用 -- リクエストごとの接続作成禁止
+- すべてのクエリはパラメータ化プレースホルダ（`$1`, `$2`）を使用 -- 文字列フォーマット禁止
 
 ```rust
-// BAD: String interpolation (SQL injection risk)
+// BAD: 文字列補間（SQL インジェクションリスク）
 let q = format!("SELECT * FROM users WHERE id = '{}'", id);
 
-// GOOD: Parameterized query, compile-time checked
+// GOOD: パラメータ化クエリ、コンパイル時チェック
 let user = sqlx::query_as!(User, "SELECT * FROM users WHERE id = $1", id)
     .fetch_optional(&pool)
     .await?;
 ```
 
-### Error Handling
+### エラーハンドリング
 
-- Define a domain error enum per module with `thiserror`
-- Map errors to HTTP responses via `IntoResponse` — never expose internal details
-- Use `tracing` for structured logging — never `println!` or `eprintln!`
+- モジュールごとに `thiserror` でドメインエラー enum を定義
+- `IntoResponse` でエラーを HTTP レスポンスにマッピング -- 内部詳細を露出しない
+- 構造化ログに `tracing` を使用 -- `println!` や `eprintln!` 禁止
 
 ```rust
 use thiserror::Error;
@@ -74,59 +74,59 @@ impl IntoResponse for AppError {
 }
 ```
 
-### Testing
+### テスト
 
-- Unit tests in `#[cfg(test)]` modules within each source file
-- Integration tests in `tests/` directory using a real PostgreSQL (Testcontainers or Docker)
-- Use `#[sqlx::test]` for database tests with automatic migration and rollback
-- Mock external services with `mockall` or `wiremock`
+- 各ソースファイル内の `#[cfg(test)]` モジュールにユニットテスト
+- `tests/` ディレクトリに実際の PostgreSQL（Testcontainers または Docker）を使用した統合テスト
+- データベーステストには自動マイグレーションとロールバック付きの `#[sqlx::test]` を使用
+- 外部サービスのモックには `mockall` または `wiremock`
 
-### Code Style
+### コードスタイル
 
-- Max line length: 100 characters (enforced by rustfmt)
-- Group imports: `std`, external crates, `crate`/`super` — separated by blank lines
-- Modules: one file per module, `mod.rs` only for re-exports
-- Types: PascalCase, functions/variables: snake_case, constants: UPPER_SNAKE_CASE
+- 最大行長: 100 文字（rustfmt で強制）
+- import のグループ化: `std`、外部クレート、`crate`/`super` -- 空行で区切る
+- モジュール: モジュールごとに 1 ファイル、`mod.rs` は再エクスポートのみ
+- 型: PascalCase、関数/変数: snake_case、定数: UPPER_SNAKE_CASE
 
-## File Structure
+## ファイル構造
 
 ```
 src/
-  main.rs              # Entrypoint, server setup, graceful shutdown
-  lib.rs               # Re-exports for integration tests
-  config.rs            # Environment config with envy or figment
-  router.rs            # Axum router with all routes
+  main.rs              # エントリポイント、サーバーセットアップ、グレースフルシャットダウン
+  lib.rs               # 統合テスト用の再エクスポート
+  config.rs            # envy または figment による環境設定
+  router.rs            # すべてのルートを持つ Axum ルーター
   middleware/
-    auth.rs            # JWT extraction and validation
-    logging.rs         # Request/response tracing
+    auth.rs            # JWT 抽出とバリデーション
+    logging.rs         # リクエスト/レスポンスのトレーシング
   handlers/
-    mod.rs             # Route handlers (thin — delegate to services)
+    mod.rs             # ルートハンドラ（薄く -- サービスに委譲）
     users.rs
     orders.rs
   services/
-    mod.rs             # Business logic
+    mod.rs             # ビジネスロジック
     users.rs
     orders.rs
   repositories/
-    mod.rs             # Database access (SQLx queries)
+    mod.rs             # データベースアクセス（SQLx クエリ）
     users.rs
     orders.rs
   domain/
-    mod.rs             # Domain types, error enums
+    mod.rs             # ドメイン型、エラー enum
     user.rs
     order.rs
 migrations/
   001_create_users.sql
   002_create_orders.sql
 tests/
-  common/mod.rs        # Shared test helpers, test server setup
-  api_users.rs         # Integration tests for user endpoints
-  api_orders.rs        # Integration tests for order endpoints
+  common/mod.rs        # 共有テストヘルパー、テストサーバーセットアップ
+  api_users.rs         # ユーザーエンドポイントの統合テスト
+  api_orders.rs        # 注文エンドポイントの統合テスト
 ```
 
-## Key Patterns
+## 主要パターン
 
-### Handler (Thin)
+### ハンドラ（薄い）
 
 ```rust
 async fn create_user(
@@ -138,7 +138,7 @@ async fn create_user(
 }
 ```
 
-### Service (Business Logic)
+### サービス（ビジネスロジック）
 
 ```rust
 impl UserService {
@@ -155,7 +155,7 @@ impl UserService {
 }
 ```
 
-### Repository (Data Access)
+### Repository（データアクセス）
 
 ```rust
 impl UserRepository {
@@ -183,7 +183,7 @@ impl UserRepository {
 }
 ```
 
-### Integration Test
+### 統合テスト
 
 ```rust
 #[tokio::test]
@@ -210,76 +210,76 @@ async fn test_create_user() {
 #[tokio::test]
 async fn test_create_user_duplicate_email() {
     let app = spawn_test_app().await;
-    // Create first user
+    // 最初のユーザーを作成
     create_test_user(&app, "alice@example.com").await;
-    // Attempt duplicate
+    // 重複を試行
     let response = create_user_request(&app, "alice@example.com").await;
     assert_eq!(response.status(), StatusCode::BAD_REQUEST);
 }
 ```
 
-## Environment Variables
+## 環境変数
 
 ```bash
-# Server
+# サーバー
 HOST=0.0.0.0
 PORT=8080
 RUST_LOG=info,tower_http=debug
 
-# Database
+# データベース
 DATABASE_URL=postgres://user:pass@localhost:5432/myapp
 
-# Auth
+# 認証
 JWT_SECRET=your-secret-key-min-32-chars
 JWT_EXPIRY_HOURS=24
 
-# Optional
+# オプション
 CORS_ALLOWED_ORIGINS=http://localhost:3000
 ```
 
-## Testing Strategy
+## テスト戦略
 
 ```bash
-# Run all tests
+# すべてのテストを実行
 cargo test
 
-# Run with output
+# 出力付きで実行
 cargo test -- --nocapture
 
-# Run specific test module
+# 特定のテストモジュールを実行
 cargo test api_users
 
-# Check coverage (requires cargo-llvm-cov)
+# カバレッジ確認（cargo-llvm-cov が必要）
 cargo llvm-cov --html
 open target/llvm-cov/html/index.html
 
 # Lint
 cargo clippy -- -D warnings
 
-# Format check
+# フォーマットチェック
 cargo fmt -- --check
 ```
 
-## ECC Workflow
+## ECC ワークフロー
 
 ```bash
-# Planning
+# 計画
 /plan "Add order fulfillment with Stripe payment"
 
-# Development with TDD
-/tdd                    # cargo test-based TDD workflow
+# TDD で開発
+/tdd                    # cargo test ベースの TDD ワークフロー
 
-# Review
-/code-review            # Rust-specific code review
-/security-scan          # Dependency audit + unsafe scan
+# レビュー
+/code-review            # Rust 固有のコードレビュー
+/security-scan          # 依存関係監査 + unsafe スキャン
 
-# Verification
-/verify                 # Build, clippy, test, security scan
+# 検証
+/verify                 # ビルド、clippy、テスト、セキュリティスキャン
 ```
 
-## Git Workflow
+## Git ワークフロー
 
-- `feat:` new features, `fix:` bug fixes, `refactor:` code changes
-- Feature branches from `main`, PRs required
-- CI: `cargo fmt --check`, `cargo clippy`, `cargo test`, `cargo audit`
-- Deploy: Docker multi-stage build with `scratch` or `distroless` base
+- `feat:` 新機能、`fix:` バグ修正、`refactor:` コード変更
+- `main` からフィーチャーブランチ、PR 必須
+- CI: `cargo fmt --check`、`cargo clippy`、`cargo test`、`cargo audit`
+- デプロイ: `scratch` または `distroless` ベースの Docker マルチステージビルド
