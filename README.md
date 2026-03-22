@@ -116,15 +116,6 @@ claude --version
 
 ---
 
-## リンク
-
-- **upstream:** [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code)
-- **このフォーク:** [yumezawa101/everything-claude-code_japanese](https://github.com/yumezawa101/everything-claude-code_japanese)
-- **簡潔ガイド:** [Everything Claude Code 簡潔ガイド](https://x.com/affaanmustafa/status/2012378465664745795)
-- **詳細ガイド:** [Everything Claude Code 詳細ガイド](https://x.com/affaanmustafa/status/2014040193557471352)
-
----
-
 ## ライセンス
 
 MIT
