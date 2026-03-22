@@ -1,18 +1,18 @@
 ---
 name: mcp-server-patterns
-description: Build MCP servers with Node/TypeScript SDK — tools, resources, prompts, Zod validation, stdio vs Streamable HTTP. Use Context7 or official MCP docs for latest API.
+description: MCPサーバーの構築パターン -- ツール定義、リソース公開、認証、エラーハンドリング、テスト。Claude Codeと統合するカスタムMCPサーバーの作成時に使用。
 origin: ECC
 ---
 
-# MCP Server Patterns
+# MCPサーバーパターン
 
 The Model Context Protocol (MCP) lets AI assistants call tools, read resources, and use prompts from your server. Use this skill when building or maintaining MCP servers. The SDK API evolves; check Context7 (query-docs for "MCP") or the official MCP documentation for current method names and signatures.
 
-## When to Use
+## 使用タイミング
 
 Use when: implementing a new MCP server, adding tools or resources, choosing stdio vs HTTP, upgrading the SDK, or debugging MCP registration and transport issues.
 
-## How It Works
+## 仕組み
 
 ### Core concepts
 
@@ -33,7 +33,7 @@ Keep server logic (tools + resources) independent of transport so you can plug i
 
 For Cursor, cloud, or other remote clients, use **Streamable HTTP** (single MCP HTTP endpoint per current spec). Support legacy HTTP/SSE only when backward compatibility is required.
 
-## Examples
+## 使用例
 
 ### Install and server setup
 
@@ -52,7 +52,7 @@ Register tools and resources using the API your SDK version provides: some versi
 
 Use **Zod** (or the SDK’s preferred schema format) for input validation.
 
-## Best Practices
+## ベストプラクティス
 
 - **Schema first**: Define input schemas for every tool; document parameters and return shape.
 - **Errors**: Return structured errors or messages the model can interpret; avoid raw stack traces.

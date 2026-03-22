@@ -1,9 +1,9 @@
 ---
-description: "Use when auditing Claude skills and commands for quality. Supports Quick Scan (changed skills only) and Full Stocktake modes with sequential subagent batch evaluation."
+description: インストール済みスキルの棚卸し -- 各スキルのステータス、カバレッジ、重複、不足を確認する。
 origin: ECC
 ---
 
-# skill-stocktake
+# スキル棚卸し
 
 Slash command (`/skill-stocktake`) that audits all Claude skills and commands using a quality checklist + AI holistic judgment. Supports two modes: Quick Scan for recently changed skills, and Full Stocktake for a complete review.
 

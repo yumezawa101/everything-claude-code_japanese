@@ -1,23 +1,23 @@
 ---
 name: frontend-slides
-description: Create stunning, animation-rich HTML presentations from scratch or by converting PowerPoint files. Use when the user wants to build a presentation, convert a PPT/PPTX to web, or create slides for a talk/pitch. Helps non-designers discover their aesthetic through visual exploration rather than abstract choices.
+description: ゼロからまたはPowerPointファイルの変換により、アニメーション豊富なHTMLプレゼンテーションを作成する。プレゼンテーション構築、PPT/PPTXのWeb変換、トーク/ピッチ用スライド作成時に使用。抽象的な選択ではなくビジュアル探索を通じて非デザイナーが自分の美学を発見するのを支援。
 origin: ECC
 ---
 
-# Frontend Slides
+# フロントエンドスライド
 
 Create zero-dependency, animation-rich HTML presentations that run entirely in the browser.
 
 Inspired by the visual exploration approach showcased in work by zarazhangrui (credit: @zarazhangrui).
 
-## When to Activate
+## 発動条件
 
 - Creating a talk deck, pitch deck, workshop deck, or internal presentation
 - Converting `.ppt` or `.pptx` slides into an HTML presentation
 - Improving an existing HTML presentation's layout, motion, or typography
 - Exploring presentation styles with a user who does not know their design preference yet
 
-## Non-Negotiables
+## 必須事項
 
 1. **Zero dependencies**: default to one self-contained HTML file with inline CSS and JS.
 2. **Viewport fit is mandatory**: every slide must fit inside one viewport with no internal scrolling.
@@ -159,7 +159,7 @@ Use these maxima unless the user explicitly asks for denser slides and readabili
 | Quote | 1 quote + attribution |
 | Image | 1 image constrained by viewport |
 
-## Anti-Patterns
+## アンチパターン
 
 - generic startup gradients with no visual identity
 - system-font decks unless intentionally editorial

@@ -1,8 +1,8 @@
-# Generative Media Guide
+# 生成メディアガイド
 
 VideoDB provides AI-powered generation of images, videos, music, sound effects, voice, and text content. All generation methods are on the **Collection** object.
 
-## Prerequisites
+## 前提条件
 
 You need a connection and a collection reference before calling any generation method:
 
@@ -320,7 +320,7 @@ print(result["output"]["summary"])
 print(result["output"]["topics"])
 ```
 
-## Tips
+## ヒント
 
 - **Generated media is persistent**: All generated content is stored in your collection and can be reused.
 - **Three audio methods**: Use `generate_music()` for background music, `generate_sound_effect()` for SFX, and `generate_voice()` for text-to-speech. There is no unified `generate_audio()` method.

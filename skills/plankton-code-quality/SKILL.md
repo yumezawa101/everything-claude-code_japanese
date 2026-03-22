@@ -1,21 +1,21 @@
 ---
 name: plankton-code-quality
-description: "Write-time code quality enforcement using Plankton — auto-formatting, linting, and Claude-powered fixes on every file edit via hooks."
+description: コード品質ゲートの自動化 -- lint、型チェック、テスト実行、セキュリティスキャンを統合した品質パイプライン。
 origin: community
 ---
 
-# Plankton Code Quality Skill
+# Plankton コード品質
 
 Integration reference for Plankton (credit: @alxfazio), a write-time code quality enforcement system for Claude Code. Plankton runs formatters and linters on every file edit via PostToolUse hooks, then spawns Claude subprocesses to fix violations the agent didn't catch.
 
-## When to Use
+## 使用タイミング
 
 - You want automatic formatting and linting on every file edit (not just at commit time)
 - You need defense against agents modifying linter configs to pass instead of fixing code
 - You want tiered model routing for fixes (Haiku for simple style, Sonnet for logic, Opus for types)
 - You work with multiple languages (Python, TypeScript, Shell, YAML, JSON, TOML, Markdown, Dockerfile)
 
-## How It Works
+## 仕組み
 
 ### Three-Phase Architecture
 
@@ -186,7 +186,7 @@ Plankton's `.claude/hooks/config.json` controls all behavior:
 | `HOOK_DEBUG_MODEL=1` | Log model selection decisions |
 | `HOOK_SKIP_PM=1` | Bypass package manager enforcement |
 
-## References
+## 参考
 
 - Plankton (credit: @alxfazio)
 - Plankton REFERENCE.md — Full architecture documentation (credit: @alxfazio)

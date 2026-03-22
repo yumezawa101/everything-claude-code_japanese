@@ -1,14 +1,14 @@
 ---
 name: laravel-security
-description: Laravel security best practices for authn/authz, validation, CSRF, mass assignment, file uploads, secrets, rate limiting, and secure deployment.
+description: 認証/認可、バリデーション、CSRF、マスアサインメント、ファイルアップロード、シークレット、レート制限、セキュアデプロイのためのLaravelセキュリティベストプラクティス。
 origin: ECC
 ---
 
-# Laravel Security Best Practices
+# Laravelセキュリティベストプラクティス
 
 Comprehensive security guidance for Laravel applications to protect against common vulnerabilities.
 
-## When to Activate
+## 発動条件
 
 - Adding authentication or authorization
 - Handling user input and file uploads
@@ -16,7 +16,7 @@ Comprehensive security guidance for Laravel applications to protect against comm
 - Managing secrets and environment settings
 - Hardening production deployments
 
-## How It Works
+## 仕組み
 
 - Middleware provides baseline protections (CSRF via `VerifyCsrfToken`, security headers via `SecurityHeaders`).
 - Guards and policies enforce access control (`auth:sanctum`, `$this->authorize`, policy middleware).

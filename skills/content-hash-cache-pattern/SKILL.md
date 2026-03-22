@@ -1,25 +1,25 @@
 ---
 name: content-hash-cache-pattern
-description: Cache expensive file processing results using SHA-256 content hashes — path-independent, auto-invalidating, with service layer separation.
+description: SHA-256コンテンツハッシュを使用して高コストなファイル処理結果をキャッシュする -- パス非依存、自動無効化、サービス層分離。
 origin: ECC
 ---
 
-# Content-Hash File Cache Pattern
+# Content-Hashファイルキャッシュパターン
 
-Cache expensive file processing results (PDF parsing, text extraction, image analysis) using SHA-256 content hashes as cache keys. Unlike path-based caching, this approach survives file moves/renames and auto-invalidates when content changes.
+SHA-256コンテンツハッシュをキャッシュキーとして使用し、高コストなファイル処理結果（PDF解析、テキスト抽出、画像分析）をキャッシュする。パスベースのキャッシュと異なり、ファイルの移動/リネームに耐え、コンテンツ変更時に自動無効化される。
 
-## When to Activate
+## 発動条件
 
-- Building file processing pipelines (PDF, images, text extraction)
-- Processing cost is high and same files are processed repeatedly
-- Need a `--cache/--no-cache` CLI option
-- Want to add caching to existing pure functions without modifying them
+- ファイル処理パイプライン（PDF、画像、テキスト抽出）の構築
+- 処理コストが高く同じファイルが繰り返し処理される
+- `--cache/--no-cache` CLIオプションが必要
+- 既存の純粋関数を変更せずにキャッシュを追加したい
 
-## Core Pattern
+## コアパターン
 
-### 1. Content-Hash Based Cache Key
+### 1. コンテンツハッシュベースのキャッシュキー
 
-Use file content (not path) as the cache key:
+ファイルの内容（パスではなく）をキャッシュキーとして使用：
 
 ```python
 import hashlib
@@ -41,9 +41,9 @@ def compute_file_hash(path: Path) -> str:
     return sha256.hexdigest()
 ```
 
-**Why content hash?** File rename/move = cache hit. Content change = automatic invalidation. No index file needed.
+**なぜコンテンツハッシュか？** ファイルのリネーム/移動 = キャッシュヒット。コンテンツ変更 = 自動無効化。インデックスファイル不要。
 
-### 2. Frozen Dataclass for Cache Entry
+### 2. Frozen Dataclassによるキャッシュエントリ
 
 ```python
 from dataclasses import dataclass
@@ -55,9 +55,9 @@ class CacheEntry:
     document: ExtractedDocument  # The cached result
 ```
 
-### 3. File-Based Cache Storage
+### 3. ファイルベースのキャッシュストレージ
 
-Each cache entry is stored as `{hash}.json` — O(1) lookup by hash, no index file required.
+各キャッシュエントリは`{hash}.json`として保存 -- ハッシュによるO(1)ルックアップ、インデックスファイル不要。
 
 ```python
 import json
@@ -81,9 +81,9 @@ def read_cache(cache_dir: Path, file_hash: str) -> CacheEntry | None:
         return None  # Treat corruption as cache miss
 ```
 
-### 4. Service Layer Wrapper (SRP)
+### 4. サービス層ラッパー（SRP）
 
-Keep the processing function pure. Add caching as a separate service layer.
+処理関数は純粋に保つ。キャッシュは別のサービス層として追加する。
 
 ```python
 def extract_with_cache(
@@ -112,50 +112,20 @@ def extract_with_cache(
     return doc
 ```
 
-## Key Design Decisions
+## 主要な設計判断
 
-| Decision | Rationale |
+| 判断 | 根拠 |
 |----------|-----------|
-| SHA-256 content hash | Path-independent, auto-invalidates on content change |
-| `{hash}.json` file naming | O(1) lookup, no index file needed |
-| Service layer wrapper | SRP: extraction stays pure, cache is a separate concern |
-| Manual JSON serialization | Full control over frozen dataclass serialization |
-| Corruption returns `None` | Graceful degradation, re-processes on next run |
-| `cache_dir.mkdir(parents=True)` | Lazy directory creation on first write |
+| SHA-256コンテンツハッシュ | パス非依存、コンテンツ変更時に自動無効化 |
+| `{hash}.json`ファイル命名 | O(1)ルックアップ、インデックスファイル不要 |
+| サービス層ラッパー | SRP：抽出は純粋に保ち、キャッシュは別の関心事 |
+| 手動JSONシリアライゼーション | frozen dataclassシリアライゼーションの完全な制御 |
+| 破損時は`None`を返す | 優雅なデグラデーション、次回実行時に再処理 |
 
-## Best Practices
+## ベストプラクティス
 
-- **Hash content, not paths** — paths change, content identity doesn't
-- **Chunk large files** when hashing — avoid loading entire files into memory
-- **Keep processing functions pure** — they should know nothing about caching
-- **Log cache hit/miss** with truncated hashes for debugging
-- **Handle corruption gracefully** — treat invalid cache entries as misses, never crash
-
-## Anti-Patterns to Avoid
-
-```python
-# BAD: Path-based caching (breaks on file move/rename)
-cache = {"/path/to/file.pdf": result}
-
-# BAD: Adding cache logic inside the processing function (SRP violation)
-def extract_text(path, *, cache_enabled=False, cache_dir=None):
-    if cache_enabled:  # Now this function has two responsibilities
-        ...
-
-# BAD: Using dataclasses.asdict() with nested frozen dataclasses
-# (can cause issues with complex nested types)
-data = dataclasses.asdict(entry)  # Use manual serialization instead
-```
-
-## When to Use
-
-- File processing pipelines (PDF parsing, OCR, text extraction, image analysis)
-- CLI tools that benefit from `--cache/--no-cache` options
-- Batch processing where the same files appear across runs
-- Adding caching to existing pure functions without modifying them
-
-## When NOT to Use
-
-- Data that must always be fresh (real-time feeds)
-- Cache entries that would be extremely large (consider streaming instead)
-- Results that depend on parameters beyond file content (e.g., different extraction configs)
+- **パスではなくコンテンツをハッシュする** -- パスは変わる、コンテンツのアイデンティティは変わらない
+- **大きなファイルのハッシュ時はチャンクする** -- ファイル全体をメモリに読み込むのを避ける
+- **処理関数を純粋に保つ** -- キャッシュについて何も知るべきでない
+- **キャッシュヒット/ミスをログ** -- デバッグ用に短縮ハッシュ付きで
+- **破損を優雅に処理する** -- 無効なキャッシュエントリはミスとして扱い、クラッシュしない

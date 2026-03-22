@@ -391,7 +391,7 @@ scene_index.start()
 
 ---
 
-## Events
+## イベント
 
 Events are reusable detection rules. Create them once, attach to any index via alerts.
 

@@ -1,21 +1,21 @@
 ---
 name: laravel-verification
-description: Verification loop for Laravel projects: env checks, linting, static analysis, tests with coverage, security scans, and deployment readiness.
+description: Laravelプロジェクトの検証ループ -- 環境チェック、lint、静的解析、カバレッジ付きテスト、セキュリティスキャン、デプロイ準備。
 origin: ECC
 ---
 
-# Laravel Verification Loop
+# Laravel検証ループ
 
 Run before PRs, after major changes, and pre-deploy.
 
-## When to Use
+## 使用タイミング
 
 - Before opening a pull request for a Laravel project
 - After major refactors or dependency upgrades
 - Pre-deployment verification for staging or production
 - Running full lint -> test -> security -> deploy readiness pipeline
 
-## How It Works
+## 仕組み
 
 - Run phases sequentially from environment checks through deployment readiness so each layer builds on the last.
 - Environment and Composer checks gate everything else; stop immediately if they fail.
@@ -143,7 +143,7 @@ Verify the job produced the expected side effect (log entry, healthcheck table r
 
 Only run this on non-production environments where processing a test job is safe.
 
-## Examples
+## 使用例
 
 Minimal flow:
 

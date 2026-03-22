@@ -1,26 +1,26 @@
 ---
 name: compose-multiplatform-patterns
-description: Compose Multiplatform and Jetpack Compose patterns for KMP projects — state management, navigation, theming, performance, and platform-specific UI.
+description: KMPプロジェクト向けのCompose MultiplatformおよびJetpack Composeパターン -- 状態管理、ナビゲーション、テーマ、パフォーマンス、プラットフォーム固有UI。
 origin: ECC
 ---
 
-# Compose Multiplatform Patterns
+# Compose Multiplatformパターン
 
-Patterns for building shared UI across Android, iOS, Desktop, and Web using Compose Multiplatform and Jetpack Compose. Covers state management, navigation, theming, and performance.
+Compose MultiplatformとJetpack Composeを使用して、Android、iOS、Desktop、Web間で共有UIを構築するためのパターン。状態管理、ナビゲーション、テーマ、パフォーマンスをカバー。
 
-## When to Activate
+## 発動条件
 
-- Building Compose UI (Jetpack Compose or Compose Multiplatform)
-- Managing UI state with ViewModels and Compose state
-- Implementing navigation in KMP or Android projects
-- Designing reusable composables and design systems
-- Optimizing recomposition and rendering performance
+- Compose UI（Jetpack ComposeまたはCompose Multiplatform）の構築
+- ViewModelとCompose stateによるUI状態管理
+- KMPまたはAndroidプロジェクトでのナビゲーション実装
+- 再利用可能なcomposableとデザインシステムの設計
+- リコンポジションとレンダリングパフォーマンスの最適化
 
-## State Management
+## 状態管理
 
-### ViewModel + Single State Object
+### ViewModel + 単一状態オブジェクト
 
-Use a single data class for screen state. Expose it as `StateFlow` and collect in Compose:
+画面状態には単一のdata classを使用。`StateFlow`として公開しComposeで収集：
 
 ```kotlin
 data class ItemListState(
@@ -53,7 +53,7 @@ class ItemListViewModel(
 }
 ```
 
-### Collecting State in Compose
+### Composeでの状態収集
 
 ```kotlin
 @Composable
@@ -75,9 +75,9 @@ private fun ItemListContent(
 }
 ```
 
-### Event Sink Pattern
+### イベントシンクパターン
 
-For complex screens, use a sealed interface for events instead of multiple callback lambdas:
+複雑な画面では、複数のコールバックラムダの代わりにsealed interfaceを使用：
 
 ```kotlin
 sealed interface ItemListEvent {
@@ -102,11 +102,11 @@ ItemListContent(
 )
 ```
 
-## Navigation
+## ナビゲーション
 
-### Type-Safe Navigation (Compose Navigation 2.8+)
+### 型安全ナビゲーション（Compose Navigation 2.8+）
 
-Define routes as `@Serializable` objects:
+ルートを`@Serializable`オブジェクトとして定義：
 
 ```kotlin
 @Serializable data object HomeRoute
@@ -128,91 +128,11 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
 }
 ```
 
-### Dialog and Bottom Sheet Navigation
+## パフォーマンス
 
-Use `dialog()` and overlay patterns instead of imperative show/hide:
+### スキップ可能なリコンポジションのための安定型
 
-```kotlin
-NavHost(navController, startDestination = HomeRoute) {
-    composable<HomeRoute> { /* ... */ }
-    dialog<ConfirmDeleteRoute> { backStackEntry ->
-        val route = backStackEntry.toRoute<ConfirmDeleteRoute>()
-        ConfirmDeleteDialog(
-            itemId = route.itemId,
-            onConfirm = { navController.popBackStack() },
-            onDismiss = { navController.popBackStack() }
-        )
-    }
-}
-```
-
-## Composable Design
-
-### Slot-Based APIs
-
-Design composables with slot parameters for flexibility:
-
-```kotlin
-@Composable
-fun AppCard(
-    modifier: Modifier = Modifier,
-    header: @Composable () -> Unit = {},
-    content: @Composable ColumnScope.() -> Unit,
-    actions: @Composable RowScope.() -> Unit = {}
-) {
-    Card(modifier = modifier) {
-        Column {
-            header()
-            Column(content = content)
-            Row(horizontalArrangement = Arrangement.End, content = actions)
-        }
-    }
-}
-```
-
-### Modifier Ordering
-
-Modifier order matters — apply in this sequence:
-
-```kotlin
-Text(
-    text = "Hello",
-    modifier = Modifier
-        .padding(16.dp)          // 1. Layout (padding, size)
-        .clip(RoundedCornerShape(8.dp))  // 2. Shape
-        .background(Color.White) // 3. Drawing (background, border)
-        .clickable { }           // 4. Interaction
-)
-```
-
-## KMP Platform-Specific UI
-
-### expect/actual for Platform Composables
-
-```kotlin
-// commonMain
-@Composable
-expect fun PlatformStatusBar(darkIcons: Boolean)
-
-// androidMain
-@Composable
-actual fun PlatformStatusBar(darkIcons: Boolean) {
-    val systemUiController = rememberSystemUiController()
-    SideEffect { systemUiController.setStatusBarColor(Color.Transparent, darkIcons) }
-}
-
-// iosMain
-@Composable
-actual fun PlatformStatusBar(darkIcons: Boolean) {
-    // iOS handles this via UIKit interop or Info.plist
-}
-```
-
-## Performance
-
-### Stable Types for Skippable Recomposition
-
-Mark classes as `@Stable` or `@Immutable` when all properties are stable:
+すべてのプロパティが安定している場合、クラスに`@Stable`または`@Immutable`をマーク：
 
 ```kotlin
 @Immutable
@@ -224,7 +144,7 @@ data class ItemUiModel(
 )
 ```
 
-### Use `key()` and Lazy Lists Correctly
+### `key()`とLazy Listの正しい使用
 
 ```kotlin
 LazyColumn {
@@ -237,7 +157,7 @@ LazyColumn {
 }
 ```
 
-### Defer Reads with `derivedStateOf`
+### `derivedStateOf`による読み取り遅延
 
 ```kotlin
 val listState = rememberLazyListState()
@@ -246,54 +166,15 @@ val showScrollToTop by remember {
 }
 ```
 
-### Avoid Allocations in Recomposition
+## 避けるべきアンチパターン
 
-```kotlin
-// BAD — new lambda and list every recomposition
-items.filter { it.isActive }.forEach { ActiveItem(it, onClick = { handle(it) }) }
+- ViewModelで`MutableStateFlow` + `collectAsStateWithLifecycle`がライフサイクル的に安全な場合に`mutableStateOf`を使用する
+- `NavController`をcomposableの深くに渡す -- 代わりにラムダコールバックを渡す
+- `@Composable`関数内での重い計算 -- ViewModelまたは`remember {}`に移動する
+- ViewModel initの代替として`LaunchedEffect(Unit)`を使用する
+- composableパラメータで新しいオブジェクトインスタンスを作成する -- 不必要なリコンポジションを引き起こす
 
-// GOOD — key each item so callbacks stay attached to the right row
-val activeItems = remember(items) { items.filter { it.isActive } }
-activeItems.forEach { item ->
-    key(item.id) {
-        ActiveItem(item, onClick = { handle(item) })
-    }
-}
-```
+## 参考
 
-## Theming
-
-### Material 3 Dynamic Theming
-
-```kotlin
-@Composable
-fun AppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
-) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            if (darkTheme) dynamicDarkColorScheme(LocalContext.current)
-            else dynamicLightColorScheme(LocalContext.current)
-        }
-        darkTheme -> darkColorScheme()
-        else -> lightColorScheme()
-    }
-
-    MaterialTheme(colorScheme = colorScheme, content = content)
-}
-```
-
-## Anti-Patterns to Avoid
-
-- Using `mutableStateOf` in ViewModels when `MutableStateFlow` with `collectAsStateWithLifecycle` is safer for lifecycle
-- Passing `NavController` deep into composables — pass lambda callbacks instead
-- Heavy computation inside `@Composable` functions — move to ViewModel or `remember {}`
-- Using `LaunchedEffect(Unit)` as a substitute for ViewModel init — it re-runs on configuration change in some setups
-- Creating new object instances in composable parameters — causes unnecessary recomposition
-
-## References
-
-See skill: `android-clean-architecture` for module structure and layering.
-See skill: `kotlin-coroutines-flows` for coroutine and Flow patterns.
+スキル`android-clean-architecture`でモジュール構造とレイヤリングを参照。
+スキル`kotlin-coroutines-flows`でコルーチンとFlowパターンを参照。

@@ -1,12 +1,12 @@
 # Capture Guide
 
-## Overview
+## 概要
 
 VideoDB Capture enables real-time screen and audio recording with AI processing. Desktop capture currently supports **macOS** only.
 
 For code-level details (SDK methods, event structures, AI pipelines), see [capture-reference.md](capture-reference.md).
 
-## Quick Start
+## クイックスタート
 
 1. **Start WebSocket listener**: `python scripts/ws_listener.py --clear &`
 2. **Run capture code** (see Complete Capture Workflow below)

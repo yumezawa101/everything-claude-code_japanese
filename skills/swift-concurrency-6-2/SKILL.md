@@ -3,11 +3,11 @@ name: swift-concurrency-6-2
 description: Swift 6.2 Approachable Concurrency — single-threaded by default, @concurrent for explicit background offloading, isolated conformances for main actor types.
 ---
 
-# Swift 6.2 Approachable Concurrency
+# Swift Concurrency 6.2
 
 Patterns for adopting Swift 6.2's concurrency model where code runs single-threaded by default and concurrency is introduced explicitly. Eliminates common data-race errors without sacrificing performance.
 
-## When to Activate
+## 発動条件
 
 - Migrating Swift 5.x or 6.0/6.1 projects to Swift 6.2
 - Resolving data-race safety compiler errors
@@ -50,7 +50,7 @@ final class StickerModel {
 }
 ```
 
-## Core Pattern — Isolated Conformances
+## コアパターン — Isolated Conformances
 
 MainActor types can now conform to non-isolated protocols safely:
 
@@ -91,7 +91,7 @@ nonisolated struct ImageExporter {
 }
 ```
 
-## Core Pattern — Global and Static Variables
+## コアパターン — Global and Static Variables
 
 Protect global/static state with MainActor:
 
@@ -132,7 +132,7 @@ extension StickerModel: Exportable {  // Implicitly @MainActor conformance
 
 This mode is opt-in and recommended for apps, scripts, and other executable targets.
 
-## Core Pattern — @concurrent for Background Work
+## コアパターン — @concurrent for Background Work
 
 When you need actual parallelism, explicitly offload with `@concurrent`:
 
@@ -188,7 +188,7 @@ To use `@concurrent`:
 5. **Add `@concurrent` where needed**: Profile first, then offload hot paths
 6. **Test thoroughly**: Data-race issues become compile-time errors
 
-## Best Practices
+## ベストプラクティス
 
 - **Start on MainActor** — write single-threaded code first, optimize later
 - **Use `@concurrent` only for CPU-intensive work** — image processing, compression, complex computation
@@ -198,7 +198,7 @@ To use `@concurrent`:
 - **Use isolated conformances** instead of `nonisolated` workarounds or `@Sendable` wrappers
 - **Migrate incrementally** — enable features one at a time in build settings
 
-## Anti-Patterns to Avoid
+## 避けるべきアンチパターン
 
 - Applying `@concurrent` to every async function (most don't need background execution)
 - Using `nonisolated` to suppress compiler errors without understanding isolation
@@ -207,7 +207,7 @@ To use `@concurrent`:
 - Fighting the compiler — if it reports a data race, the code has a real concurrency issue
 - Assuming all async code runs in the background (Swift 6.2 default: stays on calling actor)
 
-## When to Use
+## 使用タイミング
 
 - All new Swift 6.2+ projects (Approachable Concurrency is the recommended default)
 - Migrating existing apps from Swift 5.x or 6.0/6.1 concurrency

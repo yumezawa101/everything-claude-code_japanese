@@ -1,10 +1,10 @@
 ---
 name: search-first
-description: Research-before-coding workflow. Search for existing tools, libraries, and patterns before writing custom code. Invokes the researcher agent.
+description: コード変更前にまずコードベースを検索する。既存の実装、パターン、規約を理解してから作業を開始する。
 origin: ECC
 ---
 
-# /search-first — Research Before You Code
+# Search First
 
 Systematizes the "search for existing solutions before implementing" workflow.
 
@@ -16,7 +16,7 @@ Use this skill when:
 - The user asks "add X functionality" and you're about to write code
 - Before creating a new utility, helper, or abstraction
 
-## Workflow
+## ワークフロー
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -124,7 +124,7 @@ Combine for progressive discovery:
 - Cycle 2: Evaluate top candidates in detail
 - Cycle 3: Test compatibility with project constraints
 
-## Examples
+## 使用例
 
 ### Example 1: "Add dead link checking"
 ```
@@ -153,7 +153,7 @@ Action: ADOPT + EXTEND — install ajv-cli, write project-specific schema
 Result: 1 package + 1 schema file, no custom validation logic
 ```
 
-## Anti-Patterns
+## アンチパターン
 
 - **Jumping to code**: Writing a utility without checking if one exists
 - **Ignoring MCP**: Not checking if an MCP server already provides the capability

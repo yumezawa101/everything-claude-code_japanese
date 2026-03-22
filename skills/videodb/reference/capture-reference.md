@@ -1,4 +1,4 @@
-# Capture Reference
+# キャプチャリファレンス
 
 Code-level details for VideoDB capture sessions. For workflow guide, see [capture.md](capture.md).
 
@@ -220,7 +220,7 @@ ws_id = ws.connection_id
 
 ## CaptureSession
 
-### Connection Methods
+### 接続 Methods
 
 | Method | Returns | Description |
 |--------|---------|-------------|

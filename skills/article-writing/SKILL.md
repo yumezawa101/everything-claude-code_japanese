@@ -1,85 +1,85 @@
 ---
 name: article-writing
-description: Write articles, guides, blog posts, tutorials, newsletter issues, and other long-form content in a distinctive voice derived from supplied examples or brand guidance. Use when the user wants polished written content longer than a paragraph, especially when voice consistency, structure, and credibility matter.
+description: 記事、ガイド、ブログ記事、チュートリアル、ニュースレター、その他の長文コンテンツを、提供された例やブランドガイダンスから導き出された独自のボイスで執筆する。ボイスの一貫性、構造、信頼性が重要な、段落を超える洗練された文章コンテンツが必要な場合に使用する。
 origin: ECC
 ---
 
 # Article Writing
 
-Write long-form content that sounds like a real person or brand, not generic AI output.
+汎用AIの出力ではなく、実在の人物やブランドのように聞こえる長文コンテンツを書く。
 
-## When to Activate
+## 発動条件
 
-- drafting blog posts, essays, launch posts, guides, tutorials, or newsletter issues
-- turning notes, transcripts, or research into polished articles
-- matching an existing founder, operator, or brand voice from examples
-- tightening structure, pacing, and evidence in already-written long-form copy
+- ブログ記事、エッセイ、ローンチ投稿、ガイド、チュートリアル、ニュースレターの下書き
+- メモ、トランスクリプト、リサーチを洗練された記事に変換する
+- 例から既存のファウンダー、オペレーター、ブランドボイスに合わせる
+- 既に書かれた長文コピーの構造、ペーシング、エビデンスを引き締める
 
-## Core Rules
+## コアルール
 
-1. Lead with the concrete thing: example, output, anecdote, number, screenshot description, or code block.
-2. Explain after the example, not before.
-3. Prefer short, direct sentences over padded ones.
-4. Use specific numbers when available and sourced.
-5. Never invent biographical facts, company metrics, or customer evidence.
+1. 具体的なものから始める：例、出力、エピソード、数字、スクリーンショットの説明、コードブロック。
+2. 例の後に説明する。前ではなく。
+3. 冗長な文よりも短く直接的な文を好む。
+4. 利用可能でソースがある場合は具体的な数字を使用する。
+5. 経歴的事実、企業指標、顧客エビデンスを捏造しない。
 
-## Voice Capture Workflow
+## ボイスキャプチャワークフロー
 
-If the user wants a specific voice, collect one or more of:
-- published articles
-- newsletters
-- X / LinkedIn posts
-- docs or memos
-- a short style guide
+ユーザーが特定のボイスを求める場合、以下のいずれかを収集する：
+- 公開記事
+- ニュースレター
+- X / LinkedIn投稿
+- ドキュメントやメモ
+- 簡単なスタイルガイド
 
-Then extract:
-- sentence length and rhythm
-- whether the voice is formal, conversational, or sharp
-- favored rhetorical devices such as parentheses, lists, fragments, or questions
-- tolerance for humor, opinion, and contrarian framing
-- formatting habits such as headers, bullets, code blocks, and pull quotes
+そこから抽出する：
+- 文の長さとリズム
+- ボイスがフォーマル、会話的、シャープのいずれか
+- 好まれる修辞手法（括弧、リスト、断片、質問など）
+- ユーモア、意見、逆張りフレーミングの許容度
+- フォーマットの習慣（見出し、箇条書き、コードブロック、引用など）
 
-If no voice references are given, default to a direct, operator-style voice: concrete, practical, and low on hype.
+ボイスの参照が提供されない場合は、直接的なオペレータースタイルのボイスをデフォルトとする：具体的、実用的、誇大表現が少ない。
 
-## Banned Patterns
+## 禁止パターン
 
-Delete and rewrite any of these:
-- generic openings like "In today's rapidly evolving landscape"
-- filler transitions such as "Moreover" and "Furthermore"
-- hype phrases like "game-changer", "cutting-edge", or "revolutionary"
-- vague claims without evidence
-- biography or credibility claims not backed by provided context
+以下のいずれかを見つけたら削除して書き直す：
+- 「今日の急速に進化する状況で」のような汎用的な書き出し
+- 「さらに」「加えて」のようなフィラー遷移
+- 「ゲームチェンジャー」「最先端」「革命的」のような誇大フレーズ
+- エビデンスのない曖昧な主張
+- 提供されたコンテキストに裏付けられていない経歴や信頼性の主張
 
-## Writing Process
+## 執筆プロセス
 
-1. Clarify the audience and purpose.
-2. Build a skeletal outline with one purpose per section.
-3. Start each section with evidence, example, or scene.
-4. Expand only where the next sentence earns its place.
-5. Remove anything that sounds templated or self-congratulatory.
+1. オーディエンスと目的を明確にする。
+2. セクションごとに1つの目的を持つ骨格アウトラインを構築する。
+3. 各セクションをエビデンス、例、場面で始める。
+4. 次の文がその場所を正当化する場合にのみ展開する。
+5. テンプレート的または自画自賛に聞こえるものを削除する。
 
-## Structure Guidance
+## 構造ガイダンス
 
-### Technical Guides
-- open with what the reader gets
-- use code or terminal examples in every major section
-- end with concrete takeaways, not a soft summary
+### テクニカルガイド
+- 読者が得られるものから始める
+- すべての主要セクションにコードまたはターミナルの例を使用する
+- 柔らかいまとめではなく、具体的なテイクアウェイで締める
 
-### Essays / Opinion Pieces
-- start with tension, contradiction, or a sharp observation
-- keep one argument thread per section
-- use examples that earn the opinion
+### エッセイ / 意見記事
+- 緊張、矛盾、鋭い観察から始める
+- セクションごとに1つの論点スレッドを維持する
+- 意見を正当化する例を使用する
 
-### Newsletters
-- keep the first screen strong
-- mix insight with updates, not diary filler
-- use clear section labels and easy skim structure
+### ニュースレター
+- 最初の画面を強力にする
+- インサイトと更新を混ぜる（日記的なフィラーではなく）
+- 明確なセクションラベルと読みやすいスキム構造を使用する
 
-## Quality Gate
+## 品質ゲート
 
-Before delivering:
-- verify factual claims against provided sources
-- remove filler and corporate language
-- confirm the voice matches the supplied examples
-- ensure every section adds new information
-- check formatting for the intended platform
+納品前に：
+- 提供されたソースに対して事実の主張を検証する
+- フィラーとコーポレート言語を削除する
+- ボイスが提供された例と一致することを確認する
+- すべてのセクションが新しい情報を追加していることを確認する
+- 対象プラットフォームに合わせてフォーマットを確認する

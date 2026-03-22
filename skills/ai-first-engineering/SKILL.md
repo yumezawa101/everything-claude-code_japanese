@@ -1,51 +1,51 @@
 ---
 name: ai-first-engineering
-description: Engineering operating model for teams where AI agents generate a large share of implementation output.
+description: AIエージェントが実装出力の大部分を生成するチームのためのエンジニアリング運用モデル。
 origin: ECC
 ---
 
 # AI-First Engineering
 
-Use this skill when designing process, reviews, and architecture for teams shipping with AI-assisted code generation.
+AIアシストによるコード生成でプロダクトを出荷するチームのプロセス、レビュー、アーキテクチャを設計する際にこのスキルを使用する。
 
-## Process Shifts
+## プロセスの変化
 
-1. Planning quality matters more than typing speed.
-2. Eval coverage matters more than anecdotal confidence.
-3. Review focus shifts from syntax to system behavior.
+1. 計画の品質がタイピング速度よりも重要になる。
+2. evalカバレッジが経験に基づく自信よりも重要になる。
+3. レビューの焦点が構文からシステム動作に移る。
 
-## Architecture Requirements
+## アーキテクチャ要件
 
-Prefer architectures that are agent-friendly:
-- explicit boundaries
-- stable contracts
-- typed interfaces
-- deterministic tests
+エージェントフレンドリーなアーキテクチャを優先する：
+- 明示的な境界
+- 安定した契約
+- 型付きインターフェース
+- 決定論的テスト
 
-Avoid implicit behavior spread across hidden conventions.
+隠れた慣例に分散した暗黙的な動作を避ける。
 
-## Code Review in AI-First Teams
+## AI-Firstチームにおけるコードレビュー
 
-Review for:
-- behavior regressions
-- security assumptions
-- data integrity
-- failure handling
-- rollout safety
+レビュー対象：
+- 動作のリグレッション
+- セキュリティの前提条件
+- データ整合性
+- 失敗処理
+- ロールアウトの安全性
 
-Minimize time spent on style issues already covered by automation.
+自動化で既にカバーされているスタイルの問題に時間を費やすことを最小化する。
 
-## Hiring and Evaluation Signals
+## 採用と評価のシグナル
 
-Strong AI-first engineers:
-- decompose ambiguous work cleanly
-- define measurable acceptance criteria
-- produce high-signal prompts and evals
-- enforce risk controls under delivery pressure
+優秀なAI-Firstエンジニア：
+- 曖昧な作業をきれいに分解する
+- 測定可能な受け入れ基準を定義する
+- 高シグナルなプロンプトとevalを生成する
+- デリバリープレッシャー下でリスク制御を維持する
 
-## Testing Standard
+## テスト基準
 
-Raise testing bar for generated code:
-- required regression coverage for touched domains
-- explicit edge-case assertions
-- integration checks for interface boundaries
+生成コードのテスト基準を引き上げる：
+- 影響を受けるドメインのリグレッションカバレッジを必須とする
+- 明示的なエッジケースアサーション
+- インターフェース境界の統合チェック

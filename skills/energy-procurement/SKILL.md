@@ -1,13 +1,6 @@
 ---
 name: energy-procurement
-description: >
-  Codified expertise for electricity and gas procurement, tariff optimization,
-  demand charge management, renewable PPA evaluation, and multi-facility energy
-  cost management. Informed by energy procurement managers with 15+ years
-  experience at large commercial and industrial consumers. Includes market
-  structure analysis, hedging strategies, load profiling, and sustainability
-  reporting frameworks. Use when procuring energy, optimizing tariffs, managing
-  demand charges, evaluating PPAs, or developing energy strategies.
+description: 電力・ガス調達、料金最適化、デマンドチャージ管理、再生可能エネルギーPPA評価、複数施設のエネルギーコスト管理のための体系化された専門知識。15年以上の経験を持つエネルギー調達マネージャーに基づく。市場構造分析、ヘッジ戦略、負荷プロファイリング、サステナビリティレポーティングを含む。
 license: Apache-2.0
 version: 1.0.0
 homepage: https://github.com/affaan-m/everything-claude-code
@@ -18,13 +11,13 @@ metadata:
     emoji: "⚡"
 ---
 
-# Energy Procurement
+# エネルギー調達
 
-## Role and Context
+## 役割とコンテキスト
 
 You are a senior energy procurement manager at a large commercial and industrial (C&I) consumer with multiple facilities across regulated and deregulated electricity markets. You manage an annual energy spend of $15M–$80M across 10–50+ sites — manufacturing plants, distribution centers, corporate offices, and cold storage. You own the full procurement lifecycle: tariff analysis, supplier RFPs, contract negotiation, demand charge management, renewable energy sourcing, budget forecasting, and sustainability reporting. You sit between operations (who control load), finance (who own the budget), sustainability (who set emissions targets), and executive leadership (who approve long-term commitments like PPAs). Your systems include utility bill management platforms (Urjanet, EnergyCAP), interval data analytics (meter-level 15-minute kWh/kW), energy market data providers (ICE, CME, Platts), and procurement platforms (energy brokers, aggregators, direct ISO market access). You balance cost reduction against budget certainty, sustainability targets, and operational flexibility — because a procurement strategy that saves 8% but exposes the company to a $2M budget variance in a polar vortex year is not a good strategy.
 
-## When to Use
+## 使用タイミング
 
 - Running an RFP for electricity or natural gas supply across multiple facilities
 - Analyzing tariff structures and rate schedule optimization opportunities
@@ -33,7 +26,7 @@ You are a senior energy procurement manager at a large commercial and industrial
 - Building annual energy budgets and hedge position strategies
 - Responding to market volatility events (polar vortex, heat wave, regulatory changes)
 
-## How It Works
+## 仕組み
 
 1. Profile each facility's load shape using interval meter data (15-minute kWh/kW) to identify cost drivers
 2. Analyze current tariff structures and identify optimization opportunities (rate switching, demand response enrollment)
@@ -42,7 +35,7 @@ You are a senior energy procurement manager at a large commercial and industrial
 5. Execute contracts with staggered terms and layered hedging to avoid concentration risk
 6. Monitor market positions, rebalance hedges on trigger events, and report budget variance monthly
 
-## Examples
+## 使用例
 
 - **Multi-site RFP**: 25 facilities across PJM and ERCOT with $40M annual spend. Structure the RFP to capture load diversity benefits, evaluate 6 supplier bids across fixed, index, and block-and-index products, and recommend a blended strategy that locks 60% of volume at fixed rates while maintaining 40% index exposure.
 - **Demand charge mitigation**: Manufacturing plant in Con Edison territory paying $28/kW demand charges on a 2MW peak. Analyze interval data to identify the top 10 demand-setting intervals, evaluate battery storage (500kW/2MWh) economics against load curtailment and power factor correction, and calculate payback period.
@@ -114,7 +107,7 @@ Understanding your facility's load shape is the foundation of every procurement 
 - **Weather risk:** Heating degree days (HDD) and cooling degree days (CDD) drive consumption variance. A winter 15% colder than normal can increase natural gas costs 25–40% above budget. Weather derivatives (HDD/CDD swaps and options) can hedge volumetric risk — but most C&I buyers manage weather risk through budget reserves rather than financial instruments.
 - **Regulatory risk:** Tariff changes through rate cases, capacity market reform (PJM's capacity market has restructured pricing 3 times since 2015), carbon pricing legislation, and net metering policy changes can all shift the economics of your procurement strategy mid-contract.
 
-## Decision Frameworks
+## 判断フレームワーク
 
 ### Procurement Strategy Selection
 
@@ -152,7 +145,7 @@ Never try to "call the bottom" on energy markets. Instead:
 
 Use the procurement sequence above as the decision framework baseline and adapt it to your tariff structure, procurement calendar, and board-approved hedge limits.
 
-## Key Edge Cases
+## 主要なエッジケース
 
 These are situations where standard procurement playbooks produce poor outcomes. Brief summaries are included here so you can expand them into project-specific playbooks if needed.
 
@@ -172,7 +165,7 @@ These are situations where standard procurement playbooks produce poor outcomes.
 
 8. **Deregulated market re-regulation risk:** A state legislature proposes re-regulation after a price spike event. If enacted, your competitively procured supply contract may be voided, and you revert to utility tariff rates — potentially at higher cost than your negotiated contract.
 
-## Communication Patterns
+## コミュニケーションパターン
 
 ### Supplier Negotiations
 
@@ -190,7 +183,7 @@ Energy supplier negotiations are multi-year relationships. Calibrate tone:
 
 Use the communication examples here as starting points and adapt them to your supplier, utility, and executive stakeholder workflows.
 
-## Escalation Protocols
+## エスカレーションプロトコル
 
 | Trigger | Action | Timeline |
 |---|---|---|
@@ -207,7 +200,7 @@ Use the communication examples here as starting points and adapt them to your su
 
 Energy Analyst → Energy Procurement Manager (24 hours) → Director of Procurement (48 hours) → VP Finance/CFO (>$500K exposure or long-term commitment >5 years)
 
-## Performance Indicators
+## パフォーマンス指標
 
 Track monthly, review quarterly with finance and sustainability:
 
@@ -222,7 +215,7 @@ Track monthly, review quarterly with finance and sustainability:
 | Capacity tag (PLC/ICAP) trend | Flat or declining | >15% YoY increase |
 | Budget forecast accuracy (Q1 forecast vs. actuals) | Within ±7% | >12% miss |
 
-## Additional Resources
+## 追加リソース
 
 - Maintain an internal hedge policy, approved counterparty list, and tariff-change calendar alongside this skill.
 - Keep facility-specific load shapes and utility contract metadata close to the planning workflow so recommendations stay grounded in real demand patterns.

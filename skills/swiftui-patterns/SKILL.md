@@ -3,11 +3,11 @@ name: swiftui-patterns
 description: SwiftUI architecture patterns, state management with @Observable, view composition, navigation, performance optimization, and modern iOS/macOS UI best practices.
 ---
 
-# SwiftUI Patterns
+# SwiftUIパターン
 
 Modern SwiftUI patterns for building declarative, performant user interfaces on Apple platforms. Covers the Observation framework, view composition, type-safe navigation, and performance optimization.
 
-## When to Activate
+## 発動条件
 
 - Building SwiftUI views and managing state (`@State`, `@Observable`, `@Binding`)
 - Designing navigation flows with `NavigationStack`
@@ -245,7 +245,7 @@ Use `#Preview` macro with inline mock data for fast iteration:
 }
 ```
 
-## Anti-Patterns to Avoid
+## 避けるべきアンチパターン
 
 - Using `ObservableObject` / `@Published` / `@StateObject` / `@EnvironmentObject` in new code — migrate to `@Observable`
 - Putting async work directly in `body` or `init` — use `.task {}` or explicit load methods
@@ -253,7 +253,7 @@ Use `#Preview` macro with inline mock data for fast iteration:
 - Using `AnyView` type erasure — prefer `@ViewBuilder` or `Group` for conditional views
 - Ignoring `Sendable` requirements when passing data to/from actors
 
-## References
+## 参考
 
 See skill: `swift-actor-persistence` for actor-based persistence patterns.
 See skill: `swift-protocol-di-testing` for protocol-based DI and testing with Swift Testing.

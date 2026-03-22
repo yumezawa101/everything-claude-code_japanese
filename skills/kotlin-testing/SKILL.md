@@ -1,14 +1,14 @@
 ---
 name: kotlin-testing
-description: Kotlin testing patterns with Kotest, MockK, coroutine testing, property-based testing, and Kover coverage. Follows TDD methodology with idiomatic Kotlin practices.
+description: Kotest、MockK、コルーチンテスト、プロパティベーステスト、Koverカバレッジを使用したKotlinテストパターン。イディオマティックなKotlinプラクティスによるTDD方法論に従う。
 origin: ECC
 ---
 
-# Kotlin Testing Patterns
+# Kotlinテストパターン
 
 Comprehensive Kotlin testing patterns for writing reliable, maintainable tests following TDD methodology with Kotest and MockK.
 
-## When to Use
+## 使用タイミング
 
 - Writing new Kotlin functions or classes
 - Adding test coverage to existing Kotlin code
@@ -16,7 +16,7 @@ Comprehensive Kotlin testing patterns for writing reliable, maintainable tests f
 - Following TDD workflow in Kotlin projects
 - Configuring Kover for code coverage
 
-## How It Works
+## 仕組み
 
 1. **Identify target code** — Find the function, class, or module to test
 2. **Write a Kotest spec** — Choose a spec style (StringSpec, FunSpec, BehaviorSpec) matching the test scope
@@ -26,11 +26,11 @@ Comprehensive Kotlin testing patterns for writing reliable, maintainable tests f
 6. **Refactor** — Improve the implementation while keeping tests green
 7. **Check coverage** — Run `./gradlew koverHtmlReport` and verify 80%+ coverage
 
-## Examples
+## 使用例
 
 The following sections contain detailed, runnable examples for each testing pattern:
 
-### Quick Reference
+### クイックリファレンス
 
 - **Kotest specs** — StringSpec, FunSpec, BehaviorSpec, DescribeSpec examples in [Kotest Spec Styles](#kotest-spec-styles)
 - **Mocking** — MockK setup, coroutine mocking, argument capture in [MockK](#mockk)
@@ -776,7 +776,7 @@ class ApiRoutesTest : FunSpec({
 ./gradlew test --continuous
 ```
 
-### Best Practices
+### ベストプラクティス
 
 **DO:**
 - Write tests FIRST (TDD)

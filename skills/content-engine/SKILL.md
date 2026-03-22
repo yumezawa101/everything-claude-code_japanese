@@ -1,88 +1,79 @@
 ---
 name: content-engine
-description: Create platform-native content systems for X, LinkedIn, TikTok, YouTube, newsletters, and repurposed multi-platform campaigns. Use when the user wants social posts, threads, scripts, content calendars, or one source asset adapted cleanly across platforms.
+description: X、LinkedIn、TikTok、YouTube、ニュースレター、マルチプラットフォームキャンペーン向けのプラットフォームネイティブなコンテンツシステムを作成する。ソーシャル投稿、スレッド、スクリプト、コンテンツカレンダー、または1つのソースアセットをプラットフォーム間でクリーンに適応させたい場合に使用。
 origin: ECC
 ---
 
 # Content Engine
 
-Turn one idea into strong, platform-native content instead of posting the same thing everywhere.
+1つのアイデアを、どこにでも同じものを投稿するのではなく、強力なプラットフォームネイティブコンテンツに変換する。
 
-## When to Activate
+## 発動条件
 
-- writing X posts or threads
-- drafting LinkedIn posts or launch updates
-- scripting short-form video or YouTube explainers
-- repurposing articles, podcasts, demos, or docs into social content
-- building a lightweight content plan around a launch, milestone, or theme
+- Xの投稿やスレッドの作成
+- LinkedInの投稿やローンチアップデートの下書き
+- ショートフォーム動画やYouTube解説のスクリプト作成
+- 記事、ポッドキャスト、デモ、ドキュメントをソーシャルコンテンツに再利用
+- ローンチ、マイルストーン、テーマ周りの軽量コンテンツプランの構築
 
-## First Questions
+## 最初の質問
 
-Clarify:
-- source asset: what are we adapting from
-- audience: builders, investors, customers, operators, or general audience
-- platform: X, LinkedIn, TikTok, YouTube, newsletter, or multi-platform
-- goal: awareness, conversion, recruiting, authority, launch support, or engagement
+明確にする：
+- ソースアセット：何から適応するか
+- オーディエンス：ビルダー、投資家、顧客、オペレーター、一般
+- プラットフォーム：X、LinkedIn、TikTok、YouTube、ニュースレター、マルチプラットフォーム
+- 目標：認知度、コンバージョン、採用、権威性、ローンチサポート、エンゲージメント
 
-## Core Rules
+## コアルール
 
-1. Adapt for the platform. Do not cross-post the same copy.
-2. Hooks matter more than summaries.
-3. Every post should carry one clear idea.
-4. Use specifics over slogans.
-5. Keep the ask small and clear.
+1. プラットフォームに合わせて適応する。同じコピーをクロスポストしない。
+2. フックは要約より重要。
+3. すべての投稿は1つの明確なアイデアを伝える。
+4. スローガンより具体的なものを使う。
+5. アスクを小さく明確に保つ。
 
-## Platform Guidance
+## プラットフォームガイダンス
 
 ### X
-- open fast
-- one idea per post or per tweet in a thread
-- keep links out of the main body unless necessary
-- avoid hashtag spam
+- 素早く開始する
+- 投稿またはスレッドのツイートごとに1つのアイデア
+- 必要でなければ本文にリンクを入れない
+- ハッシュタグの乱用を避ける
 
 ### LinkedIn
-- strong first line
-- short paragraphs
-- more explicit framing around lessons, results, and takeaways
+- 強い最初の行
+- 短い段落
+- 教訓、結果、テイクアウェイを明示的にフレーミング
 
-### TikTok / Short Video
-- first 3 seconds must interrupt attention
-- script around visuals, not just narration
-- one demo, one claim, one CTA
+### TikTok / ショート動画
+- 最初の3秒で注意を引く
+- ナレーションだけでなくビジュアルを中心にスクリプト
+- 1つのデモ、1つの主張、1つのCTA
 
 ### YouTube
-- show the result early
-- structure by chapter
-- refresh the visual every 20-30 seconds
+- 結果を早めに見せる
+- チャプターで構造化
+- 20-30秒ごとにビジュアルをリフレッシュ
 
-### Newsletter
-- deliver one clear lens, not a bundle of unrelated items
-- make section titles skimmable
-- keep the opening paragraph doing real work
+### ニュースレター
+- 無関係なアイテムのバンドルではなく、1つの明確な視点を提供
+- セクションタイトルをスキム可能に
+- 冒頭段落に実質的な内容を
 
-## Repurposing Flow
+## リパーパスフロー
 
-Default cascade:
-1. anchor asset: article, video, demo, memo, or launch doc
-2. extract 3-7 atomic ideas
-3. write platform-native variants
-4. trim repetition across outputs
-5. align CTAs with platform intent
+デフォルトのカスケード：
+1. アンカーアセット：記事、動画、デモ、メモ、ローンチドキュメント
+2. 3-7のアトミックアイデアを抽出
+3. プラットフォームネイティブなバリアントを作成
+4. 出力間の重複をトリミング
+5. CTAをプラットフォームの意図に合わせる
 
-## Deliverables
+## 品質ゲート
 
-When asked for a campaign, return:
-- the core angle
-- platform-specific drafts
-- optional posting order
-- optional CTA variants
-- any missing inputs needed before publishing
-
-## Quality Gate
-
-Before delivering:
-- each draft reads natively for its platform
-- hooks are strong and specific
-- no generic hype language
-- no duplicated copy across platforms unless requested
-- the CTA matches the content and audience
+納品前に：
+- 各下書きがそのプラットフォームでネイティブに読める
+- フックが強く具体的
+- 汎用的な誇大表現がない
+- リクエストがない限りプラットフォーム間でコピーが重複していない
+- CTAがコンテンツとオーディエンスに一致している

@@ -1,6 +1,6 @@
 ---
 name: team-builder
-description: Interactive agent picker for composing and dispatching parallel teams
+description: プロジェクトの要件からClaude Codeエージェントチームを構築する。エージェント、スキル、ルールの最適な組み合わせを推奨する。
 origin: community
 ---
 
@@ -8,7 +8,7 @@ origin: community
 
 Interactive menu for browsing and composing agent teams on demand. Works with flat or domain-subdirectory agent collections.
 
-## When to Use
+## 使用タイミング
 
 - You have multiple agent personas (markdown files) and want to pick which ones to use for a task
 - You want to compose an ad-hoc team from different domains (e.g., Security + SEO + Architecture)
@@ -54,7 +54,7 @@ Agent directories are probed in order and results are merged:
 
 Results from all locations are merged and deduplicated by agent name. Project-local agents take precedence over global agents with the same name. A custom path can be used instead if the user specifies one.
 
-## How It Works
+## 仕組み
 
 ### Step 1: Discover Available Agents
 
@@ -123,7 +123,7 @@ If only 1 agent was selected, skip synthesis and present the output directly.
 - **Parallel dispatch.** All agents run simultaneously — use the Agent tool's parallel invocation pattern.
 - **Parallel Agent calls, not TeamCreate.** This skill uses parallel Agent tool calls for independent work. TeamCreate (a Claude Code tool for multi-agent dialogue) is only needed when agents must debate or respond to each other.
 
-## Examples
+## 使用例
 
 ```
 User: team builder

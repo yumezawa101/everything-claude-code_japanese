@@ -1,14 +1,14 @@
 ---
 name: nuxt4-patterns
-description: Nuxt 4 app patterns for hydration safety, performance, route rules, lazy loading, and SSR-safe data fetching with useFetch and useAsyncData.
+description: Nuxt 4開発パターン -- composables、サーバーAPI、状態管理、NuxtUIコンポーネント。Nuxt/Vue.jsアプリケーションの構築時に使用。
 origin: ECC
 ---
 
-# Nuxt 4 Patterns
+# Nuxt 4パターン
 
 Use when building or debugging Nuxt 4 apps with SSR, hybrid rendering, route rules, or page-level data fetching.
 
-## When to Activate
+## 発動条件
 
 - Hydration mismatches between server HTML and client state
 - Route-level rendering decisions such as prerender, SWR, ISR, or client-only sections

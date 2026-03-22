@@ -1,12 +1,12 @@
 ---
 name: videodb
-description: See, Understand, Act on video and audio. See- ingest from local files, URLs, RTSP/live feeds, or live record desktop; return realtime context and playable stream links. Understand- extract frames, build visual/semantic/temporal indexes, and search moments with timestamps and auto-clips. Act- transcode and normalize (codec, fps, resolution, aspect ratio), perform timeline edits (subtitles, text/image overlays, branding, audio overlays, dubbing, translation), generate media assets (image, audio, video), and create real time alerts for events from live streams or desktop capture.
+description: VideoDBを使用した動画データ管理 -- 動画インデックス、検索、ストリーミング、AI処理パイプライン。
 origin: ECC
 allowed-tools: Read Grep Glob Bash(python:*)
 argument-hint: "[task description]"
 ---
 
-# VideoDB Skill
+# VideoDB
 
 **Perception + memory + actions for video, live streams, and desktop sessions.**
 
@@ -112,7 +112,7 @@ Get a free API key at [console.videodb.io](https://console.videodb.io) (50 free 
 
 **Do NOT** read, write, or handle the API key yourself. Always let the user set it.
 
-### Quick Reference
+### クイックリファレンス
 
 ### Upload media
 
@@ -287,7 +287,7 @@ except InvalidRequestError as e:
 | Negative timestamps on Timeline | Silently produces broken stream | Always validate `start >= 0` before creating `VideoAsset` |
 | `generate_video()` / `create_collection()` fails | `Operation not allowed` or `maximum limit` | Plan-gated features — inform the user about plan limits |
 
-## Examples
+## 使用例
 
 ### Canonical prompts
 - "Start desktop capture and alert when a password field appears."

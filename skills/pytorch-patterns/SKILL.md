@@ -1,14 +1,14 @@
 ---
 name: pytorch-patterns
-description: PyTorch deep learning patterns and best practices for building robust, efficient, and reproducible training pipelines, model architectures, and data loading.
+description: PyTorchの開発パターン -- モデル定義、トレーニングループ、データローディング、GPU最適化、分散トレーニング。ディープラーニングモデルの構築時に使用。
 origin: ECC
 ---
 
-# PyTorch Development Patterns
+# PyTorchパターン
 
 Idiomatic PyTorch patterns and best practices for building robust, efficient, and reproducible deep learning applications.
 
-## When to Activate
+## 発動条件
 
 - Writing new PyTorch models or training scripts
 - Reviewing deep learning code
@@ -16,7 +16,7 @@ Idiomatic PyTorch patterns and best practices for building robust, efficient, an
 - Optimizing GPU memory usage or training speed
 - Setting up reproducible experiments
 
-## Core Principles
+## コア原則
 
 ### 1. Device-Agnostic Code
 
@@ -332,7 +332,7 @@ model = torch.compile(model, mode="reduce-overhead")
 # Modes: "default" (safe), "reduce-overhead" (faster), "max-autotune" (fastest)
 ```
 
-## Quick Reference: PyTorch Idioms
+## クイックリファレンス: PyTorch Idioms
 
 | Idiom | Description |
 |-------|-------------|
@@ -347,7 +347,7 @@ model = torch.compile(model, mode="reduce-overhead")
 | `torch.manual_seed` | Reproducible experiments |
 | `gradient_checkpointing` | Trade compute for memory |
 
-## Anti-Patterns to Avoid
+## 避けるべきアンチパターン
 
 ```python
 # Bad: Forgetting model.eval() during validation

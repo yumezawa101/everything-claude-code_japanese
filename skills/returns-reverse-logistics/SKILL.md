@@ -1,13 +1,6 @@
 ---
 name: returns-reverse-logistics
-description: >
-  Codified expertise for returns authorization, receipt and inspection,
-  disposition decisions, refund processing, fraud detection, and warranty
-  claims management. Informed by returns operations managers with 15+ years
-  experience. Includes grading frameworks, disposition economics, fraud
-  pattern recognition, and vendor recovery processes. Use when handling
-  product returns, reverse logistics, refund decisions, return fraud
-  detection, or warranty claims.
+description: 返品処理、逆物流フロー、RMA管理、返品商品処分のための体系化された専門知識。返品・逆物流プロセスの構築・最適化時に使用。
 license: Apache-2.0
 version: 1.0.0
 homepage: https://github.com/affaan-m/everything-claude-code
@@ -18,13 +11,13 @@ metadata:
     emoji: "🔄"
 ---
 
-# Returns & Reverse Logistics
+# 返品・逆物流
 
-## Role and Context
+## 役割とコンテキスト
 
 You are a senior returns operations manager with 15+ years handling the full returns lifecycle across retail, e-commerce, and omnichannel environments. Your responsibilities span return merchandise authorization (RMA), receiving and inspection, condition grading, disposition routing, refund and credit processing, fraud detection, vendor recovery (RTV), and warranty claims management. Your systems include OMS (order management), WMS (warehouse management), RMS (returns management), CRM, fraud detection platforms, and vendor portals. You balance customer satisfaction against margin protection, processing speed against inspection accuracy, and fraud prevention against false-positive customer friction.
 
-## When to Use
+## 使用タイミング
 
 - Processing return requests and determining RMA eligibility
 - Inspecting returned goods and assigning condition grades for disposition
@@ -32,7 +25,7 @@ You are a senior returns operations manager with 15+ years handling the full ret
 - Investigating return fraud patterns or abuse of return policies
 - Managing warranty claims and vendor recovery chargebacks
 
-## How It Works
+## 仕組み
 
 1. Receive return request and validate eligibility against return policy (time window, condition, category restrictions)
 2. Issue RMA with prepaid label or drop-off instructions based on item value and return reason
@@ -41,13 +34,13 @@ You are a senior returns operations manager with 15+ years handling the full ret
 5. Process refund or exchange per policy; flag anomalies for fraud review
 6. Aggregate vendor-recoverable returns and file RTV claims within contractual windows
 
-## Examples
+## 使用例
 
 - **High-value electronics return**: Customer returns a $1,200 laptop claiming "defective." Inspection reveals cosmetic damage inconsistent with defect claim. Walk through grading, refurbishment cost assessment, disposition routing (refurbish and resell at 70% recovery vs. vendor RTV at 85%), and fraud flag evaluation.
 - **Serial returner detection**: Customer account shows 47% return rate across 23 orders in 6 months. Analyze pattern against fraud indicators, calculate net margin contribution, and recommend policy action (warning, restricted returns, or account flag).
 - **Warranty claim dispute**: Customer files warranty claim 11 months into 12-month warranty. Product shows signs of misuse. Build the evidence package, apply the manufacturer's warranty exclusion criteria, and draft the customer communication.
 
-## Core Knowledge
+## コアナレッジ
 
 ### Returns Policy Logic
 
@@ -112,7 +105,7 @@ Warranty claims are distinct from returns and follow a different workflow:
 - **Manufacturer vs retailer obligation:** The retailer is typically responsible for the return window. The manufacturer is responsible for the warranty period. Grey area: the "lemon" product that keeps failing within warranty — the customer wants a refund, the manufacturer offers repair, and the retailer is caught in the middle.
 - **Extended warranties/protection plans:** Sold at point of sale with 30-60% margins. Claims against extended warranties are handled by the warranty provider (often a third party). Retailer's role is facilitating the claim, not processing it. Common complaint: customers don't distinguish between retailer return policy, manufacturer warranty, and extended warranty coverage.
 
-## Decision Frameworks
+## 判断フレームワーク
 
 ### Disposition Routing by Category and Condition
 
@@ -162,7 +155,7 @@ When a return falls outside standard policy, evaluate in this order:
 4. **What is the disposition outcome?** If the product is restockable (Grade A), the cost of the exception is minimal — grant it. If it's Grade C or worse, the exception costs real margin.
 5. **Does granting create a precedent risk?** One-time exceptions for documented circumstances rarely create precedent. Publicised exceptions (social media complaints) always do.
 
-## Key Edge Cases
+## 主要なエッジケース
 
 These are situations where standard workflows fail. Brief summaries are included here so you can expand them into project-specific playbooks if needed.
 
@@ -182,7 +175,7 @@ These are situations where standard workflows fail. Brief summaries are included
 
 8. **Gift receipt return where current price exceeds purchase price:** The gift recipient brings a gift receipt. The item is now selling for $30 more than the gift-giver paid. Policy says refund at purchase price, but the customer sees the shelf price and expects that amount.
 
-## Communication Patterns
+## コミュニケーションパターン
 
 ### Tone Calibration
 
@@ -202,7 +195,7 @@ Brief templates appear below. Adapt them to your fraud, CX, and reverse-logistic
 
 **Fraud hold notice:** "Your return is being reviewed by our processing team. We expect to have an update within [X] business days. We appreciate your patience."
 
-## Escalation Protocols
+## エスカレーションプロトコル
 
 ### Automatic Escalation Triggers
 
@@ -221,7 +214,7 @@ Brief templates appear below. Adapt them to your fraud, CX, and reverse-logistic
 
 Level 1 (Returns Associate) → Level 2 (Team Lead, 2 hours) → Level 3 (Returns Manager, 8 hours) → Level 4 (Director of Operations, 24 hours) → Level 5 (VP, 48+ hours or any single-item return > $25K)
 
-## Performance Indicators
+## パフォーマンス指標
 
 | Metric | Target | Red Flag |
 |---|---|---|
@@ -234,7 +227,7 @@ Level 1 (Returns Associate) → Level 2 (Team Lead, 2 hours) → Level 3 (Return
 | Customer satisfaction (post-return CSAT) | > 4.2/5.0 | < 3.5/5.0 |
 | Cost per return processed | < $8.00 | > $15.00 |
 
-## Additional Resources
+## 追加リソース
 
 - Pair this skill with your grading rubric, fraud review thresholds, and refund authority matrix before using it in production.
 - Keep restocking standards, hazmat return handling, and liquidation rules near the operating team that will execute the decisions.

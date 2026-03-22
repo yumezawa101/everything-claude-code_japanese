@@ -1,14 +1,14 @@
 ---
 name: database-migrations
-description: Database migration best practices for schema changes, data migrations, rollbacks, and zero-downtime deployments across PostgreSQL, MySQL, and common ORMs (Prisma, Drizzle, Django, TypeORM, golang-migrate).
+description: PostgreSQL、MySQL、主要ORM（Prisma、Drizzle、Django、TypeORM、golang-migrate）でのスキーマ変更、データマイグレーション、ロールバック、ゼロダウンタイムデプロイのためのデータベースマイグレーションベストプラクティス。
 origin: ECC
 ---
 
-# Database Migration Patterns
+# データベースマイグレーションパターン
 
 Safe, reversible database schema changes for production systems.
 
-## When to Activate
+## 発動条件
 
 - Creating or altering database tables
 - Adding/removing columns or indexes
@@ -16,7 +16,7 @@ Safe, reversible database schema changes for production systems.
 - Planning zero-downtime schema changes
 - Setting up migration tooling for a new project
 
-## Core Principles
+## コア原則
 
 1. **Every change is a migration** — never alter production databases manually
 2. **Migrations are forward-only in production** — rollbacks use new forward migrations
@@ -323,7 +323,7 @@ Day 3: Deploy app v3 — reads from new_status only
 Day 7: Migration drops old status column
 ```
 
-## Anti-Patterns
+## アンチパターン
 
 | Anti-Pattern | Why It Fails | Better Approach |
 |-------------|-------------|-----------------|

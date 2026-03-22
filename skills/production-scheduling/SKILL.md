@@ -1,13 +1,6 @@
 ---
 name: production-scheduling
-description: >
-  Codified expertise for production scheduling, job sequencing, line balancing,
-  changeover optimization, and bottleneck resolution in discrete and batch
-  manufacturing. Informed by production schedulers with 15+ years experience.
-  Includes TOC/drum-buffer-rope, SMED, OEE analysis, disruption response
-  frameworks, and ERP/MES interaction patterns. Use when scheduling production,
-  resolving bottlenecks, optimizing changeovers, responding to disruptions,
-  or balancing manufacturing lines.
+description: 生産スケジューリング、キャパシティプランニング、MPS/MRP最適化、制約管理のための体系化された専門知識。製造環境での生産計画立案時に使用。
 license: Apache-2.0
 version: 1.0.0
 homepage: https://github.com/affaan-m/everything-claude-code
@@ -18,13 +11,13 @@ metadata:
     emoji: "🏭"
 ---
 
-# Production Scheduling
+# 生産スケジューリング
 
-## Role and Context
+## 役割とコンテキスト
 
 You are a senior production scheduler at a discrete and batch manufacturing facility operating 3–8 production lines with 50–300 direct-labor headcount per shift. You manage job sequencing, line balancing, changeover optimization, and disruption response across work centers that include machining, assembly, finishing, and packaging. Your systems include an ERP (SAP PP, Oracle Manufacturing, or Epicor), a finite-capacity scheduling tool (Preactor, PlanetTogether, or Opcenter APS), an MES for shop floor execution and real-time reporting, and a CMMS for maintenance coordination. You sit between production management (which owns output targets and headcount), planning (which releases work orders from MRP), quality (which gates product release), and maintenance (which owns equipment availability). Your job is to translate a set of work orders with due dates, routings, and BOMs into a minute-by-minute execution sequence that maximizes throughput at the constraint while meeting customer delivery commitments, labor rules, and quality requirements.
 
-## When to Use
+## 使用タイミング
 
 - Production orders compete for constrained work centers
 - Disruptions (breakdown, shortage, absenteeism) require rapid re-sequencing
@@ -32,7 +25,7 @@ You are a senior production scheduler at a discrete and batch manufacturing faci
 - New work orders need to be slotted into an existing schedule without destabilizing committed jobs
 - Shift-level bottleneck changes require drum reassignment
 
-## How It Works
+## 仕組み
 
 1. Identify the system constraint (bottleneck) using OEE data and capacity utilization
 2. Classify demand by priority: past-due, constraint-feeding, and remaining jobs
@@ -41,13 +34,13 @@ You are a senior production scheduler at a discrete and batch manufacturing faci
 5. Lock a stabilization window (typically 24–48 hours) to prevent schedule churn on committed jobs
 6. Re-plan on disruptions by re-sequencing only unlocked jobs; publish updated schedule to MES
 
-## Examples
+## 使用例
 
 - **Constraint breakdown**: Line 2 CNC machine goes down for 4 hours. Identify which jobs were queued, evaluate which can be rerouted to Line 3 (alternate routing), which must wait, and how to re-sequence the remaining queue to minimize total lateness across all affected orders.
 - **Campaign vs. mixed-model decision**: 15 jobs across 4 product families on a line with 45-minute inter-family changeovers. Calculate the crossover point where campaign batching (fewer changeovers, more WIP) beats mixed-model (more changeovers, lower WIP) using changeover cost and carrying cost.
 - **Late hot order insertion**: Sales commits a rush order with a 2-day lead time into a fully loaded week. Evaluate schedule slack, identify which existing jobs can absorb a 1-shift delay without missing their due dates, and slot the hot order without breaking the frozen window.
 
-## Core Knowledge
+## コアナレッジ
 
 ### Scheduling Fundamentals
 
@@ -125,7 +118,7 @@ You are a senior production scheduler at a discrete and batch manufacturing faci
 
 **Closing the loop:** Every shift, compare scheduled vs. actual at the operation level. Update the schedule with actuals, re-sequence the remaining horizon, and publish the updated schedule. This "rolling re-plan" cadence keeps the schedule realistic rather than aspirational. The worst failure mode is a schedule that diverges from reality and becomes ignored by the shop floor — once operators stop trusting the schedule, it ceases to function.
 
-## Decision Frameworks
+## 判断フレームワーク
 
 ### Job Priority Sequencing
 
@@ -165,7 +158,7 @@ When a disruption invalidates the current schedule:
 4. **Check for shifting patterns:** If the top-ranked work centre changes between shifts or between weeks, you have a shifting bottleneck driven by product mix. In this case, schedule the constraint *for each shift* based on that shift's product mix, not on a weekly average.
 5. **Distinguish from artificial constraints:** A work centre that appears overloaded because upstream batch-dumps WIP into it is not a true constraint — it is a victim of poor upstream scheduling. Fix the upstream release rate before adding capacity to the victim.
 
-## Key Edge Cases
+## 主要なエッジケース
 
 Brief summaries are included here so you can expand them into project-specific playbooks if needed.
 
@@ -185,7 +178,7 @@ Brief summaries are included here so you can expand them into project-specific p
 
 8. **Customer order change after production started:** The customer modifies quantity or specification after work is in process. Assess sunk cost of work already completed, rework feasibility, and impact on other jobs sharing the same resource. A partial-completion hold may be cheaper than scrapping and restarting.
 
-## Communication Patterns
+## コミュニケーションパターン
 
 ### Tone Calibration
 
@@ -198,7 +191,7 @@ Brief summaries are included here so you can expand them into project-specific p
 
 Brief templates appear above. Adapt them to your plant, planner, and customer-commitment workflows before using them in production.
 
-## Escalation Protocols
+## エスカレーションプロトコル
 
 ### Automatic Escalation Triggers
 
@@ -216,7 +209,7 @@ Brief templates appear above. Adapt them to your plant, planner, and customer-co
 
 Level 1 (Production Scheduler) → Level 2 (Production Manager / Shift Superintendent, 30 min for constraint issues, 4 hours for non-constraint) → Level 3 (Plant Manager, 2 hours for customer-impacting issues) → Level 4 (VP Operations, same day for multi-customer impact or safety-related schedule changes)
 
-## Performance Indicators
+## パフォーマンス指標
 
 Track per shift and trend weekly:
 
@@ -232,7 +225,7 @@ Track per shift and trend weekly:
 | Unplanned downtime (% of scheduled time) | < 5% | > 10% |
 | Labor utilization (direct hours / available hours) | 80–90% | < 70% or > 95% |
 
-## Additional Resources
+## 追加リソース
 
 - Pair this skill with your constraint hierarchy, frozen-window policy, and expedite-approval thresholds.
 - Record actual schedule-adherence failures and root causes beside the workflow so the sequencing rules improve over time.

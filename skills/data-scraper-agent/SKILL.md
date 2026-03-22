@@ -1,6 +1,6 @@
 ---
 name: data-scraper-agent
-description: Build a fully automated AI-powered data collection agent for any public source — job boards, prices, news, GitHub, sports, anything. Scrapes on a schedule, enriches data with a free LLM (Gemini Flash), stores results in Notion/Sheets/Supabase, and learns from user feedback. Runs 100% free on GitHub Actions. Use when the user wants to monitor, collect, or track any public data automatically.
+description: 任意の公開ソース（求人掲示板、価格、ニュース、GitHub、スポーツなど）向けの完全自動化されたAI駆動データ収集エージェントを構築する。スケジュール上でスクレイピングし、無料LLM（Gemini Flash）でデータを強化し、結果をNotion/Sheets/Supabaseに保存し、ユーザーフィードバックから学習する。GitHub Actionsで100%無料実行。公開データの自動的なモニタリング、収集、追跡を望む場合に使用。
 origin: community
 ---
 
@@ -11,7 +11,7 @@ Runs on a schedule, enriches results with a free LLM, stores to a database, and 
 
 **Stack: Python · Gemini Flash (free) · GitHub Actions (free) · Notion / Sheets / Supabase**
 
-## When to Activate
+## 発動条件
 
 - User wants to scrape or monitor any public website or API
 - User says "build a bot that checks...", "monitor X for me", "collect data from..."
@@ -19,7 +19,7 @@ Runs on a schedule, enriches results with a free LLM, stores to a database, and 
 - User asks how to automate data collection without paying for hosting
 - User wants an agent that gets smarter over time based on their decisions
 
-## Core Concepts
+## コアコンセプト
 
 ### The Three Layers
 
@@ -680,7 +680,7 @@ soup = BeautifulSoup(html, "lxml")
 
 ---
 
-## Anti-Patterns to Avoid
+## 避けるべきアンチパターン
 
 | Anti-pattern | Problem | Fix |
 |---|---|---|
@@ -709,7 +709,7 @@ soup = BeautifulSoup(html, "lxml")
 
 ---
 
-## Requirements Template
+## 要件 Template
 
 ```
 requests==2.31.0

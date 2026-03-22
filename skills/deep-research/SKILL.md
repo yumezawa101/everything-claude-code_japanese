@@ -1,6 +1,6 @@
 ---
 name: deep-research
-description: Multi-source deep research using firecrawl and exa MCPs. Searches the web, synthesizes findings, and delivers cited reports with source attribution. Use when the user wants thorough research on any topic with evidence and citations.
+description: firecrawlとexa MCPを使用したマルチソースの深いリサーチ。Webを検索し、調査結果を合成し、ソース帰属付きの引用レポートを提供する。エビデンスと引用付きの徹底的なリサーチが必要な場合に使用。
 origin: ECC
 ---
 
@@ -8,7 +8,7 @@ origin: ECC
 
 Produce thorough, cited research reports from multiple web sources using firecrawl and exa MCP tools.
 
-## When to Activate
+## 発動条件
 
 - User asks to research any topic in depth
 - Competitive analysis, technology evaluation, or market sizing
@@ -16,7 +16,7 @@ Produce thorough, cited research reports from multiple web sources using firecra
 - Any question requiring synthesis from multiple sources
 - User says "research", "deep dive", "investigate", or "what's the current state of"
 
-## MCP Requirements
+## MCP要件s
 
 At least one of:
 - **firecrawl** — `firecrawl_search`, `firecrawl_scrape`, `firecrawl_crawl`
@@ -108,7 +108,7 @@ Structure the report:
 - [Actionable insight 2]
 - [Actionable insight 3]
 
-## Sources
+## ソースs
 1. [Title](url) — [one-line summary]
 2. ...
 
@@ -144,7 +144,7 @@ Each agent searches, reads sources, and returns findings. The main session synth
 5. **No hallucination.** If you don't know, say "insufficient data found."
 6. **Separate fact from inference.** Label estimates, projections, and opinions clearly.
 
-## Examples
+## 使用例
 
 ```
 "Research the current state of nuclear fusion energy"

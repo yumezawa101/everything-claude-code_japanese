@@ -1,17 +1,6 @@
 ---
 name: prompt-optimizer
-description: >-
-  Analyze raw prompts, identify intent and gaps, match ECC components
-  (skills/commands/agents/hooks), and output a ready-to-paste optimized
-  prompt. Advisory role only — never executes the task itself.
-  TRIGGER when: user says "optimize prompt", "improve my prompt",
-  "how to write a prompt for", "help me prompt", "rewrite this prompt",
-  or explicitly asks to enhance prompt quality. Also triggers on Chinese
-  equivalents: "优化prompt", "改进prompt", "怎么写prompt", "帮我优化这个指令".
-  DO NOT TRIGGER when: user wants the task executed directly, or says
-  "just do it" / "直接做". DO NOT TRIGGER when user says "优化代码",
-  "优化性能", "optimize performance", "optimize this code" — those are
-  refactoring/performance tasks, not prompt optimization.
+description: LLMプロンプトの最適化 -- 明確さ、具体性、コスト効率の改善。プロンプトエンジニアリングのベストプラクティス。
 origin: community
 metadata:
   author: YannJY02
@@ -23,7 +12,7 @@ metadata:
 Analyze a draft prompt, critique it, match it to ECC ecosystem components,
 and output a complete optimized prompt the user can paste and run.
 
-## When to Use
+## 使用タイミング
 
 - User says "optimize this prompt", "improve my prompt", "rewrite this prompt"
 - User says "help me write a better prompt for..."
@@ -42,7 +31,7 @@ and output a complete optimized prompt the user can paste and run.
 - User wants a skill inventory (use `skill-stocktake` instead)
 - User says "just do it" or "直接做"
 
-## How It Works
+## 仕組み
 
 **Advisory only — do not execute the user's task.**
 
@@ -262,7 +251,7 @@ A compact version for experienced ECC users. Vary by intent type:
 
 ---
 
-## Examples
+## 使用例
 
 ### Trigger Examples
 

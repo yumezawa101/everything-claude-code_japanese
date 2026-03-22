@@ -1,14 +1,14 @@
 ---
 name: perl-security
-description: Comprehensive Perl security covering taint mode, input validation, safe process execution, DBI parameterized queries, web security (XSS/SQLi/CSRF), and perlcritic security policies.
+description: Perlアプリケーションのセキュリティベストプラクティス -- 入力検証、タイントモード、SQLインジェクション防止、安全なファイル操作。
 origin: ECC
 ---
 
-# Perl Security Patterns
+# Perlセキュリティベストプラクティス
 
 Comprehensive security guidelines for Perl applications covering input validation, injection prevention, and secure coding practices.
 
-## When to Activate
+## 発動条件
 
 - Handling user input in Perl applications
 - Building Perl web applications (CGI, Mojolicious, Dancer2, Catalyst)
@@ -17,7 +17,7 @@ Comprehensive security guidelines for Perl applications covering input validatio
 - Executing system commands from Perl
 - Writing DBI database queries
 
-## How It Works
+## 仕組み
 
 Start with taint-aware input boundaries, then move outward: validate and untaint inputs, keep filesystem and process execution constrained, and use parameterized DBI queries everywhere. The examples below show the safe defaults this skill expects you to apply before shipping Perl code that touches user input, the shell, or the network.
 
@@ -471,7 +471,7 @@ perlcritic --severity 4 --theme security --quiet lib/ || exit 1
 | Regex safety | No nested quantifiers, anchored patterns |
 | Error messages | No stack traces or paths leaked to users |
 
-## Anti-Patterns
+## アンチパターン
 
 ```perl
 # 1. Two-arg open with user data (command injection)

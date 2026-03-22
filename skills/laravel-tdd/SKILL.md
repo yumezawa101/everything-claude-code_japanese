@@ -1,21 +1,21 @@
 ---
 name: laravel-tdd
-description: Test-driven development for Laravel with PHPUnit and Pest, factories, database testing, fakes, and coverage targets.
+description: PHPUnitとPestによるLaravelのテスト駆動開発 -- ファクトリ、データベーステスト、フェイク、カバレッジ目標。
 origin: ECC
 ---
 
-# Laravel TDD Workflow
+# Laravel TDDワークフロー
 
 Test-driven development for Laravel applications using PHPUnit and Pest with 80%+ coverage (unit + feature).
 
-## When to Use
+## 使用タイミング
 
 - New features or endpoints in Laravel
 - Bug fixes or refactors
 - Testing Eloquent models, policies, jobs, and notifications
 - Prefer Pest for new tests unless the project already standardizes on PHPUnit
 
-## How It Works
+## 仕組み
 
 ### Red-Green-Refactor Cycle
 
@@ -48,7 +48,7 @@ Use `RefreshDatabase` as the default for tests that touch the database: for data
 - Default to **Pest** for new tests when available.
 - Use **PHPUnit** only if the project already standardizes on it or requires PHPUnit-specific tooling.
 
-## Examples
+## 使用例
 
 ### PHPUnit Example
 

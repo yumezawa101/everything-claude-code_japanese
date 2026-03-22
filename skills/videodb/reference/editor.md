@@ -1,8 +1,8 @@
-# Timeline Editing Guide
+# タイムライン編集ガイド
 
 VideoDB provides a non-destructive timeline editor for composing videos from multiple assets, adding text and image overlays, mixing audio tracks, and trimming clips — all server-side without re-encoding or local tools. Use this for trimming, combining clips, overlaying audio/music on video, adding subtitles, and layering text or images.
 
-## Prerequisites
+## 前提条件
 
 Videos, audio, and images **must be uploaded** to a collection before they can be used as timeline assets. For caption overlays, the video must also be **indexed for spoken words**.
 
@@ -432,7 +432,7 @@ The timeline editor is designed for **non-destructive linear composition**. The 
 | **Inline track is video only** | `add_inline()` only accepts `VideoAsset`. Audio, image, and text must use `add_overlay()`. |
 | **No overlay-to-clip binding** | Overlays are placed at a fixed timeline timestamp. There is no way to attach an overlay to a specific inline clip so it moves with it. |
 
-## Tips
+## ヒント
 
 - **Non-destructive**: Timelines never modify source media. You can create multiple timelines from the same assets.
 - **Overlay stacking**: Multiple overlays can start at the same timestamp. Audio overlays mix together; image/text overlays layer in add-order.

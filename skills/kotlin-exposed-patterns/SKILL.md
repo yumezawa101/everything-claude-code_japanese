@@ -1,14 +1,14 @@
 ---
 name: kotlin-exposed-patterns
-description: JetBrains Exposed ORM patterns including DSL queries, DAO pattern, transactions, HikariCP connection pooling, Flyway migrations, and repository pattern.
+description: JetBrains Exposed ORMパターン -- DSLクエリ、DAOパターン、トランザクション、HikariCPコネクションプーリング、Flywayマイグレーション、リポジトリパターン。
 origin: ECC
 ---
 
-# Kotlin Exposed Patterns
+# Kotlin Exposedパターン
 
 Comprehensive patterns for database access with JetBrains Exposed ORM, including DSL queries, DAO, transactions, and production-ready configuration.
 
-## When to Use
+## 使用タイミング
 
 - Setting up database access with Exposed
 - Writing SQL queries using Exposed DSL or DAO
@@ -17,11 +17,11 @@ Comprehensive patterns for database access with JetBrains Exposed ORM, including
 - Implementing the repository pattern with Exposed
 - Handling JSON columns and complex queries
 
-## How It Works
+## 仕組み
 
 Exposed provides two query styles: DSL for direct SQL-like expressions and DAO for entity lifecycle management. HikariCP manages a pool of reusable database connections configured via `HikariConfig`. Flyway runs versioned SQL migration scripts at startup to keep the schema in sync. All database operations run inside `newSuspendedTransaction` blocks for coroutine safety and atomicity. The repository pattern wraps Exposed queries behind an interface so business logic stays decoupled from the data layer and tests can use an in-memory H2 database.
 
-## Examples
+## 使用例
 
 ### DSL Query
 
@@ -701,7 +701,7 @@ dependencies {
 }
 ```
 
-## Quick Reference: Exposed Patterns
+## クイックリファレンス: Exposed Patterns
 
 | Pattern | Description |
 |---------|-------------|

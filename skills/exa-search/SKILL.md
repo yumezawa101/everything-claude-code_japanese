@@ -1,6 +1,6 @@
 ---
 name: exa-search
-description: Neural search via Exa MCP for web, code, and company research. Use when the user needs web search, code examples, company intel, people lookup, or AI-powered deep research with Exa's neural search engine.
+description: Exa MCPによるニューラル検索（Web、コード、企業リサーチ）。Web検索、コード例、企業情報、人物検索、Exaのニューラル検索エンジンによるAI駆動の深いリサーチが必要な場合に使用。
 origin: ECC
 ---
 
@@ -8,7 +8,7 @@ origin: ECC
 
 Neural search for web content, code, companies, and people via the Exa MCP server.
 
-## When to Activate
+## 発動条件
 
 - User needs current web information or news
 - Searching for code examples, API docs, or technical references
@@ -17,7 +17,7 @@ Neural search for web content, code, companies, and people via the Exa MCP serve
 - Running background research for any development task
 - User says "search for", "look up", "find", or "what's the latest on"
 
-## MCP Requirement
+## MCP要件
 
 Exa MCP server must be configured. Add to `~/.claude.json`:
 
@@ -97,7 +97,7 @@ get_code_context_exa(query: "WebAssembly component model examples", tokensNum: 4
 - Lower `tokensNum` (1000-2000) for focused code snippets, higher (5000+) for comprehensive context
 - Use `get_code_context_exa` when you need API usage or code examples rather than general web pages
 
-## Related Skills
+## 関連スキル
 
 - `deep-research` — Full research workflow using firecrawl + exa together
 - `market-research` — Business-oriented research with decision frameworks

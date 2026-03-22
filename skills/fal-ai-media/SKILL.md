@@ -1,14 +1,14 @@
 ---
 name: fal-ai-media
-description: Unified media generation via fal.ai MCP — image, video, and audio. Covers text-to-image (Nano Banana), text/image-to-video (Seedance, Kling, Veo 3), text-to-speech (CSM-1B), and video-to-audio (ThinkSound). Use when the user wants to generate images, videos, or audio with AI.
+description: fal.ai MCPによる統合メディア生成 -- 画像、動画、音声。text-to-image（Nano Banana）、text/image-to-video（Seedance、Kling、Veo 3）、text-to-speech（CSM-1B）、video-to-audio（ThinkSound）をカバー。AIで画像、動画、音声を生成したい場合に使用。
 origin: ECC
 ---
 
-# fal.ai Media Generation
+# fal.ai メディア生成
 
 Generate images, videos, and audio using fal.ai models via MCP.
 
-## When to Activate
+## 発動条件
 
 - User wants to generate images from text prompts
 - Creating videos from text or images
@@ -16,7 +16,7 @@ Generate images, videos, and audio using fal.ai models via MCP.
 - Any media generation task
 - User says "generate image", "create video", "text to speech", "make a thumbnail", or similar
 
-## MCP Requirement
+## MCP要件
 
 fal.ai MCP server must be configured. Add to `~/.claude.json`:
 
@@ -277,7 +277,7 @@ models()
 - Image-to-video produces more controlled results than pure text-to-video
 - Check `estimate_cost` before running expensive video generations
 
-## Related Skills
+## 関連スキル
 
 - `videodb` — Video processing, editing, and streaming
 - `video-editing` — AI-powered video editing workflows

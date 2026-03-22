@@ -1,21 +1,21 @@
 ---
 name: swift-actor-persistence
-description: Thread-safe data persistence in Swift using actors — in-memory cache with file-backed storage, eliminating data races by design.
+description: Swift Actorベースの永続化パターン -- データの保存、同期、競合解決をactor分離で安全に行う。
 origin: ECC
 ---
 
-# Swift Actors for Thread-Safe Persistence
+# Swift Actor永続化パターン
 
 Patterns for building thread-safe data persistence layers using Swift actors. Combines in-memory caching with file-backed storage, leveraging the actor model to eliminate data races at compile time.
 
-## When to Activate
+## 発動条件
 
 - Building a data persistence layer in Swift 5.5+
 - Need thread-safe access to shared mutable state
 - Want to eliminate manual synchronization (locks, DispatchQueues)
 - Building offline-first apps with local storage
 
-## Core Pattern
+## コアパターン
 
 ### Actor-Based Repository
 
@@ -119,7 +119,7 @@ final class QuestionListViewModel {
 | Generic over `Codable & Identifiable` | Reusable across any model type |
 | Atomic file writes (`.atomic`) | Prevents partial writes on crash |
 
-## Best Practices
+## ベストプラクティス
 
 - **Use `Sendable` types** for all data crossing actor boundaries
 - **Keep the actor's public API minimal** — only expose domain operations, not persistence details
@@ -127,7 +127,7 @@ final class QuestionListViewModel {
 - **Load synchronously in `init`** — async initializers add complexity with minimal benefit for local files
 - **Combine with `@Observable`** ViewModels for reactive UI updates
 
-## Anti-Patterns to Avoid
+## 避けるべきアンチパターン
 
 - Using `DispatchQueue` or `NSLock` instead of actors for new Swift concurrency code
 - Exposing the internal cache dictionary to external callers
@@ -135,7 +135,7 @@ final class QuestionListViewModel {
 - Forgetting that all actor method calls are `await` — callers must handle async context
 - Using `nonisolated` to bypass actor isolation (defeats the purpose)
 
-## When to Use
+## 使用タイミング
 
 - Local data storage in iOS/macOS apps (user data, settings, cached content)
 - Offline-first architectures that sync to a server later

@@ -1,14 +1,14 @@
 ---
 name: rust-testing
-description: Rust testing patterns including unit tests, integration tests, async testing, property-based testing, mocking, and coverage. Follows TDD methodology.
+description: Rustテストパターン -- ユニットテスト、統合テスト、プロパティベーステスト、モック、カバレッジ。TDD方法論に従う。
 origin: ECC
 ---
 
-# Rust Testing Patterns
+# Rustテストパターン
 
 Comprehensive Rust testing patterns for writing reliable, maintainable tests following TDD methodology.
 
-## When to Use
+## 使用タイミング
 
 - Writing new Rust functions, methods, or traits
 - Adding test coverage to existing code
@@ -16,7 +16,7 @@ Comprehensive Rust testing patterns for writing reliable, maintainable tests fol
 - Implementing property-based tests for input validation
 - Following TDD workflow in Rust projects
 
-## How It Works
+## 仕組み
 
 1. **Identify target code** — Find the function, trait, or module to test
 2. **Write a test** — Use `#[test]` in a `#[cfg(test)]` module, rstest for parameterized tests, or proptest for property-based tests
@@ -452,7 +452,7 @@ cargo test --no-fail-fast         # Don't stop on first failure
 cargo test -- --ignored           # Run ignored tests
 ```
 
-## Best Practices
+## ベストプラクティス
 
 **DO:**
 - Write tests FIRST (TDD)

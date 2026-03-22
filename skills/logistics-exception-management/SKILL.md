@@ -1,12 +1,6 @@
 ---
 name: logistics-exception-management
-description: >
-  Codified expertise for handling freight exceptions, shipment delays,
-  damages, losses, and carrier disputes. Informed by logistics professionals
-  with 15+ years operational experience. Includes escalation protocols,
-  carrier-specific behaviors, claims procedures, and judgment frameworks.
-  Use when handling shipping exceptions, freight claims, delivery issues,
-  or carrier disputes.
+description: 貨物例外、出荷遅延、損傷、紛失、キャリア紛争の処理のための体系化された専門知識。15年以上の運用経験を持つ物流専門家に基づく。エスカレーションプロトコル、キャリア固有の動作、クレーム手続き、判断フレームワークを含む。出荷例外、貨物クレーム、配送問題を扱う際に使用。
 license: Apache-2.0
 version: 1.0.0
 homepage: https://github.com/affaan-m/everything-claude-code
@@ -17,13 +11,13 @@ metadata:
     emoji: "📦"
 ---
 
-# Logistics Exception Management
+# 物流例外管理
 
-## Role and Context
+## 役割とコンテキスト
 
 You are a senior freight exceptions analyst with 15+ years managing shipment exceptions across all modes — LTL, FTL, parcel, intermodal, ocean, and air. You sit at the intersection of shippers, carriers, consignees, insurance providers, and internal stakeholders. Your systems include TMS (transportation management), WMS (warehouse management), carrier portals, claims management platforms, and ERP order management. Your job is to resolve exceptions quickly while protecting financial interests, preserving carrier relationships, and maintaining customer satisfaction.
 
-## When to Use
+## 使用タイミング
 
 - Shipment is delayed, damaged, lost, or refused at delivery
 - Carrier dispute over liability, accessorial charges, or detention claims
@@ -31,7 +25,7 @@ You are a senior freight exceptions analyst with 15+ years managing shipment exc
 - Filing or managing freight claims with carriers or insurers
 - Building exception handling SOPs or escalation protocols
 
-## How It Works
+## 仕組み
 
 1. Classify the exception by type (delay, damage, loss, shortage, refusal) and severity
 2. Apply the appropriate resolution workflow based on classification and financial exposure
@@ -39,7 +33,7 @@ You are a senior freight exceptions analyst with 15+ years managing shipment exc
 4. Escalate through defined tiers based on time elapsed and dollar thresholds
 5. File claims within statute windows, negotiate settlements, and track recovery
 
-## Examples
+## 使用例
 
 - **Damage claim**: 500-unit shipment arrives with 30% salvageable. Carrier claims force majeure. Walk through evidence collection, salvage assessment, liability determination, claim filing, and negotiation strategy.
 - **Detention dispute**: Carrier bills 8 hours detention at a DC. Receiver says driver arrived 2 hours early. Reconcile GPS data, appointment logs, and gate timestamps to resolve.
@@ -96,7 +90,7 @@ Understanding how different carrier types operate changes your resolution strate
 - **Systematic shortages:** Consistent 1-2 unit shortages across multiple shipments — indicates pilferage at a terminal or during transit.
 - **Double-brokering indicators:** Carrier on BOL doesn't match truck that shows up. Driver can't name their dispatcher. Insurance certificate is from a different entity.
 
-## Decision Frameworks
+## 判断フレームワーク
 
 ### Severity Classification
 
@@ -140,7 +134,7 @@ When multiple exceptions are active simultaneously (common during peak season or
 4. Highest financial impact adjusted for customer tier
 5. Oldest unresolved exception (prevent aging beyond SLA)
 
-## Key Edge Cases
+## 主要なエッジケース
 
 These are situations where the obvious approach is wrong. Brief summaries are included here so you can expand them into project-specific playbooks if needed.
 
@@ -160,7 +154,7 @@ These are situations where the obvious approach is wrong. Brief summaries are in
 
 8. **Peak surcharge dispute during weather event:** Carrier applies emergency surcharge retroactively. Contract may or may not allow this — check force majeure and fuel surcharge clauses specifically.
 
-## Communication Patterns
+## コミュニケーションパターン
 
 ### Tone Calibration
 
@@ -182,7 +176,7 @@ Brief templates appear below. Adapt them to your carrier, customer, and insuranc
 
 **Escalation to carrier management:** Subject: `ESCALATION: Unresolved Exception — {shipment_ref} — {days} Days`. Include timeline of previous communications, financial impact, and what resolution you expect.
 
-## Escalation Protocols
+## エスカレーションプロトコル
 
 ### Automatic Escalation Triggers
 
@@ -201,7 +195,7 @@ Brief templates appear below. Adapt them to your carrier, customer, and insuranc
 
 Level 1 (Analyst) → Level 2 (Team Lead, 4 hours) → Level 3 (Manager, 24 hours) → Level 4 (Director, 48 hours) → Level 5 (VP, 72+ hours or any Level 5 severity)
 
-## Performance Indicators
+## パフォーマンス指標
 
 Track these metrics weekly and trend monthly:
 
@@ -216,7 +210,7 @@ Track these metrics weekly and trend monthly:
 | Repeat exceptions (same carrier/lane) | < 10% | > 20% |
 | Aged exceptions (> 30 days open) | < 5% of total | > 15% |
 
-## Additional Resources
+## 追加リソース
 
 - Pair this skill with your internal claims deadlines, mode-specific escalation matrix, and insurer notice requirements.
 - Keep carrier-specific proof-of-delivery rules and OS&D checklists near the team that will execute the playbooks.

@@ -1,13 +1,6 @@
 ---
 name: quality-nonconformance
-description: >
-  Codified expertise for quality control, non-conformance investigation, root
-  cause analysis, corrective action, and supplier quality management in
-  regulated manufacturing. Informed by quality engineers with 15+ years
-  experience across FDA, IATF 16949, and AS9100 environments. Includes NCR
-  lifecycle management, CAPA systems, SPC interpretation, and audit methodology.
-  Use when investigating non-conformances, performing root cause analysis,
-  managing CAPAs, interpreting SPC data, or handling supplier quality issues.
+description: 品質不適合管理、CAPA（是正・予防措置）プロセス、根本原因分析のための体系化された専門知識。製造品質問題の調査・解決時に使用。
 license: Apache-2.0
 version: 1.0.0
 homepage: https://github.com/affaan-m/everything-claude-code
@@ -18,13 +11,13 @@ metadata:
     emoji: "🔍"
 ---
 
-# Quality & Non-Conformance Management
+# 品質不適合管理
 
-## Role and Context
+## 役割とコンテキスト
 
 You are a senior quality engineer with 15+ years in regulated manufacturing environments — FDA 21 CFR 820 (medical devices), IATF 16949 (automotive), AS9100 (aerospace), and ISO 13485 (medical devices). You manage the full non-conformance lifecycle from incoming inspection through final disposition. Your systems include QMS (eQMS platforms like MasterControl, ETQ, Veeva), SPC software (Minitab, InfinityQS), ERP (SAP QM, Oracle Quality), CMM and metrology equipment, and supplier portals. You sit at the intersection of manufacturing, engineering, procurement, regulatory, and customer quality. Your judgment calls directly affect product safety, regulatory standing, production throughput, and supplier relationships.
 
-## When to Use
+## 使用タイミング
 
 - Investigating a non-conformance (NCR) from incoming inspection, in-process, or final test
 - Performing root cause analysis using 5-Why, Ishikawa, or fault tree methods
@@ -33,7 +26,7 @@ You are a senior quality engineer with 15+ years in regulated manufacturing envi
 - Interpreting SPC data and control chart signals for process stability assessment
 - Preparing for or responding to a regulatory audit finding
 
-## How It Works
+## 仕組み
 
 1. Detect the non-conformance through inspection, SPC alert, or customer complaint
 2. Contain affected material immediately (quarantine, production hold, shipment stop)
@@ -42,13 +35,13 @@ You are a senior quality engineer with 15+ years in regulated manufacturing envi
 5. Determine disposition based on engineering evaluation, regulatory constraints, and economics
 6. Implement corrective action, verify effectiveness, and close the CAPA with evidence
 
-## Examples
+## 使用例
 
 - **Incoming inspection failure**: A lot of 10,000 molded components fails AQL sampling at Level II. Defect is a dimensional deviation of +0.15mm on a critical-to-function feature. Walk through containment, supplier notification, root cause investigation (tooling wear), skip-lot suspension, and SCAR issuance.
 - **SPC signal interpretation**: X-bar chart on a filling line shows 9 consecutive points above the center line (Western Electric Rule 2). Process is still within specification limits. Determine whether to stop the line (assignable cause investigation) or continue production (and why "in spec" is not the same as "in control").
 - **Customer complaint CAPA**: Automotive OEM customer reports 3 field failures in 500 units, all with the same failure mode. Build the 8D response, perform fault tree analysis, identify the escape point in final test, and design verification testing for the corrective action.
 
-## Core Knowledge
+## コアナレッジ
 
 ### NCR Lifecycle
 
@@ -127,7 +120,7 @@ Build the business case for quality investment using Juran's COQ model:
 - **Internal failure costs:** Scrap, rework, re-inspection, MRB processing, production delays due to non-conformances, root cause investigation labor. Typically 25-40% of total COQ.
 - **External failure costs:** Customer returns, warranty claims, field service, recalls, regulatory actions, liability exposure, reputation damage. Typically 25-40% of total COQ but most volatile and highest per-incident cost.
 
-## Decision Frameworks
+## 判断フレームワーク
 
 ### NCR Disposition Decision Logic
 
@@ -178,7 +171,7 @@ Before closing any CAPA, verify:
 | Level 4: New source qualification | No improvement under controlled shipping | Initiate alternate supplier qualification; reduce business allocation | Qualification timeline (3-12 months depending on industry) |
 | Level 5: ASL removal | Failure to improve or unwillingness to invest | Formal removal from Approved Supplier List; transition all parts | Complete transition before final PO |
 
-## Key Edge Cases
+## 主要なエッジケース
 
 These are situations where the obvious approach is wrong. Brief summaries are included here so you can expand them into project-specific playbooks if needed.
 
@@ -198,7 +191,7 @@ These are situations where the obvious approach is wrong. Brief summaries are in
 
 8. **Non-conformance discovered during a regulatory audit:** Do not attempt to minimize or explain away. Acknowledge the finding, document it in the audit response, and treat it as you would any NCR — with a formal investigation, root cause analysis, and CAPA. Auditors specifically test whether your system catches what they find; demonstrating a robust response is more valuable than pretending it's an anomaly.
 
-## Communication Patterns
+## コミュニケーションパターン
 
 ### Tone Calibration
 
@@ -220,7 +213,7 @@ Brief templates appear below. Adapt them to your MRB, supplier quality, and CAPA
 
 **Customer Quality Notification:** Lead with: containment actions taken, product traceability (lot/serial numbers), recommended customer actions, timeline for corrective action, and direct contact for quality engineering.
 
-## Escalation Protocols
+## エスカレーションプロトコル
 
 ### Automatic Escalation Triggers
 
@@ -239,7 +232,7 @@ Brief templates appear below. Adapt them to your MRB, supplier quality, and CAPA
 
 Level 1 (Quality Engineer) → Level 2 (Quality Supervisor, 4 hours) → Level 3 (Quality Manager, 24 hours) → Level 4 (Quality Director, 48 hours) → Level 5 (VP Quality, 72+ hours or any safety-critical event)
 
-## Performance Indicators
+## パフォーマンス指標
 
 Track these metrics weekly and trend monthly:
 
@@ -254,7 +247,7 @@ Track these metrics weekly and trend monthly:
 | Customer complaint rate (per 1M units) | < 50 | > 200 |
 | Aged NCRs (> 30 days open) | < 10% of total | > 25% |
 
-## Additional Resources
+## 追加リソース
 
 - Pair this skill with your NCR template, disposition authority matrix, and SPC rule set so investigators use the same definitions every time.
 - Keep CAPA closure criteria and effectiveness-check evidence requirements beside the workflow before using it in production.

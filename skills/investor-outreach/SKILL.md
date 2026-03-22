@@ -1,14 +1,14 @@
 ---
 name: investor-outreach
-description: Draft cold emails, warm intro blurbs, follow-ups, update emails, and investor communications for fundraising. Use when the user wants outreach to angels, VCs, strategic investors, or accelerators and needs concise, personalized, investor-facing messaging.
+description: 資金調達のためのコールドメール、ウォーム紹介ブラーブ、フォローアップ、アップデートメール、投資家コミュニケーションの下書き。エンジェル、VC、戦略的投資家、アクセラレーターへのアウトリーチで簡潔でパーソナライズされた投資家向けメッセージングが必要な場合に使用。
 origin: ECC
 ---
 
-# Investor Outreach
+# 投資家アウトリーチ
 
 Write investor communication that is short, personalized, and easy to act on.
 
-## When to Activate
+## 発動条件
 
 - writing a cold email to an investor
 - drafting a warm intro request
@@ -16,7 +16,7 @@ Write investor communication that is short, personalized, and easy to act on.
 - writing investor updates during a process
 - tailoring outreach based on fund thesis or partner fit
 
-## Core Rules
+## コアルール
 
 1. Personalize every outbound message.
 2. Keep the ask low-friction.
@@ -66,7 +66,7 @@ Include:
 - one new proof point if available
 - the next step
 
-## Quality Gate
+## 品質ゲート
 
 Before delivering:
 - message is personalized

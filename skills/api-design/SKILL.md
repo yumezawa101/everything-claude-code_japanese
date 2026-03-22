@@ -1,25 +1,25 @@
 ---
 name: api-design
-description: REST API design patterns including resource naming, status codes, pagination, filtering, error responses, versioning, and rate limiting for production APIs.
+description: REST API設計パターン — リソース命名、ステータスコード、ページネーション、フィルタリング、エラーレスポンス、バージョニング、レート制限など本番API向け。
 origin: ECC
 ---
 
-# API Design Patterns
+# API設計パターン
 
-Conventions and best practices for designing consistent, developer-friendly REST APIs.
+一貫性のある開発者フレンドリーなREST APIを設計するための規約とベストプラクティス。
 
-## When to Activate
+## 発動条件
 
-- Designing new API endpoints
-- Reviewing existing API contracts
-- Adding pagination, filtering, or sorting
-- Implementing error handling for APIs
-- Planning API versioning strategy
-- Building public or partner-facing APIs
+- 新しいAPIエンドポイントを設計する場合
+- 既存のAPI契約をレビューする場合
+- ページネーション、フィルタリング、ソートを追加する場合
+- APIのエラーハンドリングを実装する場合
+- APIバージョニング戦略を計画する場合
+- パブリックまたはパートナー向けAPIを構築する場合
 
-## Resource Design
+## リソース設計
 
-### URL Structure
+### URL構造
 
 ```
 # Resources are nouns, plural, lowercase, kebab-case
@@ -40,7 +40,7 @@ POST   /api/v1/auth/login
 POST   /api/v1/auth/refresh
 ```
 
-### Naming Rules
+### 命名ルール
 
 ```
 # GOOD
@@ -55,21 +55,21 @@ POST   /api/v1/auth/refresh
 /api/v1/users/123/getOrders   # verb in nested resource
 ```
 
-## HTTP Methods and Status Codes
+## HTTPメソッドとステータスコード
 
-### Method Semantics
+### メソッドの意味
 
-| Method | Idempotent | Safe | Use For |
+| メソッド | 冪等性 | 安全性 | 用途 |
 |--------|-----------|------|---------|
-| GET | Yes | Yes | Retrieve resources |
-| POST | No | No | Create resources, trigger actions |
-| PUT | Yes | No | Full replacement of a resource |
-| PATCH | No* | No | Partial update of a resource |
-| DELETE | Yes | No | Remove a resource |
+| GET | あり | あり | リソースの取得 |
+| POST | なし | なし | リソースの作成、アクションのトリガー |
+| PUT | あり | なし | リソースの完全置換 |
+| PATCH | なし* | なし | リソースの部分更新 |
+| DELETE | あり | なし | リソースの削除 |
 
-*PATCH can be made idempotent with proper implementation
+*PATCHは適切な実装により冪等にできる
 
-### Status Code Reference
+### ステータスコードリファレンス
 
 ```
 # Success
@@ -92,7 +92,7 @@ POST   /api/v1/auth/refresh
 503 Service Unavailable   — Temporary overload, include Retry-After
 ```
 
-### Common Mistakes
+### よくある間違い
 
 ```
 # BAD: 200 for everything
@@ -111,9 +111,9 @@ HTTP/1.1 201 Created
 Location: /api/v1/users/abc-123
 ```
 
-## Response Format
+## レスポンス形式
 
-### Success Response
+### 成功レスポンス
 
 ```json
 {
@@ -126,7 +126,7 @@ Location: /api/v1/users/abc-123
 }
 ```
 
-### Collection Response (with Pagination)
+### コレクションレスポンス（ページネーション付き）
 
 ```json
 {
@@ -148,7 +148,7 @@ Location: /api/v1/users/abc-123
 }
 ```
 
-### Error Response
+### エラーレスポンス
 
 ```json
 {
@@ -171,7 +171,7 @@ Location: /api/v1/users/abc-123
 }
 ```
 
-### Response Envelope Variants
+### レスポンスエンベロープの変種
 
 ```typescript
 // Option A: Envelope with data wrapper (recommended for public APIs)
@@ -195,9 +195,9 @@ interface ApiError {
 // Distinguish by HTTP status code
 ```
 
-## Pagination
+## ページネーション
 
-### Offset-Based (Simple)
+### オフセットベース（シンプル）
 
 ```
 GET /api/v1/users?page=2&per_page=20
@@ -208,10 +208,10 @@ ORDER BY created_at DESC
 LIMIT 20 OFFSET 20;
 ```
 
-**Pros:** Easy to implement, supports "jump to page N"
-**Cons:** Slow on large offsets (OFFSET 100000), inconsistent with concurrent inserts
+**利点:** 実装が容易、「N番目のページにジャンプ」をサポート
+**欠点:** 大きなオフセットで低速（OFFSET 100000）、並行挿入との整合性の問題
 
-### Cursor-Based (Scalable)
+### カーソルベース（スケーラブル）
 
 ```
 GET /api/v1/users?cursor=eyJpZCI6MTIzfQ&limit=20
@@ -233,21 +233,21 @@ LIMIT 21;  -- fetch one extra to determine has_next
 }
 ```
 
-**Pros:** Consistent performance regardless of position, stable with concurrent inserts
-**Cons:** Cannot jump to arbitrary page, cursor is opaque
+**利点:** 位置に関係なく一貫したパフォーマンス、並行挿入でも安定
+**欠点:** 任意のページにジャンプ不可、カーソルは不透明
 
-### When to Use Which
+### 使い分け
 
-| Use Case | Pagination Type |
+| ユースケース | ページネーション方式 |
 |----------|----------------|
-| Admin dashboards, small datasets (<10K) | Offset |
-| Infinite scroll, feeds, large datasets | Cursor |
-| Public APIs | Cursor (default) with offset (optional) |
-| Search results | Offset (users expect page numbers) |
+| 管理ダッシュボード、小規模データセット（<10K） | オフセット |
+| 無限スクロール、フィード、大規模データセット | カーソル |
+| パブリックAPI | カーソル（デフォルト）+ オフセット（オプション） |
+| 検索結果 | オフセット（ユーザーはページ番号を期待） |
 
-## Filtering, Sorting, and Search
+## フィルタリング、ソート、検索
 
-### Filtering
+### フィルタリング
 
 ```
 # Simple equality
@@ -264,7 +264,7 @@ GET /api/v1/products?category=electronics,clothing
 GET /api/v1/orders?customer.country=US
 ```
 
-### Sorting
+### ソート
 
 ```
 # Single field (prefix - for descending)
@@ -274,7 +274,7 @@ GET /api/v1/products?sort=-created_at
 GET /api/v1/products?sort=-featured,price,-created_at
 ```
 
-### Full-Text Search
+### 全文検索
 
 ```
 # Search query parameter
@@ -284,7 +284,7 @@ GET /api/v1/products?q=wireless+headphones
 GET /api/v1/users?email=alice
 ```
 
-### Sparse Fieldsets
+### スパースフィールドセット
 
 ```
 # Return only specified fields (reduces payload)
@@ -292,9 +292,9 @@ GET /api/v1/users?fields=id,name,email
 GET /api/v1/orders?fields=id,total,status&include=customer.name
 ```
 
-## Authentication and Authorization
+## 認証と認可
 
-### Token-Based Auth
+### トークンベース認証
 
 ```
 # Bearer token in Authorization header
@@ -306,7 +306,7 @@ GET /api/v1/data
 X-API-Key: sk_live_abc123
 ```
 
-### Authorization Patterns
+### 認可パターン
 
 ```typescript
 // Resource-level: check ownership
@@ -324,9 +324,9 @@ app.delete("/api/v1/users/:id", requireRole("admin"), async (req, res) => {
 });
 ```
 
-## Rate Limiting
+## レート制限
 
-### Headers
+### ヘッダー
 
 ```
 HTTP/1.1 200 OK
@@ -345,38 +345,38 @@ Retry-After: 60
 }
 ```
 
-### Rate Limit Tiers
+### レート制限ティア
 
-| Tier | Limit | Window | Use Case |
+| ティア | 制限 | ウィンドウ | ユースケース |
 |------|-------|--------|----------|
-| Anonymous | 30/min | Per IP | Public endpoints |
-| Authenticated | 100/min | Per user | Standard API access |
-| Premium | 1000/min | Per API key | Paid API plans |
-| Internal | 10000/min | Per service | Service-to-service |
+| Anonymous | 30/分 | IPごと | パブリックエンドポイント |
+| Authenticated | 100/分 | ユーザーごと | 標準APIアクセス |
+| Premium | 1000/分 | APIキーごと | 有料APIプラン |
+| Internal | 10000/分 | サービスごと | サービス間通信 |
 
-## Versioning
+## バージョニング
 
-### URL Path Versioning (Recommended)
+### URLパスバージョニング（推奨）
 
 ```
 /api/v1/users
 /api/v2/users
 ```
 
-**Pros:** Explicit, easy to route, cacheable
-**Cons:** URL changes between versions
+**利点:** 明示的、ルーティングが容易、キャッシュ可能
+**欠点:** バージョン間でURLが変更される
 
-### Header Versioning
+### ヘッダーバージョニング
 
 ```
 GET /api/users
 Accept: application/vnd.myapp.v2+json
 ```
 
-**Pros:** Clean URLs
-**Cons:** Harder to test, easy to forget
+**利点:** クリーンなURL
+**欠点:** テストが困難、忘れやすい
 
-### Versioning Strategy
+### バージョニング戦略
 
 ```
 1. Start with /api/v1/ — don't version until you need to
@@ -396,7 +396,7 @@ Accept: application/vnd.myapp.v2+json
    - Changing authentication method
 ```
 
-## Implementation Patterns
+## 実装パターン
 
 ### TypeScript (Next.js API Route)
 
@@ -505,19 +505,19 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-## API Design Checklist
+## API設計チェックリスト
 
-Before shipping a new endpoint:
+新しいエンドポイントをリリースする前に：
 
-- [ ] Resource URL follows naming conventions (plural, kebab-case, no verbs)
-- [ ] Correct HTTP method used (GET for reads, POST for creates, etc.)
-- [ ] Appropriate status codes returned (not 200 for everything)
-- [ ] Input validated with schema (Zod, Pydantic, Bean Validation)
-- [ ] Error responses follow standard format with codes and messages
-- [ ] Pagination implemented for list endpoints (cursor or offset)
-- [ ] Authentication required (or explicitly marked as public)
-- [ ] Authorization checked (user can only access their own resources)
-- [ ] Rate limiting configured
-- [ ] Response does not leak internal details (stack traces, SQL errors)
-- [ ] Consistent naming with existing endpoints (camelCase vs snake_case)
-- [ ] Documented (OpenAPI/Swagger spec updated)
+- [ ] リソースURLが命名規約に従っている（複数形、kebab-case、動詞なし）
+- [ ] 正しいHTTPメソッドを使用している（GETは読み取り、POSTは作成など）
+- [ ] 適切なステータスコードを返している（すべてに200ではない）
+- [ ] 入力がスキーマで検証されている（Zod、Pydantic、Bean Validation）
+- [ ] エラーレスポンスがコードとメッセージ付きの標準形式に従っている
+- [ ] リストエンドポイントにページネーションが実装されている（カーソルまたはオフセット）
+- [ ] 認証が必要（または明示的にパブリックとマーク）
+- [ ] 認可がチェックされている（ユーザーは自分のリソースのみアクセス可能）
+- [ ] レート制限が設定されている
+- [ ] レスポンスが内部詳細を漏洩しない（スタックトレース、SQLエラー）
+- [ ] 既存エンドポイントとの一貫した命名（camelCase vs snake_case）
+- [ ] ドキュメント化されている（OpenAPI/Swagger仕様が更新済み）

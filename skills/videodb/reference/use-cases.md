@@ -1,4 +1,4 @@
-# Use Cases
+# ユースケース
 
 Common workflows and what VideoDB enables. For code details, see [api-reference.md](api-reference.md), [capture.md](capture.md), [editor.md](editor.md), and [search.md](search.md).
 
@@ -105,7 +105,7 @@ Every operation produces playable stream URLs. Embed in web players, share direc
 
 ---
 
-## Workflow Summary
+## ワークフロー Summary
 
 | Goal | VideoDB Approach |
 |------|------------------|

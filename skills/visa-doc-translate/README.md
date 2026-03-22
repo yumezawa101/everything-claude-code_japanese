@@ -1,86 +1,44 @@
-# Visa Document Translator
+# ビザ書類翻訳ツール
 
-Automatically translate visa application documents from images to professional English PDFs.
+ビザ申請書類を画像からプロフェッショナルな英語PDFに自動翻訳する。
 
-## Features
+## 機能
 
-- 🔄 **Automatic OCR**: Tries multiple OCR methods (macOS Vision, EasyOCR, Tesseract)
-- 📄 **Bilingual PDF**: Original image + professional English translation
-- 🌍 **Multi-language**: Supports Chinese, and other languages
-- 📋 **Professional Format**: Suitable for official visa applications
-- 🚀 **Fully Automated**: No manual intervention required
+- **自動OCR**: 複数のOCR手法を試行（macOS Vision、EasyOCR、Tesseract）
+- **バイリンガルPDF**: 原本画像 + プロフェッショナルな英語翻訳
+- **多言語対応**: 中国語、その他の言語をサポート
+- **プロフェッショナル形式**: 公式ビザ申請に適した形式
+- **完全自動化**: 手動介入不要
 
-## Supported Documents
+## 対応書類
 
-- Bank deposit certificates (存款证明)
-- Employment certificates (在职证明)
-- Retirement certificates (退休证明)
-- Income certificates (收入证明)
-- Property certificates (房产证明)
-- Business licenses (营业执照)
-- ID cards and passports
+- 銀行預金証明書
+- 在職証明書
+- 退職証明書
+- 収入証明書
+- 不動産証明書
+- 営業許可証
+- 身分証明書・パスポート
 
-## Usage
+## 使い方
 
 ```bash
 /visa-doc-translate <image-file>
 ```
 
-### Examples
+### 使用例
 
 ```bash
-/visa-doc-translate RetirementCertificate.PNG
-/visa-doc-translate BankStatement.HEIC
-/visa-doc-translate EmploymentLetter.jpg
+# 単一ファイルの翻訳
+/visa-doc-translate bank_certificate.jpg
+
+# 複数ファイルの翻訳
+/visa-doc-translate doc1.jpg doc2.png doc3.pdf
 ```
 
-## Output
+## 出力
 
-Creates `<filename>_Translated.pdf` with:
-- **Page 1**: Original document image (centered, A4 size)
-- **Page 2**: Professional English translation
-
-## Requirements
-
-### Python Libraries
-```bash
-pip install pillow reportlab
-```
-
-### OCR (one of the following)
-
-**macOS (recommended)**:
-```bash
-pip install pyobjc-framework-Vision pyobjc-framework-Quartz
-```
-
-**Cross-platform**:
-```bash
-pip install easyocr
-```
-
-**Tesseract**:
-```bash
-brew install tesseract tesseract-lang
-pip install pytesseract
-```
-
-## How It Works
-
-1. Converts HEIC to PNG if needed
-2. Checks and applies EXIF rotation
-3. Extracts text using available OCR method
-4. Translates to professional English
-5. Generates bilingual PDF
-
-## Perfect For
-
-- 🇦🇺 Australia visa applications
-- 🇺🇸 USA visa applications
-- 🇨🇦 Canada visa applications
-- 🇬🇧 UK visa applications
-- 🇪🇺 EU visa applications
-
-## License
-
-MIT
+各書類に対してバイリンガルPDFを生成：
+- 左側：原本画像
+- 右側：構造化された英語翻訳
+- 翻訳証明書付き

@@ -1,25 +1,25 @@
 ---
 name: rust-patterns
-description: Idiomatic Rust patterns, ownership, error handling, traits, concurrency, and best practices for building safe, performant applications.
+description: 所有権、ライフタイム、エラーハンドリング、トレイト設計、非同期パターン、FFIを含むイディオマティックRust開発パターン。
 origin: ECC
 ---
 
-# Rust Development Patterns
+# Rust開発パターン
 
 Idiomatic Rust patterns and best practices for building safe, performant, and maintainable applications.
 
-## When to Use
+## 使用タイミング
 
 - Writing new Rust code
 - Reviewing Rust code
 - Refactoring existing Rust code
 - Designing crate structure and module layout
 
-## How It Works
+## 仕組み
 
 This skill enforces idiomatic Rust conventions across six key areas: ownership and borrowing to prevent data races at compile time, `Result`/`?` error propagation with `thiserror` for libraries and `anyhow` for applications, enums and exhaustive pattern matching to make illegal states unrepresentable, traits and generics for zero-cost abstraction, safe concurrency via `Arc<Mutex<T>>`, channels, and async/await, and minimal `pub` surfaces organized by domain.
 
-## Core Principles
+## コア原則
 
 ### 1. Ownership and Borrowing
 
@@ -287,7 +287,7 @@ let combined: String = parts.iter().copied().collect();
 let parsed: Result<Vec<i32>, _> = strings.iter().map(|s| s.parse()).collect();
 ```
 
-## Concurrency
+## 並行性
 
 ### `Arc<Mutex<T>>` for Shared Mutable State
 
@@ -455,7 +455,7 @@ cargo update             # Update dependencies
 cargo bench              # Run benchmarks
 ```
 
-## Quick Reference: Rust Idioms
+## クイックリファレンス: Rust Idioms
 
 | Idiom | Description |
 |-------|-------------|
@@ -470,7 +470,7 @@ cargo bench              # Run benchmarks
 | Exhaustive matching | No wildcard `_` for business-critical enums |
 | Minimal `pub` surface | Use `pub(crate)` for internal APIs |
 
-## Anti-Patterns to Avoid
+## 避けるべきアンチパターン
 
 ```rust
 // Bad: .unwrap() in production code

@@ -1,14 +1,14 @@
 ---
 name: perl-patterns
-description: Modern Perl 5.36+ idioms, best practices, and conventions for building robust, maintainable Perl applications.
+description: モダンPerlの開発パターン -- Moose/Moo OOP、エラーハンドリング、ファイルI/O、正規表現、CPAN依存管理のベストプラクティス。
 origin: ECC
 ---
 
-# Modern Perl Development Patterns
+# Perl開発パターン
 
 Idiomatic Perl 5.36+ patterns and best practices for building robust, maintainable applications.
 
-## When to Activate
+## 発動条件
 
 - Writing new Perl code or modules
 - Reviewing Perl code for idiom compliance
@@ -16,11 +16,11 @@ Idiomatic Perl 5.36+ patterns and best practices for building robust, maintainab
 - Designing Perl module architecture
 - Migrating pre-5.36 code to modern Perl
 
-## How It Works
+## 仕組み
 
 Apply these patterns as a bias toward modern Perl 5.36+ defaults: signatures, explicit modules, focused error handling, and testable boundaries. The examples below are meant to be copied as starting points, then tightened for the actual app, dependency stack, and deployment model in front of you.
 
-## Core Principles
+## コア原則
 
 ### 1. Use `v5.36` Pragma
 
@@ -292,7 +292,7 @@ sub validate_emails(@emails) {
 
 ## Data Structures
 
-### References and Safe Deep Access
+### 参考 and Safe Deep Access
 
 ```perl
 use v5.36;
@@ -453,7 +453,7 @@ on test => sub {
 };
 ```
 
-## Quick Reference: Modern Perl Idioms
+## クイックリファレンス: Modern Perl Idioms
 
 | Legacy Pattern | Modern Replacement |
 |---|---|
@@ -470,7 +470,7 @@ on test => sub {
 | `blessed($o) && $o->isa('X')` | `$o isa 'X'` (5.32+) |
 | `builtin::true / false` | `use builtin 'true', 'false';` (5.36+, experimental) |
 
-## Anti-Patterns
+## アンチパターン
 
 ```perl
 # 1. Two-arg open (security risk)

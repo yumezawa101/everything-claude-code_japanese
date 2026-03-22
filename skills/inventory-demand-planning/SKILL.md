@@ -1,13 +1,6 @@
 ---
 name: inventory-demand-planning
-description: >
-  Codified expertise for demand forecasting, safety stock optimization,
-  replenishment planning, and promotional lift estimation at multi-location
-  retailers. Informed by demand planners with 15+ years experience managing
-  hundreds of SKUs. Includes forecasting method selection, ABC/XYZ analysis,
-  seasonal transition management, and vendor negotiation frameworks.
-  Use when forecasting demand, setting safety stock, planning replenishment,
-  managing promotions, or optimizing inventory levels.
+description: 複数店舗小売業者での需要予測、安全在庫最適化、補充計画、プロモーションリフト推定のための体系化された専門知識。数百SKUを管理する15年以上の経験を持つ需要計画担当者に基づく。予測手法選択、ABC/XYZ分析、季節変動管理、ベンダー交渉フレームワークを含む。
 license: Apache-2.0
 version: 1.0.0
 homepage: https://github.com/affaan-m/everything-claude-code
@@ -18,13 +11,13 @@ metadata:
     emoji: "📊"
 ---
 
-# Inventory Demand Planning
+# 在庫需要計画
 
-## Role and Context
+## 役割とコンテキスト
 
 You are a senior demand planner at a multi-location retailer operating 40–200 stores with regional distribution centers. You manage 300–800 active SKUs across categories including grocery, general merchandise, seasonal, and promotional assortments. Your systems include a demand planning suite (Blue Yonder, Oracle Demantra, or Kinaxis), an ERP (SAP, Oracle), a WMS for DC-level inventory, POS data feeds at the store level, and vendor portals for purchase order management. You sit between merchandising (which decides what to sell and at what price), supply chain (which manages warehouse capacity and transportation), and finance (which sets inventory investment budgets and GMROI targets). Your job is to translate commercial intent into executable purchase orders while minimizing both stockouts and excess inventory.
 
-## When to Use
+## 使用タイミング
 
 - Generating or reviewing demand forecasts for existing or new SKUs
 - Setting safety stock levels based on demand variability and service level targets
@@ -32,7 +25,7 @@ You are a senior demand planner at a multi-location retailer operating 40–200 
 - Evaluating forecast accuracy and adjusting models or overrides
 - Making buy decisions under supplier MOQ constraints or lead time changes
 
-## How It Works
+## 仕組み
 
 1. Collect demand signals (POS sell-through, orders, shipments) and cleanse outliers
 2. Select forecasting method per SKU based on ABC/XYZ classification and demand pattern
@@ -41,7 +34,7 @@ You are a senior demand planner at a multi-location retailer operating 40–200 
 5. Generate suggested purchase orders, apply MOQ/EOQ rounding, and route for planner review
 6. Monitor forecast accuracy (MAPE, bias) and adjust models in the next planning cycle
 
-## Examples
+## 使用例
 
 - **Seasonal promotion planning**: Merchandising plans a 3-week BOGO promotion on a top-20 SKU. Estimate promotional lift using historical promo elasticity, calculate the forward buy quantity, coordinate with the vendor on advance PO and logistics capacity, and plan the post-promo demand dip.
 - **New SKU launch**: No demand history available. Use analog SKU mapping (similar category, price point, brand) to generate an initial forecast, set conservative safety stock at 2 weeks of projected sales, and define the review cadence for the first 8 weeks.
@@ -120,7 +113,7 @@ The textbook formula is `SS = Z × σ_d × √(LT + RP)` where Z is the service 
 
 **Season-End Liquidation:** Set a hard cutoff date (typically 2–3 weeks before the next season's product arrives). Everything remaining at cutoff goes to outlet, liquidator, or donation. Holding seasonal product into the next year rarely works — style items date, and warehousing cost erodes any margin recovery from selling next season.
 
-## Decision Frameworks
+## 判断フレームワーク
 
 ### Forecast Method Selection by Demand Pattern
 
@@ -174,7 +167,7 @@ Evaluate quarterly. Flag for discontinuation when ALL of the following are true:
 
 If flagged, initiate markdown at 30% off for 4 weeks. If still not moving, escalate to 50% off or liquidation. Set a hard exit date 8 weeks from first markdown. Do not allow slow movers to linger indefinitely in the assortment — they consume shelf space, warehouse slots, and working capital.
 
-## Key Edge Cases
+## 主要なエッジケース
 
 Brief summaries are included here so you can expand them into project-specific playbooks if needed.
 
@@ -194,7 +187,7 @@ Brief summaries are included here so you can expand them into project-specific p
 
 8. **Holiday calendar shift effects:** When key selling holidays shift position in the calendar (e.g., Easter moves between March and April), week-over-week comparisons break. Align forecasts to "weeks relative to holiday" rather than calendar weeks. A failure to account for Easter shifting from Week 13 to Week 16 will create significant forecast error in both years.
 
-## Communication Patterns
+## コミュニケーションパターン
 
 ### Tone Calibration
 
@@ -207,7 +200,7 @@ Brief summaries are included here so you can expand them into project-specific p
 
 Brief templates appear above. Adapt them to your supplier, sales, and operations planning workflows before using them in production.
 
-## Escalation Protocols
+## エスカレーションプロトコル
 
 ### Automatic Escalation Triggers
 
@@ -225,7 +218,7 @@ Brief templates appear above. Adapt them to your supplier, sales, and operations
 
 Level 1 (Demand Planner) → Level 2 (Planning Manager, 24 hours) → Level 3 (Director of Supply Chain Planning, 48 hours) → Level 4 (VP Supply Chain, 72+ hours or any A-item stockout at enterprise customer)
 
-## Performance Indicators
+## パフォーマンス指標
 
 Track weekly and trend monthly:
 
@@ -241,7 +234,7 @@ Track weekly and trend monthly:
 | Purchase order fill rate from vendors | > 95% | < 90% |
 | Promotional forecast accuracy (WMAPE) | < 35% | > 50% |
 
-## Additional Resources
+## 追加リソース
 
 - Pair this skill with your SKU segmentation model, service-level policy, and planner override audit log.
 - Store post-mortems for promotion misses, vendor delays, and forecast overrides next to the planning workflow so the edge cases stay actionable.

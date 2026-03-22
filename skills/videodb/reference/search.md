@@ -1,8 +1,8 @@
-# Search & Indexing Guide
+# 検索とインデックスガイド
 
 Search allows you to find specific moments inside videos using natural language queries, exact keywords, or visual scene descriptions.
 
-## Prerequisites
+## 前提条件
 
 Videos **must be indexed** before they can be searched. Indexing is a one-time operation per video per index type.
 
@@ -219,7 +219,7 @@ stream_url = results.compile()
 print(stream_url)
 ```
 
-## Tips
+## ヒント
 
 - **Index once, search many times**: Indexing is the expensive operation. Once indexed, searches are fast.
 - **Combine index types**: Index both spoken words and scenes to enable all search types on the same video.

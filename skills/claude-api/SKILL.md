@@ -1,40 +1,40 @@
 ---
 name: claude-api
-description: Anthropic Claude API patterns for Python and TypeScript. Covers Messages API, streaming, tool use, vision, extended thinking, batches, prompt caching, and Claude Agent SDK. Use when building applications with the Claude API or Anthropic SDKs.
+description: PythonとTypeScript向けのAnthropic Claude APIパターン。Messages API、ストリーミング、ツール使用、ビジョン、拡張思考、バッチ、プロンプトキャッシング、Claude Agent SDKをカバー。Claude APIまたはAnthropic SDKでアプリケーションを構築する際に使用。
 origin: ECC
 ---
 
 # Claude API
 
-Build applications with the Anthropic Claude API and SDKs.
+Anthropic Claude APIとSDKでアプリケーションを構築する。
 
-## When to Activate
+## 発動条件
 
-- Building applications that call the Claude API
-- Code imports `anthropic` (Python) or `@anthropic-ai/sdk` (TypeScript)
-- User asks about Claude API patterns, tool use, streaming, or vision
-- Implementing agent workflows with Claude Agent SDK
-- Optimizing API costs, token usage, or latency
+- Claude APIを呼び出すアプリケーションの構築
+- コードが`anthropic`(Python)または`@anthropic-ai/sdk`(TypeScript)をインポートしている
+- ユーザーがClaude APIパターン、ツール使用、ストリーミング、ビジョンについて質問する場合
+- Claude Agent SDKでエージェントワークフローを実装する場合
+- APIコスト、トークン使用量、レイテンシの最適化
 
-## Model Selection
+## モデル選択
 
-| Model | ID | Best For |
+| モデル | ID | 最適な用途 |
 |-------|-----|----------|
-| Opus 4.1 | `claude-opus-4-1` | Complex reasoning, architecture, research |
-| Sonnet 4 | `claude-sonnet-4-0` | Balanced coding, most development tasks |
-| Haiku 3.5 | `claude-3-5-haiku-latest` | Fast responses, high-volume, cost-sensitive |
+| Opus 4.1 | `claude-opus-4-1` | 複雑な推論、アーキテクチャ、リサーチ |
+| Sonnet 4 | `claude-sonnet-4-0` | バランスの取れたコーディング、ほとんどの開発タスク |
+| Haiku 3.5 | `claude-3-5-haiku-latest` | 高速レスポンス、大量処理、コスト重視 |
 
-Default to Sonnet 4 unless the task requires deep reasoning (Opus) or speed/cost optimization (Haiku). For production, prefer pinned snapshot IDs over aliases.
+タスクが深い推論（Opus）または速度/コスト最適化（Haiku）を必要としない限り、デフォルトはSonnet 4。本番環境ではエイリアスよりも固定されたスナップショットIDを推奨。
 
 ## Python SDK
 
-### Installation
+### インストール
 
 ```bash
 pip install anthropic
 ```
 
-### Basic Message
+### 基本メッセージ
 
 ```python
 import anthropic
@@ -51,7 +51,7 @@ message = client.messages.create(
 print(message.content[0].text)
 ```
 
-### Streaming
+### ストリーミング
 
 ```python
 with client.messages.stream(
@@ -63,7 +63,7 @@ with client.messages.stream(
         print(text, end="", flush=True)
 ```
 
-### System Prompt
+### システムプロンプト
 
 ```python
 message = client.messages.create(
@@ -76,13 +76,13 @@ message = client.messages.create(
 
 ## TypeScript SDK
 
-### Installation
+### インストール
 
 ```bash
 npm install @anthropic-ai/sdk
 ```
 
-### Basic Message
+### 基本メッセージ
 
 ```typescript
 import Anthropic from "@anthropic-ai/sdk";
@@ -99,7 +99,7 @@ const message = await client.messages.create({
 console.log(message.content[0].text);
 ```
 
-### Streaming
+### ストリーミング
 
 ```typescript
 const stream = client.messages.stream({
@@ -115,9 +115,9 @@ for await (const event of stream) {
 }
 ```
 
-## Tool Use
+## ツール使用
 
-Define tools and let Claude call them:
+ツールを定義してClaudeに呼び出させる：
 
 ```python
 tools = [
@@ -162,9 +162,9 @@ for block in message.content:
         )
 ```
 
-## Vision
+## ビジョン
 
-Send images for analysis:
+画像を送信して分析する：
 
 ```python
 import base64
@@ -185,9 +185,9 @@ message = client.messages.create(
 )
 ```
 
-## Extended Thinking
+## 拡張思考
 
-For complex reasoning tasks:
+複雑な推論タスク向け：
 
 ```python
 message = client.messages.create(
@@ -207,9 +207,9 @@ for block in message.content:
         print(f"Answer: {block.text}")
 ```
 
-## Prompt Caching
+## プロンプトキャッシング
 
-Cache large system prompts or context to reduce costs:
+大きなシステムプロンプトやコンテキストをキャッシュしてコストを削減：
 
 ```python
 message = client.messages.create(
@@ -227,7 +227,7 @@ print(f"Cache creation: {message.usage.cache_creation_input_tokens}")
 
 ## Batches API
 
-Process large volumes asynchronously at 50% cost reduction:
+大量を非同期処理して50%のコスト削減：
 
 ```python
 import time
@@ -260,7 +260,7 @@ for result in client.messages.batches.results(batch.id):
 
 ## Claude Agent SDK
 
-Build multi-step agents:
+マルチステップエージェントの構築：
 
 ```python
 # Note: Agent SDK API surface may change — check official docs
@@ -295,17 +295,17 @@ while True:
     # ... execute tools and append tool_result messages
 ```
 
-## Cost Optimization
+## コスト最適化
 
-| Strategy | Savings | When to Use |
+| 戦略 | 節約 | 使用タイミング |
 |----------|---------|-------------|
-| Prompt caching | Up to 90% on cached tokens | Repeated system prompts or context |
-| Batches API | 50% | Non-time-sensitive bulk processing |
-| Haiku instead of Sonnet | ~75% | Simple tasks, classification, extraction |
-| Shorter max_tokens | Variable | When you know output will be short |
-| Streaming | None (same cost) | Better UX, same price |
+| プロンプトキャッシング | キャッシュトークンで最大90% | 繰り返しのシステムプロンプトやコンテキスト |
+| Batches API | 50% | 時間に敏感でない大量処理 |
+| SonnetではなくHaiku | 約75% | シンプルなタスク、分類、抽出 |
+| 短いmax_tokens | 可変 | 出力が短いことがわかっている場合 |
+| ストリーミング | なし（同コスト） | より良いUX、同じ価格 |
 
-## Error Handling
+## エラーハンドリング
 
 ```python
 import time
@@ -324,7 +324,7 @@ except APIError as e:
     print(f"API error {e.status_code}: {e.message}")
 ```
 
-## Environment Setup
+## 環境設定
 
 ```bash
 # Required
@@ -334,4 +334,4 @@ export ANTHROPIC_API_KEY="your-api-key-here"
 export ANTHROPIC_MODEL="claude-sonnet-4-0"
 ```
 
-Never hardcode API keys. Always use environment variables.
+APIキーをハードコードしない。常に環境変数を使用する。

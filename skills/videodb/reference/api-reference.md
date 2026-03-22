@@ -1,8 +1,8 @@
-# Complete API Reference
+# 完全なAPIリファレンス
 
 Reference material for the VideoDB skill. For usage guidance and workflow selection, start with [../SKILL.md](../SKILL.md).
 
-## Connection
+## 接続
 
 ```python
 import videodb
@@ -15,7 +15,7 @@ conn = videodb.connect(
 
 **Returns:** `Connection` object
 
-### Connection Methods
+### 接続 Methods
 
 | Method | Returns | Description |
 |--------|---------|-------------|

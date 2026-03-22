@@ -1,14 +1,14 @@
 ---
 name: investor-materials
-description: Create and update pitch decks, one-pagers, investor memos, accelerator applications, financial models, and fundraising materials. Use when the user needs investor-facing documents, projections, use-of-funds tables, milestone plans, or materials that must stay internally consistent across multiple fundraising assets.
+description: ピッチデッキ、ワンページャー、投資家メモ、アクセラレーター申請、財務モデル、資金調達資料の作成・更新。投資家向けドキュメント、予測、資金使途表、マイルストーンプラン、複数の資金調達資料間で内部一貫性を保つ必要がある場合に使用。
 origin: ECC
 ---
 
-# Investor Materials
+# 投資家向け資料
 
 Build investor-facing materials that are consistent, credible, and easy to defend.
 
-## When to Activate
+## 発動条件
 
 - creating or revising a pitch deck
 - writing an investor memo or one-pager
@@ -16,7 +16,7 @@ Build investor-facing materials that are consistent, credible, and easy to defen
 - answering accelerator or incubator application questions
 - aligning multiple fundraising docs around one source of truth
 
-## Golden Rule
+## ゴールデンルール
 
 All investor materials must agree with each other.
 
@@ -86,7 +86,7 @@ Include:
 - revenue math that does not sum cleanly
 - inflated certainty where assumptions are fragile
 
-## Quality Gate
+## 品質ゲート
 
 Before delivering:
 - every number matches the current source of truth

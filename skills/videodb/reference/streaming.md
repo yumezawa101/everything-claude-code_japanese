@@ -1,8 +1,8 @@
-# Streaming & Playback
+# ストリーミングと再生
 
 VideoDB generates streams on-demand, returning HLS-compatible URLs that play instantly in any standard video player. No render times or export waits - edits, searches, and compositions stream immediately.
 
-## Prerequisites
+## 前提条件
 
 Videos **must be uploaded** to a collection before streams can be generated. For search-based streams, the video must also be **indexed** (spoken words and/or scenes). See [search.md](search.md) for indexing details.
 
@@ -394,7 +394,7 @@ print(f"Event recap: {stream_url}")
 
 ---
 
-## Tips
+## ヒント
 
 - **HLS compatibility**: Stream URLs return HLS manifests (`.m3u8`). They work in Safari natively, and in other browsers via hls.js or similar libraries.
 - **On-demand compilation**: Streams are compiled server-side when requested. The first play may have a brief compilation delay; subsequent plays of the same composition are cached.

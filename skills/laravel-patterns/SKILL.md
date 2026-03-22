@@ -1,14 +1,14 @@
 ---
 name: laravel-patterns
-description: Laravel architecture patterns, routing/controllers, Eloquent ORM, service layers, queues, events, caching, and API resources for production apps.
+description: 本番アプリ向けのLaravelアーキテクチャパターン -- ルーティング/コントローラ、Eloquent ORM、サービス層、キュー、イベント、キャッシング、APIリソース。
 origin: ECC
 ---
 
-# Laravel Development Patterns
+# Laravel開発パターン
 
 Production-grade Laravel architecture patterns for scalable, maintainable applications.
 
-## When to Use
+## 使用タイミング
 
 - Building Laravel web applications or APIs
 - Structuring controllers, services, and domain logic
@@ -16,7 +16,7 @@ Production-grade Laravel architecture patterns for scalable, maintainable applic
 - Designing APIs with resources and pagination
 - Adding queues, events, caching, and background jobs
 
-## How It Works
+## 仕組み
 
 - Structure the app around clear boundaries (controllers -> services/actions -> models).
 - Use explicit bindings and scoped bindings to keep routing predictable; still enforce authorization for access control.
@@ -24,7 +24,7 @@ Production-grade Laravel architecture patterns for scalable, maintainable applic
 - Keep IO-heavy work in queues and cache expensive reads.
 - Centralize config in `config/*` and keep environments explicit.
 
-## Examples
+## 使用例
 
 ### Project Structure
 

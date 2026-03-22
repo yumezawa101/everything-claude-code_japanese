@@ -1,14 +1,14 @@
 ---
 name: perl-testing
-description: Perl testing patterns using Test2::V0, Test::More, prove runner, mocking, coverage with Devel::Cover, and TDD methodology.
+description: Test2、Test::More、Test::Deep、カバレッジ測定を使用したPerlテストパターン。TDD方法論に従う。
 origin: ECC
 ---
 
-# Perl Testing Patterns
+# Perlテストパターン
 
 Comprehensive testing strategies for Perl applications using Test2::V0, Test::More, prove, and TDD methodology.
 
-## When to Activate
+## 発動条件
 
 - Writing new Perl code (follow TDD: red, green, refactor)
 - Designing test suites for Perl modules or applications
@@ -396,7 +396,7 @@ subtest 'database integration' => sub {
 done_testing;
 ```
 
-## Best Practices
+## ベストプラクティス
 
 ### DO
 
@@ -421,7 +421,7 @@ done_testing;
 - **Don't test CPAN modules**: Trust libraries to work correctly
 - **Don't write brittle tests**: Avoid over-specific string matching
 
-## Quick Reference
+## クイックリファレンス
 
 | Task | Command / Pattern |
 |---|---|

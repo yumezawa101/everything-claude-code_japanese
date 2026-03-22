@@ -1,19 +1,19 @@
 # RTStream Guide
 
-## Overview
+## 概要
 
 RTStream enables real-time ingestion of live video streams (RTSP/RTMP) and desktop capture sessions. Once connected, you can record, index, search, and export content from live sources.
 
 For code-level details (SDK methods, parameters, examples), see [rtstream-reference.md](rtstream-reference.md).
 
-## Use Cases
+## ユースケース
 
 - **Security & Monitoring**: Connect RTSP cameras, detect events, trigger alerts
 - **Live Broadcasts**: Ingest RTMP streams, index in real-time, enable instant search
 - **Meeting Recording**: Capture desktop screen and audio, transcribe live, export recordings
 - **Event Processing**: Monitor live feeds, run AI analysis, respond to detected content
 
-## Quick Start
+## クイックスタート
 
 1. **Connect to a live stream** (RTSP/RTMP URL) or get RTStream from a capture session
 

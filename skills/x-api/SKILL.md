@@ -1,6 +1,6 @@
 ---
 name: x-api
-description: X/Twitter API integration for posting tweets, threads, reading timelines, search, and analytics. Covers OAuth auth patterns, rate limits, and platform-native content posting. Use when the user wants to interact with X programmatically.
+description: X（旧Twitter）API v2パターン -- ツイート投稿、メディアアップロード、スレッド作成、タイムライン取得。X APIを使用した自動化やボット構築に使用。
 origin: ECC
 ---
 
@@ -8,7 +8,7 @@ origin: ECC
 
 Programmatic interaction with X (Twitter) for posting, reading, searching, and analytics.
 
-## When to Activate
+## 発動条件
 
 - User wants to post tweets or threads programmatically
 - Reading timeline, mentions, or user data from X
@@ -202,7 +202,7 @@ Use `content-engine` skill to generate platform-native content, then post via X 
 3. Post via X API using patterns above
 4. Track engagement via public_metrics
 
-## Related Skills
+## 関連スキル
 
 - `content-engine` — Generate platform-native content for X
 - `crosspost` — Distribute content across X, LinkedIn, and other platforms

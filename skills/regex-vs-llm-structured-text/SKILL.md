@@ -1,14 +1,14 @@
 ---
 name: regex-vs-llm-structured-text
-description: Decision framework for choosing between regex and LLM when parsing structured text — start with regex, add LLM only for low-confidence edge cases.
+description: 正規表現とLLMを組み合わせた構造化テキスト抽出パターン。いつ正規表現を使い、いつLLMを使うかの判断基準。
 origin: ECC
 ---
 
-# Regex vs LLM for Structured Text Parsing
+# 正規表現 vs LLM構造化テキスト
 
 A practical decision framework for parsing structured text (quizzes, forms, invoices, documents). The key insight: regex handles 95-98% of cases cheaply and deterministically. Reserve expensive LLM calls for the remaining edge cases.
 
-## When to Activate
+## 発動条件
 
 - Parsing structured text with repeating patterns (questions, forms, tables)
 - Deciding between regex and LLM for text extraction
@@ -194,7 +194,7 @@ From a production quiz parsing pipeline (410 items):
 | Cost savings vs all-LLM | ~95% |
 | Test coverage | 93% |
 
-## Best Practices
+## ベストプラクティス
 
 - **Start with regex** — even imperfect regex gives you a baseline to improve
 - **Use confidence scoring** to programmatically identify what needs LLM help
@@ -203,7 +203,7 @@ From a production quiz parsing pipeline (410 items):
 - **TDD works well** for parsers — write tests for known patterns first, then edge cases
 - **Log metrics** (regex success rate, LLM call count) to track pipeline health
 
-## Anti-Patterns to Avoid
+## 避けるべきアンチパターン
 
 - Sending all text to an LLM when regex handles 95%+ of cases (expensive and slow)
 - Using regex for free-form, highly variable text (LLM is better here)
@@ -211,7 +211,7 @@ From a production quiz parsing pipeline (410 items):
 - Mutating parsed objects during cleaning/validation steps
 - Not testing edge cases (malformed input, missing fields, encoding issues)
 
-## When to Use
+## 使用タイミング
 
 - Quiz/exam question parsing
 - Form data extraction

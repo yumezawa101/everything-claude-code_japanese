@@ -1,88 +1,88 @@
 ---
 name: blueprint
 description: >-
-  Turn a one-line objective into a step-by-step construction plan for
-  multi-session, multi-agent engineering projects. Each step has a
-  self-contained context brief so a fresh agent can execute it cold.
-  Includes adversarial review gate, dependency graph, parallel step
-  detection, anti-pattern catalog, and plan mutation protocol.
-  TRIGGER when: user requests a plan, blueprint, or roadmap for a
-  complex multi-PR task, or describes work that needs multiple sessions.
-  DO NOT TRIGGER when: task is completable in a single PR or fewer
-  than 3 tool calls, or user says "just do it".
+  1行の目標を、マルチセッション・マルチエージェントのエンジニアリングプロジェクト向けの
+  ステップバイステップの構築計画に変換する。各ステップはフレッシュなエージェントが
+  コールドスタートで実行できる自己完結型のコンテキストブリーフを持つ。
+  敵対的レビューゲート、依存関係グラフ、並列ステップ検出、アンチパターンカタログ、
+  計画変更プロトコルを含む。
+  トリガー条件：ユーザーが複雑なマルチPRタスクの計画、blueprint、ロードマップを
+  要求した場合、または複数セッションが必要な作業を説明した場合。
+  トリガーしない条件：タスクが単一PRまたは3回未満のツール呼び出しで完了可能な場合、
+  またはユーザーが「やっちゃって」と言った場合。
 origin: community
 ---
 
-# Blueprint — Construction Plan Generator
+# Blueprint -- 構築計画ジェネレーター
 
-Turn a one-line objective into a step-by-step construction plan that any coding agent can execute cold.
+1行の目標を、任意のコーディングエージェントがコールドスタートで実行できるステップバイステップの構築計画に変換する。
 
-## When to Use
+## 使用タイミング
 
-- Breaking a large feature into multiple PRs with clear dependency order
-- Planning a refactor or migration that spans multiple sessions
-- Coordinating parallel workstreams across sub-agents
-- Any task where context loss between sessions would cause rework
+- 大規模な機能を、明確な依存関係順序を持つ複数のPRに分解する場合
+- 複数セッションにまたがるリファクタリングやマイグレーションを計画する場合
+- サブエージェント間で並列ワークストリームを調整する場合
+- セッション間のコンテキスト喪失がリワークを引き起こす可能性のある任意のタスク
 
-**Do not use** for tasks completable in a single PR, fewer than 3 tool calls, or when the user says "just do it."
+単一PRで完了可能なタスク、3回未満のツール呼び出し、またはユーザーが「やっちゃって」と言った場合には**使用しない**。
 
-## How It Works
+## 仕組み
 
-Blueprint runs a 5-phase pipeline:
+Blueprintは5フェーズのパイプラインを実行する：
 
-1. **Research** — Pre-flight checks (git, gh auth, remote, default branch), then reads project structure, existing plans, and memory files to gather context.
-2. **Design** — Breaks the objective into one-PR-sized steps (3–12 typical). Assigns dependency edges, parallel/serial ordering, model tier (strongest vs default), and rollback strategy per step.
-3. **Draft** — Writes a self-contained Markdown plan file to `plans/`. Every step includes a context brief, task list, verification commands, and exit criteria — so a fresh agent can execute any step without reading prior steps.
-4. **Review** — Delegates adversarial review to a strongest-model sub-agent (e.g., Opus) against a checklist and anti-pattern catalog. Fixes all critical findings before finalizing.
-5. **Register** — Saves the plan, updates memory index, and presents the step count and parallelism summary to the user.
+1. **Research** -- プリフライトチェック（git、gh auth、remote、デフォルトブランチ）を行い、プロジェクト構造、既存計画、メモリファイルを読み取ってコンテキストを収集する。
+2. **Design** -- 目標を1PR単位のステップ（通常3-12）に分解する。依存関係エッジ、並列/直列順序、モデルティア（最強 vs デフォルト）、ステップごとのロールバック戦略を割り当てる。
+3. **Draft** -- `plans/`に自己完結型のMarkdown計画ファイルを書き込む。各ステップにはコンテキストブリーフ、タスクリスト、検証コマンド、終了基準が含まれる — フレッシュなエージェントが前のステップを読まずに任意のステップを実行できるようにする。
+4. **Review** -- チェックリストとアンチパターンカタログに対して、最強モデルのサブエージェント（例：Opus）に敵対的レビューを委譲する。確定前にすべてのクリティカルな指摘を修正する。
+5. **Register** -- 計画を保存し、メモリインデックスを更新し、ステップ数と並列性の概要をユーザーに提示する。
 
-Blueprint detects git/gh availability automatically. With git + GitHub CLI, it generates full branch/PR/CI workflow plans. Without them, it switches to direct mode (edit-in-place, no branches).
+Blueprintはgit/ghの利用可能性を自動検出する。git + GitHub CLIがある場合、完全なブランチ/PR/CIワークフロー計画を生成する。ない場合、ダイレクトモード（インプレース編集、ブランチなし）に切り替える。
 
-## Examples
+## 使用例
 
-### Basic usage
+### 基本的な使い方
 
 ```
 /blueprint myapp "migrate database to PostgreSQL"
 ```
 
-Produces `plans/myapp-migrate-database-to-postgresql.md` with steps like:
-- Step 1: Add PostgreSQL driver and connection config
-- Step 2: Create migration scripts for each table
-- Step 3: Update repository layer to use new driver
-- Step 4: Add integration tests against PostgreSQL
-- Step 5: Remove old database code and config
+`plans/myapp-migrate-database-to-postgresql.md`が生成される：
+- Step 1: PostgreSQLドライバーと接続設定を追加
+- Step 2: 各テーブルのマイグレーションスクリプトを作成
+- Step 3: 新しいドライバーを使用するようリポジトリ層を更新
+- Step 4: PostgreSQLに対する統合テストを追加
+- Step 5: 古いデータベースコードと設定を削除
 
-### Multi-agent project
+### マルチエージェントプロジェクト
 
 ```
 /blueprint chatbot "extract LLM providers into a plugin system"
 ```
 
-Produces a plan with parallel steps where possible (e.g., "implement Anthropic plugin" and "implement OpenAI plugin" run in parallel after the plugin interface step is done), model tier assignments (strongest for the interface design step, default for implementation), and invariants verified after every step (e.g., "all existing tests pass", "no provider imports in core").
+可能な場合は並列ステップ（例：「Anthropicプラグインの実装」と「OpenAIプラグインの実装」はプラグインインターフェースステップの完了後に並列実行）、モデルティア割り当て（インターフェース設計ステップには最強、実装にはデフォルト）、各ステップ後に検証される不変条件（例：「既存テストがすべてパス」「コアにプロバイダーインポートなし」）を含む計画を生成する。
 
-## Key Features
+## 主な機能
 
-- **Cold-start execution** — Every step includes a self-contained context brief. No prior context needed.
-- **Adversarial review gate** — Every plan is reviewed by a strongest-model sub-agent against a checklist covering completeness, dependency correctness, and anti-pattern detection.
-- **Branch/PR/CI workflow** — Built into every step. Degrades gracefully to direct mode when git/gh is absent.
-- **Parallel step detection** — Dependency graph identifies steps with no shared files or output dependencies.
-- **Plan mutation protocol** — Steps can be split, inserted, skipped, reordered, or abandoned with formal protocols and audit trail.
-- **Zero runtime risk** — Pure Markdown skill. The entire repository contains only `.md` files — no hooks, no shell scripts, no executable code, no `package.json`, no build step. Nothing runs on install or invocation beyond Claude Code's native Markdown skill loader.
+- **コールドスタート実行** -- 各ステップは自己完結型のコンテキストブリーフを含む。事前コンテキスト不要。
+- **敵対的レビューゲート** -- 完全性、依存関係の正確性、アンチパターン検出をカバーするチェックリストに対して、最強モデルのサブエージェントがすべての計画をレビュー。
+- **ブランチ/PR/CIワークフロー** -- 各ステップに組み込み。git/ghがない場合はダイレクトモードに優雅にデグレード。
+- **並列ステップ検出** -- 依存関係グラフが共有ファイルや出力依存関係のないステップを特定。
+- **計画変更プロトコル** -- ステップの分割、挿入、スキップ、並べ替え、中止を正式なプロトコルと監査証跡付きで実行可能。
+- **ランタイムリスクゼロ** -- 純粋なMarkdownスキル。リポジトリ全体が`.md`ファイルのみ — フック、シェルスクリプト、実行可能コード、`package.json`、ビルドステップなし。インストールや呼び出し時にClaude Codeのネイティブなmarkdownスキルローダー以外は何も実行されない。
 
-## Installation
+## インストール
 
-This skill ships with Everything Claude Code. No separate installation is needed when ECC is installed.
+このスキルはEverything Claude Codeに同梱されている。ECCがインストールされていれば別途インストール不要。
 
-### Full ECC install
+### フルECCインストール
 
-If you are working from the ECC repository checkout, verify the skill is present with:
+ECCリポジトリのチェックアウトから作業している場合、以下でスキルの存在を確認：
 
 ```bash
 test -f skills/blueprint/SKILL.md
 ```
 
-To update later, review the ECC diff before updating:
+後で更新する場合、更新前にECCのdiffを確認：
 
 ```bash
 cd /path/to/everything-claude-code
@@ -91,15 +91,15 @@ git log --oneline HEAD..origin/main       # review new commits before updating
 git checkout <reviewed-full-sha>          # pin to a specific reviewed commit
 ```
 
-### Vendored standalone install
+### ベンダリングによるスタンドアロンインストール
 
-If you are vendoring only this skill outside the full ECC install, copy the reviewed file from the ECC repository into `~/.claude/skills/blueprint/SKILL.md`. Vendored copies do not have a git remote, so update them by re-copying the file from a reviewed ECC commit rather than running `git pull`.
+フルECCインストール外でこのスキルのみをベンダリングする場合、ECCリポジトリからレビュー済みのファイルを`~/.claude/skills/blueprint/SKILL.md`にコピーする。ベンダリングされたコピーにはgit remoteがないため、`git pull`ではなくレビュー済みのECCコミットからファイルを再コピーして更新する。
 
-## Requirements
+## 要件
 
-- Claude Code (for `/blueprint` slash command)
-- Git + GitHub CLI (optional — enables full branch/PR/CI workflow; Blueprint detects absence and auto-switches to direct mode)
+- Claude Code（`/blueprint`スラッシュコマンド用）
+- Git + GitHub CLI（オプション -- 完全なブランチ/PR/CIワークフローを有効化。Blueprintは不在を検出してダイレクトモードに自動切り替え）
 
-## Source
+## ソース
 
-Inspired by antbotlab/blueprint — upstream project and reference design.
+antbotlab/blueprintにインスパイアされた -- アップストリームプロジェクトおよびリファレンスデザイン。

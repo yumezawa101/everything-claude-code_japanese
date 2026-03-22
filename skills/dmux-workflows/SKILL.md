@@ -1,14 +1,14 @@
 ---
 name: dmux-workflows
-description: Multi-agent orchestration using dmux (tmux pane manager for AI agents). Patterns for parallel agent workflows across Claude Code, Codex, OpenCode, and other harnesses. Use when running multiple agent sessions in parallel or coordinating multi-agent development workflows.
+description: dmux（AIエージェント用tmuxペインマネージャ）を使用したマルチエージェントオーケストレーション。Claude Code、Codex、OpenCodeなどのハーネス間での並列エージェントワークフローパターン。複数のエージェントセッションを並列実行する場合やマルチエージェント開発ワークフローを調整する場合に使用。
 origin: ECC
 ---
 
-# dmux Workflows
+# dmux ワークフロー
 
 Orchestrate parallel AI agent sessions using dmux, a tmux pane manager for agent harnesses.
 
-## When to Activate
+## 発動条件
 
 - Running multiple agent sessions in parallel
 - Coordinating work across Claude Code, Codex, and other harnesses
@@ -101,7 +101,7 @@ Pane 3: "Review src/api/ for test coverage gaps"
 # Merge all reviews into a single report
 ```
 
-## Best Practices
+## ベストプラクティス
 
 1. **Independent tasks only.** Don't parallelize tasks that depend on each other's output.
 2. **Clear boundaries.** Each pane should work on distinct files or concerns.

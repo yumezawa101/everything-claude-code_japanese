@@ -1,14 +1,14 @@
 ---
 name: market-research
-description: Conduct market research, competitive analysis, investor due diligence, and industry intelligence with source attribution and decision-oriented summaries. Use when the user wants market sizing, competitor comparisons, fund research, technology scans, or research that informs business decisions.
+description: マルチソースのWeb検索とAI分析を使用した市場調査レポートの生成。競合分析、市場サイジング、テクノロジー評価、業界トレンドに使用。
 origin: ECC
 ---
 
-# Market Research
+# マーケットリサーチ
 
 Produce research that supports decisions, not research theater.
 
-## When to Activate
+## 発動条件
 
 - researching a market, category, company, investor, or technology trend
 - building TAM/SAM/SOM estimates
@@ -65,7 +65,7 @@ Default structure:
 5. recommendation
 6. sources
 
-## Quality Gate
+## 品質ゲート
 
 Before delivering:
 - all numbers are sourced or labeled as estimates

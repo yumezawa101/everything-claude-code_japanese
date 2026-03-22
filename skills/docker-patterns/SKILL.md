@@ -1,14 +1,14 @@
 ---
 name: docker-patterns
-description: Docker and Docker Compose patterns for local development, container security, networking, volume strategies, and multi-service orchestration.
+description: ローカル開発、コンテナセキュリティ、ネットワーキング、ボリューム戦略、マルチサービスオーケストレーション向けのDockerとDocker Composeパターン。
 origin: ECC
 ---
 
-# Docker Patterns
+# Dockerパターン
 
 Docker and Docker Compose best practices for containerized development.
 
-## When to Activate
+## 発動条件
 
 - Setting up Docker Compose for local development
 - Designing multi-container architectures
@@ -341,7 +341,7 @@ docker network ls
 docker network inspect <project>_default
 ```
 
-## Anti-Patterns
+## アンチパターン
 
 ```
 # BAD: Using docker compose in production without orchestration

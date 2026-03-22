@@ -3,11 +3,11 @@ name: foundation-models-on-device
 description: Apple FoundationModels framework for on-device LLM — text generation, guided generation with @Generable, tool calling, and snapshot streaming in iOS 26+.
 ---
 
-# FoundationModels: On-Device LLM (iOS 26)
+# FoundationModels: オンデバイスLLM（iOS 26）
 
 Patterns for integrating Apple's on-device language model into apps using the FoundationModels framework. Covers text generation, structured output with `@Generable`, custom tool calling, and snapshot streaming — all running on-device for privacy and offline support.
 
-## When to Activate
+## 発動条件
 
 - Building AI-powered features using Apple Intelligence on-device
 - Generating or summarizing text without cloud dependency
@@ -16,7 +16,7 @@ Patterns for integrating Apple's on-device language model into apps using the Fo
 - Streaming structured responses for real-time UI updates
 - Need privacy-preserving AI (no data leaves the device)
 
-## Core Pattern — Availability Check
+## コアパターン — Availability Check
 
 Always check model availability before creating a session:
 
@@ -41,7 +41,7 @@ struct GenerativeView: View {
 }
 ```
 
-## Core Pattern — Basic Session
+## コアパターン — Basic Session
 
 ```swift
 // Single-turn: create a new session each time
@@ -66,7 +66,7 @@ Key points for instructions:
 - Set style preferences ("Respond as briefly as possible")
 - Add safety measures ("Respond with 'I can't help with that' for dangerous requests")
 
-## Core Pattern — Guided Generation with @Generable
+## コアパターン — Guided Generation with @Generable
 
 Generate structured Swift types instead of raw strings:
 
@@ -105,7 +105,7 @@ print("Profile: \(response.content.profile)")
 - `.count(3)` — array element count
 - `description:` — semantic guidance for generation
 
-## Core Pattern — Tool Calling
+## コアパターン — Tool Calling
 
 Let the model invoke custom code for domain-specific tasks:
 
@@ -152,7 +152,7 @@ do {
 }
 ```
 
-## Core Pattern — Snapshot Streaming
+## コアパターン — Snapshot Streaming
 
 Stream structured responses for real-time UI with `PartiallyGenerated` types:
 
@@ -213,7 +213,7 @@ var body: some View {
 | Single request per session | `isResponding` prevents concurrent requests; create multiple sessions if needed |
 | `response.content` (not `.output`) | Correct API — always access results via `.content` property |
 
-## Best Practices
+## ベストプラクティス
 
 - **Always check `model.availability`** before creating a session — handle all unavailability cases
 - **Use `instructions`** to guide model behavior — they take priority over prompts
@@ -224,7 +224,7 @@ var body: some View {
 - **Use `GenerationOptions(temperature:)`** to tune creativity (higher = more creative)
 - **Monitor with Instruments** — use Xcode Instruments to profile request performance
 
-## Anti-Patterns to Avoid
+## 避けるべきアンチパターン
 
 - Creating sessions without checking `model.availability` first
 - Sending inputs exceeding the 4,096 token context window
@@ -234,7 +234,7 @@ var body: some View {
 - Building complex multi-step logic in a single prompt — break into multiple focused prompts
 - Assuming the model is always available — device eligibility and settings vary
 
-## When to Use
+## 使用タイミング
 
 - On-device text generation for privacy-sensitive apps
 - Structured data extraction from user input (forms, natural language commands)

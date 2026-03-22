@@ -1,14 +1,14 @@
 ---
 name: kotlin-patterns
-description: Idiomatic Kotlin patterns, best practices, and conventions for building robust, efficient, and maintainable Kotlin applications with coroutines, null safety, and DSL builders.
+description: コルーチン、null安全、DSLビルダーを活用した堅牢で効率的かつ保守可能なKotlinアプリケーション構築のためのイディオマティックKotlinパターン、ベストプラクティス、規約。
 origin: ECC
 ---
 
-# Kotlin Development Patterns
+# Kotlin開発パターン
 
 Idiomatic Kotlin patterns and best practices for building robust, efficient, and maintainable applications.
 
-## When to Use
+## 使用タイミング
 
 - Writing new Kotlin code
 - Reviewing Kotlin code
@@ -16,11 +16,11 @@ Idiomatic Kotlin patterns and best practices for building robust, efficient, and
 - Designing Kotlin modules or libraries
 - Configuring Gradle Kotlin DSL builds
 
-## How It Works
+## 仕組み
 
 This skill enforces idiomatic Kotlin conventions across seven key areas: null safety using the type system and safe-call operators, immutability via `val` and `copy()` on data classes, sealed classes and interfaces for exhaustive type hierarchies, structured concurrency with coroutines and `Flow`, extension functions for adding behaviour without inheritance, type-safe DSL builders using `@DslMarker` and lambda receivers, and Gradle Kotlin DSL for build configuration.
 
-## Examples
+## 使用例
 
 **Null safety with Elvis operator:**
 ```kotlin
@@ -49,7 +49,7 @@ suspend fun fetchUserWithPosts(userId: String): UserProfile =
     }
 ```
 
-## Core Principles
+## コア原則
 
 ### 1. Null Safety
 
@@ -211,7 +211,7 @@ fun ApiError.toStatusCode(): Int = when (this) {
 
 ## Scope Functions
 
-### When to Use Each
+### 使用タイミング Each
 
 ```kotlin
 // let: Transform nullable or scoped result
@@ -240,7 +240,7 @@ val csv = with(StringBuilder()) {
 }
 ```
 
-### Anti-Patterns
+### アンチパターン
 
 ```kotlin
 // Bad: Nesting scope functions
@@ -646,7 +646,7 @@ val usersById: Map<UserId, User> = users.associateBy { it.id }
 val (active, inactive) = users.partition { it.isActive }
 ```
 
-## Quick Reference: Kotlin Idioms
+## クイックリファレンス: Kotlin Idioms
 
 | Idiom | Description |
 |-------|-------------|
@@ -666,7 +666,7 @@ val (active, inactive) = users.partition { it.isActive }
 | `sequence` | Lazy evaluation |
 | Delegation `by` | Reuse implementation without inheritance |
 
-## Anti-Patterns to Avoid
+## 避けるべきアンチパターン
 
 ```kotlin
 // Bad: Force-unwrapping nullable types

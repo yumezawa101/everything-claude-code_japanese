@@ -1,14 +1,14 @@
 ---
 name: video-editing
-description: AI-assisted video editing workflows for cutting, structuring, and augmenting real footage. Covers the full pipeline from raw capture through FFmpeg, Remotion, ElevenLabs, fal.ai, and final polish in Descript or CapCut. Use when the user wants to edit video, cut footage, create vlogs, or build video content.
+description: FFmpegとAIツールを使用した動画編集ワークフロー -- カット、結合、トランスコード、エフェクト、字幕追加。
 origin: ECC
 ---
 
-# Video Editing
+# 動画編集
 
 AI-assisted editing for real footage. Not generation from prompts. Editing existing video fast.
 
-## When to Activate
+## 発動条件
 
 - User wants to edit, cut, or structure video footage
 - Turning long recordings into short-form content
@@ -303,7 +303,7 @@ identify the 5 most engaging 30-second clips for social media."
 5. **Generate selectively.** Only use AI generation for assets that don't exist, not for everything.
 6. **Taste is the last layer.** AI clears repetitive work. You make the final creative calls.
 
-## Related Skills
+## 関連スキル
 
 - `fal-ai-media` — AI image, video, and audio generation
 - `videodb` — Server-side video processing, indexing, and streaming

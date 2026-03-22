@@ -1,63 +1,63 @@
 ---
 name: agentic-engineering
-description: Operate as an agentic engineer using eval-first execution, decomposition, and cost-aware model routing.
+description: eval駆動実行、分解、コスト考慮のモデルルーティングを用いたエージェンティックエンジニアとして行動する。
 origin: ECC
 ---
 
 # Agentic Engineering
 
-Use this skill for engineering workflows where AI agents perform most implementation work and humans enforce quality and risk controls.
+AIエージェントが実装作業の大部分を行い、人間が品質とリスク管理を担保するエンジニアリングワークフローにこのスキルを使用する。
 
-## Operating Principles
+## 運用原則
 
-1. Define completion criteria before execution.
-2. Decompose work into agent-sized units.
-3. Route model tiers by task complexity.
-4. Measure with evals and regression checks.
+1. 実行前に完了基準を定義する。
+2. 作業をエージェントサイズの単位に分解する。
+3. タスクの複雑さに応じてモデルティアをルーティングする。
+4. evalとリグレッションチェックで測定する。
 
-## Eval-First Loop
+## Eval駆動ループ
 
-1. Define capability eval and regression eval.
-2. Run baseline and capture failure signatures.
-3. Execute implementation.
-4. Re-run evals and compare deltas.
+1. 能力evalとリグレッションevalを定義する。
+2. ベースラインを実行し、失敗シグネチャをキャプチャする。
+3. 実装を実行する。
+4. evalを再実行し、差分を比較する。
 
-## Task Decomposition
+## タスク分解
 
-Apply the 15-minute unit rule:
-- each unit should be independently verifiable
-- each unit should have a single dominant risk
-- each unit should expose a clear done condition
+15分単位ルールを適用する：
+- 各単位は独立して検証可能であること
+- 各単位は単一の支配的リスクを持つこと
+- 各単位は明確な完了条件を公開すること
 
-## Model Routing
+## モデルルーティング
 
-- Haiku: classification, boilerplate transforms, narrow edits
-- Sonnet: implementation and refactors
-- Opus: architecture, root-cause analysis, multi-file invariants
+- Haiku: 分類、ボイラープレート変換、狭い範囲の編集
+- Sonnet: 実装とリファクタリング
+- Opus: アーキテクチャ、根本原因分析、複数ファイルにまたがる不変条件
 
-## Session Strategy
+## セッション戦略
 
-- Continue session for closely-coupled units.
-- Start fresh session after major phase transitions.
-- Compact after milestone completion, not during active debugging.
+- 密結合の単位にはセッションを継続する。
+- 大きなフェーズ遷移後はフレッシュなセッションを開始する。
+- アクティブなデバッグ中ではなく、マイルストーン完了後にコンパクト化する。
 
-## Review Focus for AI-Generated Code
+## AI生成コードのレビュー重点
 
-Prioritize:
-- invariants and edge cases
-- error boundaries
-- security and auth assumptions
-- hidden coupling and rollout risk
+優先事項：
+- 不変条件とエッジケース
+- エラー境界
+- セキュリティと認証の前提条件
+- 隠れた結合とロールアウトリスク
 
-Do not waste review cycles on style-only disagreements when automated format/lint already enforce style.
+自動フォーマット/lintが既にスタイルを強制している場合、スタイルのみの意見の相違にレビューサイクルを費やさない。
 
-## Cost Discipline
+## コスト規律
 
-Track per task:
-- model
-- token estimate
-- retries
-- wall-clock time
-- success/failure
+タスクごとに追跡する：
+- モデル
+- トークン見積もり
+- リトライ回数
+- 実測時間
+- 成功/失敗
 
-Escalate model tier only when lower tier fails with a clear reasoning gap.
+明確な推論のギャップで下位ティアが失敗した場合にのみ、モデルティアをエスカレーションする。

@@ -1,6 +1,6 @@
 ---
 name: kotlin-coroutines-flows
-description: Kotlin Coroutines and Flow patterns for Android and KMP — structured concurrency, Flow operators, StateFlow, error handling, and testing.
+description: AndroidおよびKMP向けKotlin CoroutinesとFlowパターン -- 構造化された並行性、Flow演算子、StateFlow、エラーハンドリング、テスト。
 origin: ECC
 ---
 
@@ -8,7 +8,7 @@ origin: ECC
 
 Patterns for structured concurrency, Flow-based reactive streams, and coroutine testing in Android and Kotlin Multiplatform projects.
 
-## When to Activate
+## 発動条件
 
 - Writing async code with Kotlin coroutines
 - Using Flow, StateFlow, or SharedFlow for reactive data
@@ -269,7 +269,7 @@ class FakeItemRepository : ItemRepository {
 }
 ```
 
-## Anti-Patterns to Avoid
+## 避けるべきアンチパターン
 
 - Using `GlobalScope` — leaks coroutines, no structured cancellation
 - Collecting Flows in `init {}` without a scope — use `viewModelScope.launch`
@@ -278,7 +278,7 @@ class FakeItemRepository : ItemRepository {
 - Using `flowOn(Dispatchers.Main)` to collect — collection dispatcher is the caller's dispatcher
 - Creating `Flow` in `@Composable` without `remember` — recreates the flow every recomposition
 
-## References
+## 参考
 
 See skill: `compose-multiplatform-patterns` for UI consumption of Flows.
 See skill: `android-clean-architecture` for where coroutines fit in layers.

@@ -1,20 +1,20 @@
 ---
 name: continuous-agent-loop
-description: Patterns for continuous autonomous agent loops with quality gates, evals, and recovery controls.
+description: 品質ゲート、eval、回復制御を備えた継続的自律エージェントループのパターン。
 origin: ECC
 ---
 
 # Continuous Agent Loop
 
-This is the v1.8+ canonical loop skill name. It supersedes `autonomous-loops` while keeping compatibility for one release.
+v1.8+の正規ループスキル名。`autonomous-loops`を置き換えつつ、1リリース分の互換性を維持する。
 
-## Loop Selection Flow
+## ループ選択フロー
 
 ```text
 Start
   |
   +-- Need strict CI/PR control? -- yes --> continuous-pr
-  |                                    
+  |
   +-- Need RFC decomposition? -- yes --> rfc-dag
   |
   +-- Need exploratory parallel generation? -- yes --> infinite
@@ -22,24 +22,24 @@ Start
   +-- default --> sequential
 ```
 
-## Combined Pattern
+## 推奨の組み合わせパターン
 
-Recommended production stack:
-1. RFC decomposition (`ralphinho-rfc-pipeline`)
-2. quality gates (`plankton-code-quality` + `/quality-gate`)
-3. eval loop (`eval-harness`)
-4. session persistence (`nanoclaw-repl`)
+本番環境の推奨スタック：
+1. RFC分解（`ralphinho-rfc-pipeline`）
+2. 品質ゲート（`plankton-code-quality` + `/quality-gate`）
+3. evalループ（`eval-harness`）
+4. セッション永続化（`nanoclaw-repl`）
 
-## Failure Modes
+## 失敗モード
 
-- loop churn without measurable progress
-- repeated retries with same root cause
-- merge queue stalls
-- cost drift from unbounded escalation
+- 測定可能な進捗のないループチャーン
+- 同じ根本原因での繰り返しリトライ
+- マージキューのストール
+- 無制限のエスカレーションによるコストドリフト
 
-## Recovery
+## 回復
 
-- freeze loop
-- run `/harness-audit`
-- reduce scope to failing unit
-- replay with explicit acceptance criteria
+- ループをフリーズ
+- `/harness-audit`を実行
+- スコープを失敗ユニットに縮小
+- 明示的な受け入れ基準でリプレイ

@@ -3,11 +3,11 @@ name: liquid-glass-design
 description: iOS 26 Liquid Glass design system — dynamic glass material with blur, reflection, and interactive morphing for SwiftUI, UIKit, and WidgetKit.
 ---
 
-# Liquid Glass Design System (iOS 26)
+# Liquid Glassデザインシステム（iOS 26）
 
 Patterns for implementing Apple's Liquid Glass — a dynamic material that blurs content behind it, reflects color and light from surrounding content, and reacts to touch and pointer interactions. Covers SwiftUI, UIKit, and WidgetKit integration.
 
-## When to Activate
+## 発動条件
 
 - Building or updating apps for iOS 26+ with the new design language
 - Implementing glass-style buttons, cards, toolbars, or containers
@@ -15,7 +15,7 @@ Patterns for implementing Apple's Liquid Glass — a dynamic material that blurs
 - Applying Liquid Glass effects to widgets
 - Migrating existing blur/material effects to the new Liquid Glass API
 
-## Core Pattern — SwiftUI
+## コアパターン — SwiftUI
 
 ### Basic Glass Effect
 
@@ -128,7 +128,7 @@ Button("Toggle") {
 
 To allow horizontal scroll content to extend under a sidebar or inspector, ensure the `ScrollView` content reaches the leading/trailing edges of the container. The system automatically handles the under-sidebar scrolling behavior when the layout extends to the edges — no additional modifier is needed.
 
-## Core Pattern — UIKit
+## コアパターン — UIKit
 
 ### Basic UIGlassEffect
 
@@ -191,7 +191,7 @@ let favoriteButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style:
 favoriteButton.hidesSharedBackground = true  // Opt out of shared glass background
 ```
 
-## Core Pattern — WidgetKit
+## コアパターン — WidgetKit
 
 ### Rendering Mode Detection
 
@@ -251,7 +251,7 @@ VStack { /* content */ }
 | UIGlassContainerEffect in UIKit | Same container pattern as SwiftUI for consistency |
 | Accented rendering mode in widgets | System applies tinted glass when user selects tinted Home Screen |
 
-## Best Practices
+## ベストプラクティス
 
 - **Always use GlassEffectContainer** when applying glass to multiple sibling views — it enables morphing and improves rendering performance
 - **Apply `.glassEffect()` after** other appearance modifiers (frame, font, padding)
@@ -261,7 +261,7 @@ VStack { /* content */ }
 - **Test across appearances** — light mode, dark mode, and accented/tinted modes
 - **Ensure accessibility contrast** — text on glass must remain readable
 
-## Anti-Patterns to Avoid
+## 避けるべきアンチパターン
 
 - Using multiple standalone `.glassEffect()` views without a GlassEffectContainer
 - Nesting too many glass effects — degrades performance and visual clarity
@@ -270,7 +270,7 @@ VStack { /* content */ }
 - Ignoring accented rendering mode in widgets — breaks tinted Home Screen appearance
 - Using opaque backgrounds behind glass — defeats the translucency effect
 
-## When to Use
+## 使用タイミング
 
 - Navigation bars, toolbars, and tab bars with the new iOS 26 design
 - Floating action buttons and card-style containers

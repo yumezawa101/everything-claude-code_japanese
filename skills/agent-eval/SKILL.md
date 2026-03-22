@@ -1,30 +1,30 @@
 ---
 name: agent-eval
-description: Head-to-head comparison of coding agents (Claude Code, Aider, Codex, etc.) on custom tasks with pass rate, cost, time, and consistency metrics
+description: コーディングエージェント（Claude Code、Aider、Codexなど）をカスタムタスクで直接比較し、パス率、コスト、時間、一貫性の指標を測定する
 origin: ECC
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
-# Agent Eval Skill
+# Agent Eval スキル
 
-A lightweight CLI tool for comparing coding agents head-to-head on reproducible tasks. Every "which coding agent is best?" comparison runs on vibes — this tool systematizes it.
+コーディングエージェントを再現可能なタスクで直接比較するための軽量CLIツール。「どのコーディングエージェントが最適か？」という比較はすべて主観的に行われがちだが、このツールはそれを体系化する。
 
-## When to Activate
+## 発動条件
 
-- Comparing coding agents (Claude Code, Aider, Codex, etc.) on your own codebase
-- Measuring agent performance before adopting a new tool or model
-- Running regression checks when an agent updates its model or tooling
-- Producing data-backed agent selection decisions for a team
+- コーディングエージェント（Claude Code、Aider、Codexなど）を自分のコードベースで比較する場合
+- 新しいツールやモデルを導入する前にエージェントの性能を測定する場合
+- エージェントがモデルやツールを更新した際にリグレッションチェックを実行する場合
+- チームのためにデータに基づいたエージェント選定を行う場合
 
-## Installation
+## インストール
 
-> **Note:** Install agent-eval from its repository after reviewing the source.
+> **注意:** agent-evalはソースを確認した上で、そのリポジトリからインストールしてください。
 
-## Core Concepts
+## コアコンセプト
 
-### YAML Task Definitions
+### YAMLタスク定義
 
-Define tasks declaratively. Each task specifies what to do, which files to touch, and how to judge success:
+タスクを宣言的に定義する。各タスクは実行内容、対象ファイル、成功判定基準を指定する：
 
 ```yaml
 name: add-retry-logic
@@ -44,47 +44,47 @@ judge:
 commit: "abc1234"  # pin to specific commit for reproducibility
 ```
 
-### Git Worktree Isolation
+### Git Worktreeによる分離
 
-Each agent run gets its own git worktree — no Docker required. This provides reproducibility isolation so agents cannot interfere with each other or corrupt the base repo.
+各エージェント実行は独自のgit worktreeを取得する — Dockerは不要。これにより再現性の分離が実現され、エージェント同士が干渉したりベースリポジトリを破壊することがない。
 
-### Metrics Collected
+### 収集される指標
 
-| Metric | What It Measures |
+| 指標 | 測定内容 |
 |--------|-----------------|
-| Pass rate | Did the agent produce code that passes the judge? |
-| Cost | API spend per task (when available) |
-| Time | Wall-clock seconds to completion |
-| Consistency | Pass rate across repeated runs (e.g., 3/3 = 100%) |
+| パス率 | エージェントが判定を通過するコードを生成したか |
+| コスト | タスクごとのAPI費用（取得可能な場合） |
+| 時間 | 完了までの実測時間（秒） |
+| 一貫性 | 複数回実行でのパス率（例：3/3 = 100%） |
 
-## Workflow
+## ワークフロー
 
-### 1. Define Tasks
+### 1. タスクを定義する
 
-Create a `tasks/` directory with YAML files, one per task:
+`tasks/`ディレクトリにYAMLファイルを作成する（タスクごとに1ファイル）：
 
 ```bash
 mkdir tasks
 # Write task definitions (see template above)
 ```
 
-### 2. Run Agents
+### 2. エージェントを実行する
 
-Execute agents against your tasks:
+タスクに対してエージェントを実行する：
 
 ```bash
 agent-eval run --task tasks/add-retry-logic.yaml --agent claude-code --agent aider --runs 3
 ```
 
-Each run:
-1. Creates a fresh git worktree from the specified commit
-2. Hands the prompt to the agent
-3. Runs the judge criteria
-4. Records pass/fail, cost, and time
+各実行の流れ：
+1. 指定されたcommitからフレッシュなgit worktreeを作成
+2. エージェントにプロンプトを渡す
+3. 判定基準を実行する
+4. 合否、コスト、時間を記録する
 
-### 3. Compare Results
+### 3. 結果を比較する
 
-Generate a comparison report:
+比較レポートを生成する：
 
 ```bash
 agent-eval report --format table
@@ -100,9 +100,9 @@ Task: add-retry-logic (3 runs each)
 └──────────────┴───────────┴────────┴────────┴─────────────┘
 ```
 
-## Judge Types
+## 判定タイプ
 
-### Code-Based (deterministic)
+### コードベース（決定論的）
 
 ```yaml
 judge:
@@ -112,7 +112,7 @@ judge:
     command: npm run build
 ```
 
-### Pattern-Based
+### パターンベース
 
 ```yaml
 judge:
@@ -121,7 +121,7 @@ judge:
     files: src/**/*.py
 ```
 
-### Model-Based (LLM-as-judge)
+### モデルベース（LLM-as-judge）
 
 ```yaml
 judge:
@@ -131,15 +131,15 @@ judge:
       Check for: max retries, increasing delays, jitter.
 ```
 
-## Best Practices
+## ベストプラクティス
 
-- **Start with 3-5 tasks** that represent your real workload, not toy examples
-- **Run at least 3 trials** per agent to capture variance — agents are non-deterministic
-- **Pin the commit** in your task YAML so results are reproducible across days/weeks
-- **Include at least one deterministic judge** (tests, build) per task — LLM judges add noise
-- **Track cost alongside pass rate** — a 95% agent at 10x the cost may not be the right choice
-- **Version your task definitions** — they are test fixtures, treat them as code
+- **実際のワークロードを代表する3-5タスクから始める** — トイの例ではなく
+- **エージェントごとに少なくとも3回試行する** — エージェントは非決定論的であるため分散を捕捉する
+- **タスクYAMLでcommitを固定する** — 数日/数週間にわたって結果を再現可能にする
+- **タスクごとに少なくとも1つの決定論的判定（テスト、ビルド）を含める** — LLM判定はノイズを加える
+- **パス率と共にコストを追跡する** — 10倍のコストで95%のエージェントは最適な選択ではない可能性がある
+- **タスク定義をバージョン管理する** — テストフィクスチャと同様にコードとして扱う
 
-## Links
+## リンク
 
-- Repository: [github.com/joaquinhuigomez/agent-eval](https://github.com/joaquinhuigomez/agent-eval)
+- リポジトリ: [github.com/joaquinhuigomez/agent-eval](https://github.com/joaquinhuigomez/agent-eval)

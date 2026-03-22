@@ -1,22 +1,22 @@
 ---
 name: rules-distill
-description: "Scan skills to extract cross-cutting principles and distill them into rules — append, revise, or create new rule files"
+description: プロジェクトの規約とパターンをCLAUDE.mdルールに蒸留する。コードベース分析からルール抽出を自動化する。
 origin: ECC
 ---
 
-# Rules Distill
+# ルール蒸留
 
 Scan installed skills, extract cross-cutting principles that appear in multiple skills, and distill them into rules — appending to existing rule files, revising outdated content, or creating new rule files.
 
 Applies the "deterministic collection + LLM judgment" principle: scripts collect facts exhaustively, then an LLM cross-reads the full context and produces verdicts.
 
-## When to Use
+## 使用タイミング
 
 - Periodic rules maintenance (monthly or after installing new skills)
 - After a skill-stocktake reveals patterns that should be rules
 - When rules feel incomplete relative to the skills being used
 
-## How It Works
+## 仕組み
 
 The rules distillation process follows three phases:
 

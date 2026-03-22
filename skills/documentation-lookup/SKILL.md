@@ -1,14 +1,14 @@
 ---
 name: documentation-lookup
-description: Use up-to-date library and framework docs via Context7 MCP instead of training data. Activates for setup questions, API references, code examples, or when the user names a framework (e.g. React, Next.js, Prisma).
+description: トレーニングデータの代わりにContext7 MCPを介して最新のライブラリとフレームワークのドキュメントを使用する。セットアップの質問、APIリファレンス、コード例、またはユーザーがフレームワーク名（React、Next.js、Prismaなど）を挙げた場合に発動。
 origin: ECC
 ---
 
-# Documentation Lookup (Context7)
+# ドキュメント検索（Context7）
 
 When the user asks about libraries, frameworks, or APIs, fetch current documentation via the Context7 MCP (tools `resolve-library-id` and `query-docs`) instead of relying on training data.
 
-## Core Concepts
+## コアコンセプト
 
 - **Context7**: MCP server that exposes live documentation; use it instead of training data for libraries and APIs.
 - **resolve-library-id**: Returns Context7-compatible library IDs (e.g. `/vercel/next.js`) from a library name and query.
@@ -60,7 +60,7 @@ Limit: do not call query-docs (or resolve-library-id) more than 3 times per ques
 - Include relevant code examples from the docs when helpful.
 - Cite the library or version when it matters (e.g. "In Next.js 15...").
 
-## Examples
+## 使用例
 
 ### Example: Next.js middleware
 
@@ -82,7 +82,7 @@ Limit: do not call query-docs (or resolve-library-id) more than 3 times per ques
 2. Pick the Supabase docs library ID.
 3. Call **query-docs**; summarize the auth methods and show minimal examples from the fetched docs.
 
-## Best Practices
+## ベストプラクティス
 
 - **Be specific**: Use the user's full question as the query where possible for better relevance.
 - **Version awareness**: When users mention versions, use version-specific library IDs from the resolve step when available.

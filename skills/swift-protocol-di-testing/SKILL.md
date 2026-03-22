@@ -1,21 +1,21 @@
 ---
 name: swift-protocol-di-testing
-description: Protocol-based dependency injection for testable Swift code — mock file system, network, and external APIs using focused protocols and Swift Testing.
+description: Swiftのプロトコル指向DI（依存性注入）とテストパターン -- プロトコルベースのモック、テスタビリティ、クリーンアーキテクチャ。
 origin: ECC
 ---
 
-# Swift Protocol-Based Dependency Injection for Testing
+# Swift Protocol DI & テスト
 
 Patterns for making Swift code testable by abstracting external dependencies (file system, network, iCloud) behind small, focused protocols. Enables deterministic tests without I/O.
 
-## When to Activate
+## 発動条件
 
 - Writing Swift code that accesses file system, network, or external APIs
 - Need to test error handling paths without triggering real failures
 - Building modules that work across environments (app, test, SwiftUI preview)
 - Designing testable architecture with Swift concurrency (actors, Sendable)
 
-## Core Pattern
+## コアパターン
 
 ### 1. Define Small, Focused Protocols
 
@@ -166,7 +166,7 @@ func testReadError() async {
 }
 ```
 
-## Best Practices
+## ベストプラクティス
 
 - **Single Responsibility**: Each protocol should handle one concern — don't create "god protocols" with many methods
 - **Sendable conformance**: Required when protocols are used across actor boundaries
@@ -174,7 +174,7 @@ func testReadError() async {
 - **Error simulation**: Design mocks with configurable error properties for testing failure paths
 - **Only mock boundaries**: Mock external dependencies (file system, network, APIs), not internal types
 
-## Anti-Patterns to Avoid
+## 避けるべきアンチパターン
 
 - Creating a single large protocol that covers all external access
 - Mocking internal types that have no external dependencies
@@ -182,7 +182,7 @@ func testReadError() async {
 - Forgetting `Sendable` conformance when used with actors
 - Over-engineering: if a type has no external dependencies, it doesn't need a protocol
 
-## When to Use
+## 使用タイミング
 
 - Any Swift code that touches file system, network, or external APIs
 - Testing error handling paths that are hard to trigger in real environments

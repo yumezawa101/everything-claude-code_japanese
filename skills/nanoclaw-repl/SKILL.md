@@ -1,6 +1,6 @@
 ---
 name: nanoclaw-repl
-description: Operate and extend NanoClaw v2, ECC's zero-dependency session-aware REPL built on claude -p.
+description: セッション永続化付きの軽量REPL。会話履歴を維持しながらclaude -pを同期呼び出しする。インタラクティブな永続エージェントセッションに使用。
 origin: ECC
 ---
 
