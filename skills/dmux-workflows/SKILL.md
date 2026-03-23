@@ -6,25 +6,25 @@ origin: ECC
 
 # dmux ワークフロー
 
-Orchestrate parallel AI agent sessions using dmux, a tmux pane manager for agent harnesses.
+dmux（AIエージェントハーネス用のtmuxペインマネージャ）を使用して、並列AIエージェントセッションをオーケストレーションする。
 
 ## 発動条件
 
-- Running multiple agent sessions in parallel
-- Coordinating work across Claude Code, Codex, and other harnesses
-- Complex tasks that benefit from divide-and-conquer parallelism
-- User says "run in parallel", "split this work", "use dmux", or "multi-agent"
+- 複数のエージェントセッションを並列で実行する場合
+- Claude Code、Codex、その他のハーネス間で作業を調整する場合
+- 分割統治型の並列処理が有効な複雑なタスク
+- ユーザーが「並列で実行」「作業を分割」「dmuxを使って」「マルチエージェント」などと言った場合
 
-## What is dmux
+## dmuxとは
 
-dmux is a tmux-based orchestration tool that manages AI agent panes:
-- Press `n` to create a new pane with a prompt
-- Press `m` to merge pane output back to the main session
-- Supports: Claude Code, Codex, OpenCode, Cline, Gemini, Qwen
+dmuxはAIエージェントペインを管理するtmuxベースのオーケストレーションツール:
+- `n`を押してプロンプト付きの新しいペインを作成
+- `m`を押してペインの出力をメインセッションにマージ
+- 対応ツール: Claude Code、Codex、OpenCode、Cline、Gemini、Qwen
 
-**Install:** Install dmux from its repository after reviewing the package. See [github.com/standardagents/dmux](https://github.com/standardagents/dmux)
+**インストール:** パッケージを確認した上で、リポジトリからdmuxをインストール。[github.com/standardagents/dmux](https://github.com/standardagents/dmux)を参照。
 
-## Quick Start
+## クイックスタート
 
 ```bash
 # Start dmux session
@@ -39,11 +39,11 @@ dmux
 # Press 'm' to merge results back
 ```
 
-## Workflow Patterns
+## ワークフローパターン
 
-### Pattern 1: Research + Implement
+### パターン1: リサーチ + 実装
 
-Split research and implementation into parallel tracks:
+リサーチと実装を並列トラックに分割:
 
 ```
 Pane 1 (Research): "Research best practices for rate limiting in Node.js.
@@ -53,24 +53,24 @@ Pane 1 (Research): "Research best practices for rate limiting in Node.js.
 Pane 2 (Implement): "Implement rate limiting middleware for our Express API.
   Start with a basic token bucket, we'll refine after research completes."
 
-# After Pane 1 completes, merge findings into Pane 2's context
+# Pane 1が完了したら、成果をPane 2のコンテキストにマージ
 ```
 
-### Pattern 2: Multi-File Feature
+### パターン2: マルチファイル機能
 
-Parallelize work across independent files:
+独立したファイルにまたがる作業を並列化:
 
 ```
 Pane 1: "Create the database schema and migrations for the billing feature"
 Pane 2: "Build the billing API endpoints in src/api/billing/"
 Pane 3: "Create the billing dashboard UI components"
 
-# Merge all, then do integration in main pane
+# すべてマージし、メインペインで統合作業を行う
 ```
 
-### Pattern 3: Test + Fix Loop
+### パターン3: テスト + 修正ループ
 
-Run tests in one pane, fix in another:
+一方のペインでテストを実行し、もう一方で修正:
 
 ```
 Pane 1 (Watcher): "Run the test suite in watch mode. When tests fail,
@@ -79,9 +79,9 @@ Pane 1 (Watcher): "Run the test suite in watch mode. When tests fail,
 Pane 2 (Fixer): "Fix failing tests based on the error output from pane 1"
 ```
 
-### Pattern 4: Cross-Harness
+### パターン4: クロスハーネス
 
-Use different AI tools for different tasks:
+異なるタスクに異なるAIツールを使用:
 
 ```
 Pane 1 (Claude Code): "Review the security of the auth module"
@@ -89,29 +89,29 @@ Pane 2 (Codex): "Refactor the utility functions for performance"
 Pane 3 (Claude Code): "Write E2E tests for the checkout flow"
 ```
 
-### Pattern 5: Code Review Pipeline
+### パターン5: コードレビューパイプライン
 
-Parallel review perspectives:
+並列レビューの多角的視点:
 
 ```
 Pane 1: "Review src/api/ for security vulnerabilities"
 Pane 2: "Review src/api/ for performance issues"
 Pane 3: "Review src/api/ for test coverage gaps"
 
-# Merge all reviews into a single report
+# すべてのレビューを1つのレポートにマージ
 ```
 
 ## ベストプラクティス
 
-1. **Independent tasks only.** Don't parallelize tasks that depend on each other's output.
-2. **Clear boundaries.** Each pane should work on distinct files or concerns.
-3. **Merge strategically.** Review pane output before merging to avoid conflicts.
-4. **Use git worktrees.** For file-conflict-prone work, use separate worktrees per pane.
-5. **Resource awareness.** Each pane uses API tokens — keep total panes under 5-6.
+1. **独立したタスクのみ。** 互いの出力に依存するタスクを並列化しないこと。
+2. **明確な境界。** 各ペインは異なるファイルや関心事を扱うべき。
+3. **戦略的にマージ。** コンフリクトを避けるため、マージ前にペインの出力を確認する。
+4. **git worktreeを活用。** ファイル競合が起きやすい作業では、ペインごとに別のworktreeを使用する。
+5. **リソースを意識。** 各ペインはAPIトークンを消費する -- 合計ペイン数は5-6以下に抑える。
 
-## Git Worktree Integration
+## Git Worktree統合
 
-For tasks that touch overlapping files:
+重複するファイルに触れるタスクの場合:
 
 ```bash
 # Create worktrees for isolation
@@ -127,24 +127,24 @@ git merge feat/auth
 git merge feat/billing
 ```
 
-## Complementary Tools
+## 補完ツール
 
-| Tool | What It Does | When to Use |
+| ツール | 機能 | 使用タイミング |
 |------|-------------|-------------|
-| **dmux** | tmux pane management for agents | Parallel agent sessions |
-| **Superset** | Terminal IDE for 10+ parallel agents | Large-scale orchestration |
-| **Claude Code Task tool** | In-process subagent spawning | Programmatic parallelism within a session |
-| **Codex multi-agent** | Built-in agent roles | Codex-specific parallel work |
+| **dmux** | エージェント用tmuxペイン管理 | 並列エージェントセッション |
+| **Superset** | 10以上の並列エージェント用ターミナルIDE | 大規模オーケストレーション |
+| **Claude Code Taskツール** | プロセス内サブエージェント生成 | セッション内のプログラマティック並列処理 |
+| **Codex multi-agent** | 組み込みエージェントロール | Codex固有の並列作業 |
 
-## ECC Helper
+## ECCヘルパー
 
-ECC now includes a helper for external tmux-pane orchestration with separate git worktrees:
+ECCには、個別のgit worktreeを使用した外部tmuxペインオーケストレーション用のヘルパーが含まれている:
 
 ```bash
 node scripts/orchestrate-worktrees.js plan.json --execute
 ```
 
-Example `plan.json`:
+`plan.json`の例:
 
 ```json
 {
@@ -158,15 +158,15 @@ Example `plan.json`:
 }
 ```
 
-The helper:
-- Creates one branch-backed git worktree per worker
-- Optionally overlays selected `seedPaths` from the main checkout into each worker worktree
-- Writes per-worker `task.md`, `handoff.md`, and `status.md` files under `.orchestration/<session>/`
-- Starts a tmux session with one pane per worker
-- Launches each worker command in its own pane
-- Leaves the main pane free for the orchestrator
+ヘルパーの機能:
+- ワーカーごとにブランチバックのgit worktreeを1つ作成
+- オプションで、メインチェックアウトから選択した`seedPaths`を各ワーカーworktreeにオーバーレイ
+- `.orchestration/<session>/`配下にワーカーごとの`task.md`、`handoff.md`、`status.md`ファイルを作成
+- ワーカーごとに1ペインのtmuxセッションを開始
+- 各ワーカーコマンドを専用ペインで起動
+- オーケストレーター用にメインペインを空けておく
 
-Use `seedPaths` when workers need access to dirty or untracked local files that are not yet part of `HEAD`, such as local orchestration scripts, draft plans, or docs:
+ワーカーが`HEAD`にまだ含まれていないダーティまたは未追跡のローカルファイル（ローカルオーケストレーションスクリプト、ドラフト計画、ドキュメントなど）にアクセスする必要がある場合は`seedPaths`を使用:
 
 ```json
 {
@@ -183,9 +183,9 @@ Use `seedPaths` when workers need access to dirty or untracked local files that 
 }
 ```
 
-## Troubleshooting
+## トラブルシューティング
 
-- **Pane not responding:** Switch to the pane directly or inspect it with `tmux capture-pane -pt <session>:0.<pane-index>`.
-- **Merge conflicts:** Use git worktrees to isolate file changes per pane.
-- **High token usage:** Reduce number of parallel panes. Each pane is a full agent session.
-- **tmux not found:** Install with `brew install tmux` (macOS) or `apt install tmux` (Linux).
+- **ペインが応答しない:** ペインに直接切り替えるか、`tmux capture-pane -pt <session>:0.<pane-index>`で検査する。
+- **マージコンフリクト:** git worktreeを使用してペインごとにファイル変更を分離する。
+- **トークン使用量が多い:** 並列ペイン数を減らす。各ペインは完全なエージェントセッション。
+- **tmuxが見つからない:** `brew install tmux`（macOS）または`apt install tmux`（Linux）でインストール。

@@ -6,22 +6,22 @@ origin: ECC
 
 # X API
 
-Programmatic interaction with X (Twitter) for posting, reading, searching, and analytics.
+X（Twitter）への投稿、読み取り、検索、分析のためのプログラマティックなインタラクション。
 
 ## 発動条件
 
-- User wants to post tweets or threads programmatically
-- Reading timeline, mentions, or user data from X
-- Searching X for content, trends, or conversations
-- Building X integrations or bots
-- Analytics and engagement tracking
-- User says "post to X", "tweet", "X API", or "Twitter API"
+- ツイートやスレッドをプログラムで投稿したい場合
+- Xからタイムライン、メンション、ユーザーデータを読み取る場合
+- Xでコンテンツ、トレンド、会話を検索する場合
+- Xの統合やボットを構築する場合
+- 分析とエンゲージメント追跡
+- ユーザーが「Xに投稿」「ツイート」「X API」「Twitter API」などと言った場合
 
-## Authentication
+## 認証
 
-### OAuth 2.0 Bearer Token (App-Only)
+### OAuth 2.0 Bearer Token（アプリ専用）
 
-Best for: read-heavy operations, search, public data.
+最適な用途: 読み取り中心の操作、検索、公開データ。
 
 ```bash
 # Environment setup
@@ -44,9 +44,9 @@ resp = requests.get(
 tweets = resp.json()
 ```
 
-### OAuth 1.0a (User Context)
+### OAuth 1.0a（ユーザーコンテキスト）
 
-Required for: posting tweets, managing account, DMs.
+必要な場面: ツイート投稿、アカウント管理、DM。
 
 ```bash
 # Environment setup — source before use
@@ -68,9 +68,9 @@ oauth = OAuth1Session(
 )
 ```
 
-## Core Operations
+## コア操作
 
-### Post a Tweet
+### ツイートを投稿
 
 ```python
 resp = oauth.post(
@@ -81,7 +81,7 @@ resp.raise_for_status()
 tweet_id = resp.json()["data"]["id"]
 ```
 
-### Post a Thread
+### スレッドを投稿
 
 ```python
 def post_thread(oauth, tweets: list[str]) -> list[str]:
@@ -98,7 +98,7 @@ def post_thread(oauth, tweets: list[str]) -> list[str]:
     return ids
 ```
 
-### Read User Timeline
+### ユーザータイムラインを読み取る
 
 ```python
 resp = requests.get(
@@ -111,7 +111,7 @@ resp = requests.get(
 )
 ```
 
-### Search Tweets
+### ツイートを検索
 
 ```python
 resp = requests.get(
@@ -125,7 +125,7 @@ resp = requests.get(
 )
 ```
 
-### Get User by Username
+### ユーザー名でユーザーを取得
 
 ```python
 resp = requests.get(
@@ -135,7 +135,7 @@ resp = requests.get(
 )
 ```
 
-### Upload Media and Post
+### メディアをアップロードして投稿
 
 ```python
 # Media upload uses v1.1 endpoint
@@ -154,12 +154,12 @@ resp = oauth.post(
 )
 ```
 
-## Rate Limits
+## レート制限
 
-X API rate limits vary by endpoint, auth method, and account tier, and they change over time. Always:
-- Check the current X developer docs before hardcoding assumptions
-- Read `x-rate-limit-remaining` and `x-rate-limit-reset` headers at runtime
-- Back off automatically instead of relying on static tables in code
+X APIのレート制限はエンドポイント、認証方法、アカウントティアによって異なり、時間とともに変更される。常に:
+- ハードコーディングする前に最新のX開発者ドキュメントを確認する
+- 実行時に`x-rate-limit-remaining`と`x-rate-limit-reset`ヘッダーを読み取る
+- コード内の静的テーブルに頼らず、自動的にバックオフする
 
 ```python
 import time
@@ -171,7 +171,7 @@ if remaining < 5:
     print(f"Rate limit approaching. Resets in {wait}s")
 ```
 
-## Error Handling
+## エラーハンドリング
 
 ```python
 resp = oauth.post("https://api.x.com/2/tweets", json={"text": content})
@@ -186,23 +186,23 @@ else:
     raise Exception(f"X API error {resp.status_code}: {resp.text}")
 ```
 
-## Security
+## セキュリティ
 
-- **Never hardcode tokens.** Use environment variables or `.env` files.
-- **Never commit `.env` files.** Add to `.gitignore`.
-- **Rotate tokens** if exposed. Regenerate at developer.x.com.
-- **Use read-only tokens** when write access is not needed.
-- **Store OAuth secrets securely** — not in source code or logs.
+- **トークンをハードコードしない。** 環境変数または`.env`ファイルを使用する。
+- **`.env`ファイルをコミットしない。** `.gitignore`に追加する。
+- **トークンが漏洩した場合はローテーション**する。developer.x.comで再生成。
+- **書き込みアクセスが不要な場合は読み取り専用トークン**を使用する。
+- **OAuthシークレットは安全に保管** -- ソースコードやログに含めない。
 
-## Integration with Content Engine
+## Content Engineとの統合
 
-Use `content-engine` skill to generate platform-native content, then post via X API:
-1. Generate content with content-engine (X platform format)
-2. Validate length (280 chars for single tweet)
-3. Post via X API using patterns above
-4. Track engagement via public_metrics
+`content-engine`スキルを使用してプラットフォームネイティブなコンテンツを生成し、X API経由で投稿:
+1. content-engineでコンテンツを生成（Xプラットフォーム形式）
+2. 文字数を検証（単一ツイートは280文字）
+3. 上記のパターンでX API経由で投稿
+4. public_metricsでエンゲージメントを追跡
 
 ## 関連スキル
 
-- `content-engine` — Generate platform-native content for X
-- `crosspost` — Distribute content across X, LinkedIn, and other platforms
+- `content-engine` -- Xのプラットフォームネイティブコンテンツを生成
+- `crosspost` -- X、LinkedIn、その他のプラットフォームにコンテンツを配信

@@ -6,179 +6,179 @@ origin: ECC
 
 # フロントエンドスライド
 
-Create zero-dependency, animation-rich HTML presentations that run entirely in the browser.
+依存関係ゼロで、アニメーション豊富な HTML プレゼンテーションを作成します。ブラウザのみで完全に動作します。
 
-Inspired by the visual exploration approach showcased in work by zarazhangrui (credit: @zarazhangrui).
+zarazhangrui によるビジュアル探索アプローチにインスパイアされています（クレジット: @zarazhangrui）。
 
 ## 発動条件
 
-- Creating a talk deck, pitch deck, workshop deck, or internal presentation
-- Converting `.ppt` or `.pptx` slides into an HTML presentation
-- Improving an existing HTML presentation's layout, motion, or typography
-- Exploring presentation styles with a user who does not know their design preference yet
+- トークデッキ、ピッチデッキ、ワークショップデッキ、または社内プレゼンテーションの作成
+- `.ppt` または `.pptx` スライドを HTML プレゼンテーションに変換
+- 既存の HTML プレゼンテーションのレイアウト、モーション、またはタイポグラフィの改善
+- デザインの好みがまだ決まっていないユーザーとプレゼンテーションスタイルの探索
 
 ## 必須事項
 
-1. **Zero dependencies**: default to one self-contained HTML file with inline CSS and JS.
-2. **Viewport fit is mandatory**: every slide must fit inside one viewport with no internal scrolling.
-3. **Show, don't tell**: use visual previews instead of abstract style questionnaires.
-4. **Distinctive design**: avoid generic purple-gradient, Inter-on-white, template-looking decks.
-5. **Production quality**: keep code commented, accessible, responsive, and performant.
+1. **依存関係ゼロ**: デフォルトでインライン CSS と JS を含む単一の自己完結型 HTML ファイルとする。
+2. **ビューポートフィットは必須**: すべてのスライドは内部スクロールなしで 1 つのビューポート内に収まること。
+3. **見せて伝える**: 抽象的なスタイルアンケートではなく、ビジュアルプレビューを使用する。
+4. **独自性のあるデザイン**: 汎用的な紫グラデーション、Inter-on-white、テンプレート風のデッキを避ける。
+5. **プロダクション品質**: コードにコメントを付け、アクセシブル、レスポンシブ、パフォーマントに保つ。
 
-Before generating, read `STYLE_PRESETS.md` for the viewport-safe CSS base, density limits, preset catalog, and CSS gotchas.
+生成前に、ビューポートセーフな CSS ベース、密度制限、プリセットカタログ、CSS の注意点について `STYLE_PRESETS.md` を読むこと。
 
-## Workflow
+## ワークフロー
 
-### 1. Detect Mode
+### 1. モード検出
 
-Choose one path:
-- **New presentation**: user has a topic, notes, or full draft
-- **PPT conversion**: user has `.ppt` or `.pptx`
-- **Enhancement**: user already has HTML slides and wants improvements
+以下のいずれかのパスを選択する：
+- **新規プレゼンテーション**: ユーザーがトピック、メモ、または完全な下書きを持っている
+- **PPT 変換**: ユーザーが `.ppt` または `.pptx` を持っている
+- **改善**: ユーザーが既に HTML スライドを持っていて改善を望んでいる
 
-### 2. Discover Content
+### 2. コンテンツの把握
 
-Ask only the minimum needed:
-- purpose: pitch, teaching, conference talk, internal update
-- length: short (5-10), medium (10-20), long (20+)
-- content state: finished copy, rough notes, topic only
+最低限必要なことのみ確認する：
+- 目的: ピッチ、教育、カンファレンストーク、社内報告
+- 長さ: 短い（5-10）、中程度（10-20）、長い（20+）
+- コンテンツの状態: 完成原稿、ラフノート、トピックのみ
 
-If the user has content, ask them to paste it before styling.
+ユーザーがコンテンツを持っている場合、スタイリング前に貼り付けてもらう。
 
-### 3. Discover Style
+### 3. スタイルの発見
 
-Default to visual exploration.
+デフォルトはビジュアル探索とする。
 
-If the user already knows the desired preset, skip previews and use it directly.
+ユーザーが既に希望するプリセットを知っている場合、プレビューをスキップして直接使用する。
 
-Otherwise:
-1. Ask what feeling the deck should create: impressed, energized, focused, inspired.
-2. Generate **3 single-slide preview files** in `.ecc-design/slide-previews/`.
-3. Each preview must be self-contained, show typography/color/motion clearly, and stay under roughly 100 lines of slide content.
-4. Ask the user which preview to keep or what elements to mix.
+それ以外の場合：
+1. デッキがどのような印象を与えるべきか尋ねる: 感銘、活力、集中、インスピレーション。
+2. `.ecc-design/slide-previews/` に **3 つの単一スライドプレビューファイル** を生成する。
+3. 各プレビューは自己完結型で、タイポグラフィ/カラー/モーションを明確に表示し、スライドコンテンツはおおよそ 100 行以下に収める。
+4. ユーザーにどのプレビューを採用するか、またはどの要素をミックスするか尋ねる。
 
-Use the preset guide in `STYLE_PRESETS.md` when mapping mood to style.
+ムードからスタイルへのマッピングには `STYLE_PRESETS.md` のプリセットガイドを使用する。
 
-### 4. Build the Presentation
+### 4. プレゼンテーションの構築
 
-Output either:
+以下のいずれかで出力する：
 - `presentation.html`
-- `[presentation-name].html`
+- `[プレゼンテーション名].html`
 
-Use an `assets/` folder only when the deck contains extracted or user-supplied images.
+デッキに抽出画像またはユーザー提供の画像が含まれる場合のみ `assets/` フォルダを使用する。
 
-Required structure:
-- semantic slide sections
-- a viewport-safe CSS base from `STYLE_PRESETS.md`
-- CSS custom properties for theme values
-- a presentation controller class for keyboard, wheel, and touch navigation
-- Intersection Observer for reveal animations
-- reduced-motion support
+必須構造：
+- セマンティックなスライドセクション
+- `STYLE_PRESETS.md` のビューポートセーフな CSS ベース
+- テーマ値用の CSS カスタムプロパティ
+- キーボード、ホイール、タッチナビゲーション用のプレゼンテーションコントローラークラス
+- 表示時アニメーション用の Intersection Observer
+- reduced-motion サポート
 
-### 5. Enforce Viewport Fit
+### 5. ビューポートフィットの強制
 
-Treat this as a hard gate.
+これをハードゲートとして扱う。
 
-Rules:
-- every `.slide` must use `height: 100vh; height: 100dvh; overflow: hidden;`
-- all type and spacing must scale with `clamp()`
-- when content does not fit, split into multiple slides
-- never solve overflow by shrinking text below readable sizes
-- never allow scrollbars inside a slide
+ルール：
+- すべての `.slide` は `height: 100vh; height: 100dvh; overflow: hidden;` を使用すること
+- すべてのタイポグラフィとスペーシングは `clamp()` でスケールすること
+- コンテンツが収まらない場合、複数のスライドに分割すること
+- 読みやすいサイズ以下にテキストを縮小してオーバーフローを解決しないこと
+- スライド内にスクロールバーを許可しないこと
 
-Use the density limits and mandatory CSS block in `STYLE_PRESETS.md`.
+密度制限と必須 CSS ブロックについては `STYLE_PRESETS.md` を使用する。
 
-### 6. Validate
+### 6. 検証
 
-Check the finished deck at these sizes:
+完成したデッキを以下のサイズで確認する：
 - 1920x1080
 - 1280x720
 - 768x1024
 - 375x667
 - 667x375
 
-If browser automation is available, use it to verify no slide overflows and that keyboard navigation works.
+ブラウザ自動化が利用可能な場合、スライドのオーバーフローがないこととキーボードナビゲーションが機能することを検証する。
 
-### 7. Deliver
+### 7. 納品
 
-At handoff:
-- delete temporary preview files unless the user wants to keep them
-- open the deck with the platform-appropriate opener when useful
-- summarize file path, preset used, slide count, and easy theme customization points
+引き渡し時：
+- ユーザーが保持を望まない限り、一時的なプレビューファイルを削除する
+- 有用な場合、プラットフォーム適切なオープナーでデッキを開く
+- ファイルパス、使用したプリセット、スライド数、簡単なテーマカスタマイズポイントを要約する
 
-Use the correct opener for the current OS:
+現在の OS に適したオープナーを使用する：
 - macOS: `open file.html`
 - Linux: `xdg-open file.html`
 - Windows: `start "" file.html`
 
-## PPT / PPTX Conversion
+## PPT / PPTX 変換
 
-For PowerPoint conversion:
-1. Prefer `python3` with `python-pptx` to extract text, images, and notes.
-2. If `python-pptx` is unavailable, ask whether to install it or fall back to a manual/export-based workflow.
-3. Preserve slide order, speaker notes, and extracted assets.
-4. After extraction, run the same style-selection workflow as a new presentation.
+PowerPoint 変換の場合：
+1. テキスト、画像、ノートを抽出するために `python3` と `python-pptx` を優先する。
+2. `python-pptx` が利用できない場合、インストールするか手動/エクスポートベースのワークフローにフォールバックするか尋ねる。
+3. スライド順序、スピーカーノート、抽出アセットを保持する。
+4. 抽出後、新規プレゼンテーションと同じスタイル選択ワークフローを実行する。
 
-Keep conversion cross-platform. Do not rely on macOS-only tools when Python can do the job.
+変換はクロスプラットフォームで行うこと。Python で処理できる場合は macOS 専用ツールに依存しないこと。
 
-## Implementation Requirements
+## 実装要件
 
 ### HTML / CSS
 
-- Use inline CSS and JS unless the user explicitly wants a multi-file project.
-- Fonts may come from Google Fonts or Fontshare.
-- Prefer atmospheric backgrounds, strong type hierarchy, and a clear visual direction.
-- Use abstract shapes, gradients, grids, noise, and geometry rather than illustrations.
+- ユーザーが明示的にマルチファイルプロジェクトを望まない限り、インライン CSS と JS を使用する。
+- フォントは Google Fonts または Fontshare から取得可能。
+- 雰囲気のある背景、強いタイプ階層、明確なビジュアルディレクションを優先する。
+- イラストではなく、抽象的な形状、グラデーション、グリッド、ノイズ、ジオメトリを使用する。
 
 ### JavaScript
 
-Include:
-- keyboard navigation
-- touch / swipe navigation
-- mouse wheel navigation
-- progress indicator or slide index
-- reveal-on-enter animation triggers
+以下を含める：
+- キーボードナビゲーション
+- タッチ / スワイプナビゲーション
+- マウスホイールナビゲーション
+- 進行状況インジケータまたはスライドインデックス
+- 表示時のアニメーショントリガー
 
-### Accessibility
+### アクセシビリティ
 
-- use semantic structure (`main`, `section`, `nav`)
-- keep contrast readable
-- support keyboard-only navigation
-- respect `prefers-reduced-motion`
+- セマンティック構造を使用する（`main`、`section`、`nav`）
+- 読みやすいコントラストを保つ
+- キーボードのみのナビゲーションをサポートする
+- `prefers-reduced-motion` を尊重する
 
-## Content Density Limits
+## コンテンツ密度の制限
 
-Use these maxima unless the user explicitly asks for denser slides and readability still holds:
+ユーザーが明示的にさらに密なスライドを求め、かつ可読性が保たれる場合を除き、以下の上限を使用する：
 
-| Slide type | Limit |
+| スライドタイプ | 制限 |
 |------------|-------|
-| Title | 1 heading + 1 subtitle + optional tagline |
-| Content | 1 heading + 4-6 bullets or 2 short paragraphs |
-| Feature grid | 6 cards max |
-| Code | 8-10 lines max |
-| Quote | 1 quote + attribution |
-| Image | 1 image constrained by viewport |
+| タイトル | 見出し 1 つ + サブタイトル 1 つ + オプションのタグライン |
+| コンテンツ | 見出し 1 つ + 箇条書き 4-6 個または短い段落 2 つ |
+| フィーチャーグリッド | 最大 6 カード |
+| コード | 最大 8-10 行 |
+| 引用 | 引用 1 つ + 出典 |
+| 画像 | ビューポートで制約された画像 1 つ |
 
 ## アンチパターン
 
-- generic startup gradients with no visual identity
-- system-font decks unless intentionally editorial
-- long bullet walls
-- code blocks that need scrolling
-- fixed-height content boxes that break on short screens
-- invalid negated CSS functions like `-clamp(...)`
+- ビジュアルアイデンティティのない汎用的なスタートアップグラデーション
+- 意図的にエディトリアルでない限りシステムフォントのデッキ
+- 長い箇条書きの壁
+- スクロールが必要なコードブロック
+- 短い画面で崩れる固定高さのコンテンツボックス
+- `-clamp(...)` のような無効な CSS 否定関数
 
-## Related ECC Skills
+## 関連 ECC スキル
 
-- `frontend-patterns` for component and interaction patterns around the deck
-- `liquid-glass-design` when a presentation intentionally borrows Apple glass aesthetics
-- `e2e-testing` if you need automated browser verification for the final deck
+- `frontend-patterns` - デッキ周辺のコンポーネントとインタラクションパターン
+- `liquid-glass-design` - プレゼンテーションが意図的に Apple ガラス風の美学を取り入れる場合
+- `e2e-testing` - 最終デッキの自動ブラウザ検証が必要な場合
 
-## Deliverable Checklist
+## 納品チェックリスト
 
-- presentation runs from a local file in a browser
-- every slide fits the viewport without scrolling
-- style is distinctive and intentional
-- animation is meaningful, not noisy
-- reduced motion is respected
-- file paths and customization points are explained at handoff
+- プレゼンテーションがローカルファイルからブラウザで動作する
+- すべてのスライドがスクロールなしでビューポートに収まる
+- スタイルが独自性があり意図的である
+- アニメーションが意味のあるもので、ノイズではない
+- reduced motion が尊重されている
+- ファイルパスとカスタマイズポイントが引き渡し時に説明されている

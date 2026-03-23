@@ -6,28 +6,28 @@ origin: ECC
 
 # NanoClaw REPL
 
-Use this skill when running or extending `scripts/claw.js`.
+このスキルは `scripts/claw.js` の実行や拡張を行う際に使用します。
 
-## Capabilities
+## 機能
 
-- persistent markdown-backed sessions
-- model switching with `/model`
-- dynamic skill loading with `/load`
-- session branching with `/branch`
-- cross-session search with `/search`
-- history compaction with `/compact`
-- export to md/json/txt with `/export`
-- session metrics with `/metrics`
+- Markdown ベースの永続セッション
+- `/model` によるモデル切り替え
+- `/load` による動的スキルロード
+- `/branch` によるセッション分岐
+- `/search` によるクロスセッション検索
+- `/compact` による履歴圧縮
+- `/export` による md/json/txt へのエクスポート
+- `/metrics` によるセッションメトリクス
 
-## Operating Guidance
+## 運用ガイダンス
 
-1. Keep sessions task-focused.
-2. Branch before high-risk changes.
-3. Compact after major milestones.
-4. Export before sharing or archival.
+1. セッションはタスクに集中させる。
+2. リスクの高い変更の前に分岐する。
+3. 主要なマイルストーン後に圧縮する。
+4. 共有やアーカイブの前にエクスポートする。
 
-## Extension Rules
+## 拡張ルール
 
-- keep zero external runtime dependencies
-- preserve markdown-as-database compatibility
-- keep command handlers deterministic and local
+- 外部ランタイム依存関係をゼロに保つ
+- Markdown をデータベースとして使用する互換性を維持する
+- コマンドハンドラーは決定的かつローカルに保つ

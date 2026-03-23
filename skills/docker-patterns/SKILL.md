@@ -6,19 +6,19 @@ origin: ECC
 
 # Dockerパターン
 
-Docker and Docker Compose best practices for containerized development.
+コンテナ化開発のためのDockerおよびDocker Composeのベストプラクティス。
 
 ## 発動条件
 
-- Setting up Docker Compose for local development
-- Designing multi-container architectures
-- Troubleshooting container networking or volume issues
-- Reviewing Dockerfiles for security and size
-- Migrating from local dev to containerized workflow
+- ローカル開発用のDocker Composeをセットアップする場合
+- マルチコンテナアーキテクチャを設計する場合
+- コンテナのネットワーキングやボリュームの問題をトラブルシューティングする場合
+- Dockerfileのセキュリティとサイズをレビューする場合
+- ローカル開発からコンテナ化ワークフローに移行する場合
 
-## Docker Compose for Local Development
+## ローカル開発用Docker Compose
 
-### Standard Web App Stack
+### 標準Webアプリスタック
 
 ```yaml
 # docker-compose.yml
@@ -78,7 +78,7 @@ volumes:
   redisdata:
 ```
 
-### Development vs Production Dockerfile
+### 開発用と本番用のDockerfile
 
 ```dockerfile
 # Stage: dependencies
@@ -116,7 +116,7 @@ HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://localhost:3000/heal
 CMD ["node", "dist/server.js"]
 ```
 
-### Override Files
+### オーバーライドファイル
 
 ```yaml
 # docker-compose.override.yml (auto-loaded, dev-only settings)
@@ -149,18 +149,18 @@ docker compose up
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 ```
 
-## Networking
+## ネットワーキング
 
-### Service Discovery
+### サービスディスカバリ
 
-Services in the same Compose network resolve by service name:
+同じComposeネットワーク内のサービスはサービス名で名前解決される:
 ```
-# From "app" container:
-postgres://postgres:postgres@db:5432/app_dev    # "db" resolves to the db container
-redis://redis:6379/0                             # "redis" resolves to the redis container
+# "app"コンテナから:
+postgres://postgres:postgres@db:5432/app_dev    # "db"はdbコンテナに解決される
+redis://redis:6379/0                             # "redis"はredisコンテナに解決される
 ```
 
-### Custom Networks
+### カスタムネットワーク
 
 ```yaml
 services:
@@ -175,38 +175,38 @@ services:
 
   db:
     networks:
-      - backend-net              # Only reachable from api, not frontend
+      - backend-net              # apiからのみ到達可能、frontendからは不可
 
 networks:
   frontend-net:
   backend-net:
 ```
 
-### Exposing Only What's Needed
+### 必要なものだけを公開する
 
 ```yaml
 services:
   db:
     ports:
-      - "127.0.0.1:5432:5432"   # Only accessible from host, not network
-    # Omit ports entirely in production -- accessible only within Docker network
+      - "127.0.0.1:5432:5432"   # ホストからのみアクセス可能、ネットワークからは不可
+    # 本番ではportsを完全に省略 -- Dockerネットワーク内からのみアクセス可能
 ```
 
-## Volume Strategies
+## ボリューム戦略
 
 ```yaml
 volumes:
-  # Named volume: persists across container restarts, managed by Docker
+  # Named volume: コンテナ再起動間で永続化、Dockerが管理
   pgdata:
 
-  # Bind mount: maps host directory into container (for development)
+  # Bind mount: ホストディレクトリをコンテナにマッピング（開発用）
   # - ./src:/app/src
 
-  # Anonymous volume: preserves container-generated content from bind mount override
+  # Anonymous volume: バインドマウントのオーバーライドからコンテナ生成コンテンツを保護
   # - /app/node_modules
 ```
 
-### Common Patterns
+### 一般的なパターン
 
 ```yaml
 services:
@@ -222,9 +222,9 @@ services:
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql  # Init scripts
 ```
 
-## Container Security
+## コンテナセキュリティ
 
-### Dockerfile Hardening
+### Dockerfileのハードニング
 
 ```dockerfile
 # 1. Use specific tags (never :latest)
@@ -239,7 +239,7 @@ USER app
 # 5. No secrets in image layers
 ```
 
-### Compose Security
+### Composeのセキュリティ
 
 ```yaml
 services:
@@ -256,7 +256,7 @@ services:
       - NET_BIND_SERVICE          # Only if binding to ports < 1024
 ```
 
-### Secret Management
+### シークレット管理
 
 ```yaml
 # GOOD: Use environment variables (injected at runtime)
@@ -299,9 +299,9 @@ README.md
 tests/
 ```
 
-## Debugging
+## デバッグ
 
-### Common Commands
+### よく使うコマンド
 
 ```bash
 # View logs
@@ -327,7 +327,7 @@ docker compose down -v                # Also remove volumes (DESTRUCTIVE)
 docker system prune                   # Remove unused images/containers
 ```
 
-### Debugging Network Issues
+### ネットワーク問題のデバッグ
 
 ```bash
 # Check DNS resolution inside container
@@ -344,21 +344,21 @@ docker network inspect <project>_default
 ## アンチパターン
 
 ```
-# BAD: Using docker compose in production without orchestration
-# Use Kubernetes, ECS, or Docker Swarm for production multi-container workloads
+# BAD: オーケストレーションなしで本番環境でdocker composeを使用する
+# 本番のマルチコンテナワークロードにはKubernetes、ECS、またはDocker Swarmを使用すること
 
-# BAD: Storing data in containers without volumes
-# Containers are ephemeral -- all data lost on restart without volumes
+# BAD: ボリュームなしでコンテナにデータを保存する
+# コンテナは一時的なもの -- ボリュームがなければ再起動時にすべてのデータが失われる
 
-# BAD: Running as root
-# Always create and use a non-root user
+# BAD: rootで実行する
+# 常にnon-rootユーザーを作成して使用すること
 
-# BAD: Using :latest tag
-# Pin to specific versions for reproducible builds
+# BAD: :latestタグを使用する
+# 再現可能なビルドのために特定バージョンを指定すること
 
-# BAD: One giant container with all services
-# Separate concerns: one process per container
+# BAD: すべてのサービスを1つの巨大なコンテナに入れる
+# 関心の分離: 1コンテナにつき1プロセス
 
-# BAD: Putting secrets in docker-compose.yml
-# Use .env files (gitignored) or Docker secrets
+# BAD: docker-compose.ymlにシークレットを入れる
+# .envファイル（gitignore済み）またはDockerシークレットを使用すること
 ```

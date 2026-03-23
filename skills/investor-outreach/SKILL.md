@@ -6,71 +6,71 @@ origin: ECC
 
 # 投資家アウトリーチ
 
-Write investor communication that is short, personalized, and easy to act on.
+短く、パーソナライズされ、アクションしやすい投資家コミュニケーションを作成する。
 
 ## 発動条件
 
-- writing a cold email to an investor
-- drafting a warm intro request
-- sending follow-ups after a meeting or no response
-- writing investor updates during a process
-- tailoring outreach based on fund thesis or partner fit
+- 投資家へのコールドメールの作成
+- ウォーム紹介リクエストの下書き
+- ミーティング後や未返信時のフォローアップ送信
+- プロセス中の投資家アップデートの作成
+- ファンドのテーゼやパートナーの適合性に基づくアウトリーチの調整
 
 ## コアルール
 
-1. Personalize every outbound message.
-2. Keep the ask low-friction.
-3. Use proof, not adjectives.
-4. Stay concise.
-5. Never send generic copy that could go to any investor.
+1. すべてのアウトバウンドメッセージをパーソナライズする。
+2. 依頼は低負荷にする。
+3. 形容詞ではなく、実績で示す。
+4. 簡潔に保つ。
+5. どの投資家にも送れるような汎用コピーは絶対に送らない。
 
-## Cold Email Structure
+## コールドメールの構成
 
-1. subject line: short and specific
-2. opener: why this investor specifically
-3. pitch: what the company does, why now, what proof matters
-4. ask: one concrete next step
-5. sign-off: name, role, one credibility anchor if needed
+1. 件名: 短く具体的に
+2. オープナー: なぜこの投資家なのか
+3. ピッチ: 会社の事業内容、なぜ今なのか、どの実績が重要か
+4. 依頼: 具体的な次のステップを1つ
+5. 締め: 名前、役職、必要に応じて信頼性のアンカーを1つ
 
-## Personalization Sources
+## パーソナライズのソース
 
-Reference one or more of:
-- relevant portfolio companies
-- a public thesis, talk, post, or article
-- a mutual connection
-- a clear market or product fit with the investor's focus
+以下の1つ以上を参照する：
+- 関連するポートフォリオ企業
+- 公開されたテーゼ、講演、投稿、または記事
+- 共通のつながり
+- 投資家のフォーカスとの明確な市場またはプロダクトの適合性
 
-If that context is missing, ask for it or state that the draft is a template awaiting personalization.
+そのコンテキストがない場合は、求めるか、パーソナライズ待ちのテンプレートである旨を記載する。
 
-## Follow-Up Cadence
+## フォローアップのケイデンス
 
-Default:
-- day 0: initial outbound
-- day 4-5: short follow-up with one new data point
-- day 10-12: final follow-up with a clean close
+デフォルト：
+- 0日目: 初回アウトバウンド
+- 4-5日目: 新しいデータポイントを1つ含む短いフォローアップ
+- 10-12日目: きれいなクローズを含む最終フォローアップ
 
-Do not keep nudging after that unless the user wants a longer sequence.
+ユーザーがより長いシーケンスを望まない限り、それ以上のナッジは行わない。
 
-## Warm Intro Requests
+## ウォーム紹介リクエスト
 
-Make life easy for the connector:
-- explain why the intro is a fit
-- include a forwardable blurb
-- keep the forwardable blurb under 100 words
+紹介者の手間を最小限にする：
+- 紹介が適合する理由を説明する
+- 転送可能なブラーブを含める
+- 転送可能なブラーブは100ワード以内に収める
 
-## Post-Meeting Updates
+## ミーティング後のアップデート
 
-Include:
-- the specific thing discussed
-- the answer or update promised
-- one new proof point if available
-- the next step
+含める内容：
+- 話し合った具体的な事項
+- 約束した回答やアップデート
+- 利用可能であれば新しい実績ポイントを1つ
+- 次のステップ
 
 ## 品質ゲート
 
-Before delivering:
-- message is personalized
-- the ask is explicit
-- there is no fluff or begging language
-- the proof point is concrete
-- word count stays tight
+提出前の確認事項：
+- メッセージがパーソナライズされている
+- 依頼が明確である
+- 冗長な表現やお願い口調がない
+- 実績ポイントが具体的である
+- 文字数が簡潔に収まっている

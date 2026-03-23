@@ -4,28 +4,28 @@ description: Perlアプリケーションのセキュリティベストプラク
 origin: ECC
 ---
 
-# Perlセキュリティベストプラクティス
+# Perl セキュリティベストプラクティス
 
-Comprehensive security guidelines for Perl applications covering input validation, injection prevention, and secure coding practices.
+入力検証、インジェクション防止、セキュアなコーディングプラクティスをカバーする Perl アプリケーション向けの包括的セキュリティガイドラインです。
 
 ## 発動条件
 
-- Handling user input in Perl applications
-- Building Perl web applications (CGI, Mojolicious, Dancer2, Catalyst)
-- Reviewing Perl code for security vulnerabilities
-- Performing file operations with user-supplied paths
-- Executing system commands from Perl
-- Writing DBI database queries
+- Perl アプリケーションでのユーザー入力処理
+- Perl ウェブアプリケーションの構築（CGI、Mojolicious、Dancer2、Catalyst）
+- Perl コードのセキュリティ脆弱性レビュー
+- ユーザー指定パスを使用したファイル操作の実行
+- Perl からのシステムコマンド実行
+- DBI データベースクエリの記述
 
 ## 仕組み
 
-Start with taint-aware input boundaries, then move outward: validate and untaint inputs, keep filesystem and process execution constrained, and use parameterized DBI queries everywhere. The examples below show the safe defaults this skill expects you to apply before shipping Perl code that touches user input, the shell, or the network.
+タイント対応の入力境界から始め、外側に向かって進みます: 入力を検証してアンタイントし、ファイルシステムとプロセス実行を制約し、あらゆる場所でパラメータ化された DBI クエリを使用します。以下の例は、ユーザー入力、シェル、またはネットワークに触れる Perl コードを出荷する前に適用すべき安全なデフォルトを示しています。
 
-## Taint Mode
+## タイントモード
 
-Perl's taint mode (`-T`) tracks data from external sources and prevents it from being used in unsafe operations without explicit validation.
+Perl のタイントモード（`-T`）は外部ソースからのデータを追跡し、明示的な検証なしに安全でない操作で使用されることを防ぎます。
 
-### Enabling Taint Mode
+### タイントモードの有効化
 
 ```perl
 #!/usr/bin/perl -T
@@ -42,7 +42,7 @@ $ENV{PATH} = '/usr/local/bin:/usr/bin:/bin';
 delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
 ```
 
-### Untainting Pattern
+### アンタイントパターン
 
 ```perl
 use v5.36;
@@ -70,9 +70,9 @@ sub bad_untaint($input) {
 }
 ```
 
-## Input Validation
+## 入力検証
 
-### Allowlist Over Blocklist
+### ブロックリストよりも許可リスト
 
 ```perl
 use v5.36;
@@ -106,7 +106,7 @@ sub bad_validate($input) {
 }
 ```
 
-### Length Constraints
+### 長さ制約
 
 ```perl
 use v5.36;
@@ -118,11 +118,11 @@ sub validate_comment($text) {
 }
 ```
 
-## Safe Regular Expressions
+## 安全な正規表現
 
-### ReDoS Prevention
+### ReDoS 防止
 
-Catastrophic backtracking occurs with nested quantifiers on overlapping patterns.
+壊滅的バックトラッキングは、重複するパターン上のネストされた量指定子で発生します。
 
 ```perl
 use v5.36;
@@ -156,9 +156,9 @@ sub safe_match($string, $pattern, $timeout = 2) {
 }
 ```
 
-## Safe File Operations
+## 安全なファイル操作
 
-### Three-Argument Open
+### 3引数 open
 
 ```perl
 use v5.36;
@@ -180,7 +180,7 @@ sub bad_read($path) {
 }
 ```
 
-### TOCTOU Prevention and Path Traversal
+### TOCTOU 防止とパストラバーサル
 
 ```perl
 use v5.36;
@@ -206,11 +206,11 @@ sub safe_path($base_dir, $user_path) {
 }
 ```
 
-Use `File::Temp` for temporary files (`tempfile(UNLINK => 1)`) and `flock(LOCK_EX)` to prevent race conditions.
+一時ファイルには `File::Temp` を使用し（`tempfile(UNLINK => 1)`）、競合状態の防止には `flock(LOCK_EX)` を使用します。
 
-## Safe Process Execution
+## 安全なプロセス実行
 
-### List-Form system and exec
+### リスト形式の system と exec
 
 ```perl
 use v5.36;
@@ -243,11 +243,11 @@ sub bad_search($pattern) {
 my $output = `ls $user_dir`;   # Shell injection risk
 ```
 
-Also use `Capture::Tiny` for capturing stdout/stderr from external commands safely.
+外部コマンドの stdout/stderr を安全にキャプチャするには `Capture::Tiny` も使用できます。
 
-## SQL Injection Prevention
+## SQL インジェクション防止
 
-### DBI Placeholders
+### DBI プレースホルダー
 
 ```perl
 use v5.36;
@@ -283,7 +283,7 @@ sub bad_find($dbh, $email) {
 }
 ```
 
-### Dynamic Column Allowlists
+### 動的カラム許可リスト
 
 ```perl
 use v5.36;
@@ -307,7 +307,7 @@ sub bad_order($dbh, $column) {
 }
 ```
 
-### DBIx::Class (ORM Safety)
+### DBIx::Class（ORM の安全性）
 
 ```perl
 use v5.36;
@@ -322,9 +322,9 @@ my @users = $schema->resultset('User')->search({
 });
 ```
 
-## Web Security
+## ウェブセキュリティ
 
-### XSS Prevention
+### XSS 防止
 
 ```perl
 use v5.36;
@@ -360,7 +360,7 @@ sub bad_html($input) {
 }
 ```
 
-### CSRF Protection
+### CSRF 保護
 
 ```perl
 use v5.36;
@@ -372,9 +372,9 @@ sub generate_csrf_token() {
 }
 ```
 
-Use constant-time comparison when verifying tokens. Most web frameworks (Mojolicious, Dancer2, Catalyst) provide built-in CSRF protection — prefer those over hand-rolled solutions.
+トークンの検証には定数時間比較を使用します。ほとんどのウェブフレームワーク（Mojolicious、Dancer2、Catalyst）にはビルトインの CSRF 保護が備わっています -- 独自実装よりもそちらを推奨します。
 
-### Session and Header Security
+### セッションとヘッダーのセキュリティ
 
 ```perl
 use v5.36;
@@ -392,19 +392,19 @@ $app->hook(after_dispatch => sub ($c) {
 });
 ```
 
-## Output Encoding
+## 出力エンコーディング
 
-Always encode output for its context: `HTML::Entities::encode_entities()` for HTML, `URI::Escape::uri_escape_utf8()` for URLs, `JSON::MaybeXS::encode_json()` for JSON.
+出力は常にそのコンテキストに応じてエンコードします: HTML には `HTML::Entities::encode_entities()`、URL には `URI::Escape::uri_escape_utf8()`、JSON には `JSON::MaybeXS::encode_json()` を使用します。
 
-## CPAN Module Security
+## CPAN モジュールのセキュリティ
 
-- **Pin versions** in cpanfile: `requires 'DBI', '== 1.643';`
-- **Prefer maintained modules**: Check MetaCPAN for recent releases
-- **Minimize dependencies**: Each dependency is an attack surface
+- cpanfile でバージョンを**ピン留め**: `requires 'DBI', '== 1.643';`
+- **メンテナンスされているモジュールを推奨**: MetaCPAN で最近のリリースを確認
+- **依存関係を最小化**: 各依存関係は攻撃対象領域
 
-## Security Tooling
+## セキュリティツール
 
-### perlcritic Security Policies
+### perlcritic セキュリティポリシー
 
 ```ini
 # .perlcriticrc — security-focused configuration
@@ -441,7 +441,7 @@ severity = 5
 severity = 5
 ```
 
-### Running perlcritic
+### perlcritic の実行
 
 ```bash
 # Check a file
@@ -454,22 +454,22 @@ perlcritic --severity 3 --theme security lib/
 perlcritic --severity 4 --theme security --quiet lib/ || exit 1
 ```
 
-## Quick Security Checklist
+## クイックセキュリティチェックリスト
 
-| Check | What to Verify |
+| チェック項目 | 確認内容 |
 |---|---|
-| Taint mode | `-T` flag on CGI/web scripts |
-| Input validation | Allowlist patterns, length limits |
-| File operations | Three-arg open, path traversal checks |
-| Process execution | List-form system, no shell interpolation |
-| SQL queries | DBI placeholders, never interpolate |
-| HTML output | `encode_entities()`, template auto-escape |
-| CSRF tokens | Generated, verified on state-changing requests |
-| Session config | Secure, HttpOnly, SameSite cookies |
-| HTTP headers | CSP, X-Frame-Options, HSTS |
-| Dependencies | Pinned versions, audited modules |
-| Regex safety | No nested quantifiers, anchored patterns |
-| Error messages | No stack traces or paths leaked to users |
+| タイントモード | CGI/ウェブスクリプトに `-T` フラグ |
+| 入力検証 | 許可リストパターン、長さ制限 |
+| ファイル操作 | 3引数 open、パストラバーサルチェック |
+| プロセス実行 | リスト形式 system、シェル補間なし |
+| SQL クエリ | DBI プレースホルダー、補間しない |
+| HTML 出力 | `encode_entities()`、テンプレート自動エスケープ |
+| CSRF トークン | 生成済み、状態変更リクエストで検証 |
+| セッション設定 | Secure、HttpOnly、SameSite Cookie |
+| HTTP ヘッダー | CSP、X-Frame-Options、HSTS |
+| 依存関係 | バージョンピン留め、監査済みモジュール |
+| 正規表現の安全性 | ネストされた量指定子なし、アンカーされたパターン |
+| エラーメッセージ | スタックトレースやパスをユーザーに漏洩しない |
 
 ## アンチパターン
 
@@ -500,4 +500,4 @@ print "<div>Welcome, $username!</div>";  # XSS
 print $cgi->redirect($user_url);         # Open redirect
 ```
 
-**Remember**: Perl's flexibility is powerful but requires discipline. Use taint mode for web-facing code, validate all input with allowlists, use DBI placeholders for every query, and encode all output for its context. Defense in depth — never rely on a single layer.
+**注意**: Perl の柔軟性は強力ですが、規律が求められます。ウェブ向けコードにはタイントモードを使用し、すべての入力を許可リストで検証し、すべてのクエリに DBI プレースホルダーを使用し、すべての出力をそのコンテキストに応じてエンコードしてください。多層防御 -- 単一のレイヤーに依存しないこと。

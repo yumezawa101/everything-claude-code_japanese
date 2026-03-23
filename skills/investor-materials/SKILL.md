@@ -6,91 +6,91 @@ origin: ECC
 
 # 投資家向け資料
 
-Build investor-facing materials that are consistent, credible, and easy to defend.
+一貫性があり、信頼性が高く、根拠を持って説明できる投資家向け資料を作成します。
 
 ## 発動条件
 
-- creating or revising a pitch deck
-- writing an investor memo or one-pager
-- building a financial model, milestone plan, or use-of-funds table
-- answering accelerator or incubator application questions
-- aligning multiple fundraising docs around one source of truth
+- ピッチデッキの作成または改訂
+- 投資家メモまたはワンページャーの作成
+- 財務モデル、マイルストーンプラン、資金使途表の構築
+- アクセラレーターまたはインキュベーターの申請質問への回答
+- 複数の資金調達ドキュメントを一つの信頼できる情報源に合わせる
 
 ## ゴールデンルール
 
-All investor materials must agree with each other.
+すべての投資家向け資料は互いに整合していなければならない。
 
-Create or confirm a single source of truth before writing:
-- traction metrics
-- pricing and revenue assumptions
-- raise size and instrument
-- use of funds
-- team bios and titles
-- milestones and timelines
+執筆前に単一の信頼できる情報源を作成または確認する：
+- トラクション指標
+- 価格設定と収益の前提条件
+- 調達額と手段
+- 資金使途
+- チームの経歴と役職
+- マイルストーンとタイムライン
 
-If conflicting numbers appear, stop and resolve them before drafting.
+矛盾する数字が見つかった場合、下書きを進める前に解決すること。
 
-## Core Workflow
+## コアワークフロー
 
-1. inventory the canonical facts
-2. identify missing assumptions
-3. choose the asset type
-4. draft the asset with explicit logic
-5. cross-check every number against the source of truth
+1. 正規の事実を棚卸しする
+2. 不足している前提条件を特定する
+3. 成果物の種類を選択する
+4. 明確なロジックで成果物を下書きする
+5. すべての数字を信頼できる情報源と照合する
 
-## Asset Guidance
+## 成果物ガイダンス
 
-### Pitch Deck
-Recommended flow:
-1. company + wedge
-2. problem
-3. solution
-4. product / demo
-5. market
-6. business model
-7. traction
-8. team
-9. competition / differentiation
-10. ask
-11. use of funds / milestones
-12. appendix
+### ピッチデッキ
+推奨フロー：
+1. 企業 + ウェッジ
+2. 課題
+3. ソリューション
+4. プロダクト / デモ
+5. 市場
+6. ビジネスモデル
+7. トラクション
+8. チーム
+9. 競合 / 差別化
+10. アスク
+11. 資金使途 / マイルストーン
+12. 付録
 
-If the user wants a web-native deck, pair this skill with `frontend-slides`.
+ユーザーが Web ネイティブなデッキを望む場合、このスキルを `frontend-slides` と組み合わせる。
 
-### One-Pager / Memo
-- state what the company does in one clean sentence
-- show why now
-- include traction and proof points early
-- make the ask precise
-- keep claims easy to verify
+### ワンページャー / メモ
+- 企業が何をしているかを一文で明確に述べる
+- なぜ今なのかを示す
+- トラクションと裏付けとなるデータを早い段階で含める
+- アスクを正確にする
+- 主張を検証しやすく保つ
 
-### Financial Model
-Include:
-- explicit assumptions
-- bear / base / bull cases when useful
-- clean layer-by-layer revenue logic
-- milestone-linked spending
-- sensitivity analysis where the decision hinges on assumptions
+### 財務モデル
+含めるもの：
+- 明示的な前提条件
+- 有用な場合はベア / ベース / ブルケース
+- クリーンなレイヤー別収益ロジック
+- マイルストーンに連動した支出
+- 前提条件に判断が依存する場合の感度分析
 
-### Accelerator Applications
-- answer the exact question asked
-- prioritize traction, insight, and team advantage
-- avoid puffery
-- keep internal metrics consistent with the deck and model
+### アクセラレーター申請
+- 質問されたことに正確に回答する
+- トラクション、インサイト、チームの優位性を優先する
+- 誇大表現を避ける
+- 社内指標をデッキとモデルと一致させる
 
-## Red Flags to Avoid
+## 避けるべきレッドフラグ
 
-- unverifiable claims
-- fuzzy market sizing without assumptions
-- inconsistent team roles or titles
-- revenue math that does not sum cleanly
-- inflated certainty where assumptions are fragile
+- 検証不可能な主張
+- 前提条件のない曖昧な市場規模算定
+- チームの役割や役職の不整合
+- きれいに合計できない収益計算
+- 前提条件が脆弱な箇所での過度な確実性の表明
 
 ## 品質ゲート
 
-Before delivering:
-- every number matches the current source of truth
-- use of funds and revenue layers sum correctly
-- assumptions are visible, not buried
-- the story is clear without hype language
-- the final asset is defensible in a partner meeting
+納品前の確認事項：
+- すべての数字が現在の信頼できる情報源と一致している
+- 資金使途と収益レイヤーが正しく合計されている
+- 前提条件が表面に見えており、埋もれていない
+- ストーリーが誇大表現なしで明確である
+- 最終成果物がパートナーミーティングで説明に耐えられる

@@ -6,24 +6,24 @@ origin: ECC
 
 # Laravel検証ループ
 
-Run before PRs, after major changes, and pre-deploy.
+PR作成前、大規模な変更後、デプロイ前に実行する。
 
 ## 使用タイミング
 
-- Before opening a pull request for a Laravel project
-- After major refactors or dependency upgrades
-- Pre-deployment verification for staging or production
-- Running full lint -> test -> security -> deploy readiness pipeline
+- Laravelプロジェクトのプルリクエストを作成する前
+- 大規模なリファクタリングや依存関係のアップグレード後
+- ステージングまたは本番環境へのデプロイ前検証
+- lint -> テスト -> セキュリティ -> デプロイ準備の完全なパイプラインを実行する場合
 
 ## 仕組み
 
-- Run phases sequentially from environment checks through deployment readiness so each layer builds on the last.
-- Environment and Composer checks gate everything else; stop immediately if they fail.
-- Linting/static analysis should be clean before running full tests and coverage.
-- Security and migration reviews happen after tests so you verify behavior before data or release steps.
-- Build/deploy readiness and queue/scheduler checks are final gates; any failure blocks release.
+- 環境チェックからデプロイ準備まで、各レイヤーが前のレイヤーに基づくようにフェーズを順次実行する。
+- 環境チェックとComposerチェックが他のすべてのゲートとなる。失敗した場合は即座に停止する。
+- lint/静的解析は、完全なテストとカバレッジを実行する前にクリーンであるべき。
+- セキュリティとマイグレーションのレビューはテスト後に行い、データやリリースのステップの前に動作を検証する。
+- ビルド/デプロイ準備とキュー/スケジューラチェックは最終ゲート。いずれかの失敗でリリースをブロックする。
 
-## Phase 1: Environment Checks
+## フェーズ1: 環境チェック
 
 ```bash
 php -v
@@ -31,50 +31,50 @@ composer --version
 php artisan --version
 ```
 
-- Verify `.env` is present and required keys exist
-- Confirm `APP_DEBUG=false` for production environments
-- Confirm `APP_ENV` matches the target deployment (`production`, `staging`)
+- `.env`が存在し、必要なキーが含まれていることを確認
+- 本番環境では`APP_DEBUG=false`であることを確認
+- `APP_ENV`がターゲットデプロイメント（`production`、`staging`）と一致していることを確認
 
-If using Laravel Sail locally:
+Laravel Sailをローカルで使用している場合:
 
 ```bash
 ./vendor/bin/sail php -v
 ./vendor/bin/sail artisan --version
 ```
 
-## Phase 1.5: Composer and Autoload
+## フェーズ1.5: Composerとオートロード
 
 ```bash
 composer validate
 composer dump-autoload -o
 ```
 
-## Phase 2: Linting and Static Analysis
+## フェーズ2: lintと静的解析
 
 ```bash
 vendor/bin/pint --test
 vendor/bin/phpstan analyse
 ```
 
-If your project uses Psalm instead of PHPStan:
+プロジェクトがPHPStanの代わりにPsalmを使用している場合:
 
 ```bash
 vendor/bin/psalm
 ```
 
-## Phase 3: Tests and Coverage
+## フェーズ3: テストとカバレッジ
 
 ```bash
 php artisan test
 ```
 
-Coverage (CI):
+カバレッジ（CI）:
 
 ```bash
 XDEBUG_MODE=coverage php artisan test --coverage
 ```
 
-CI example (format -> static analysis -> tests):
+CIの例（フォーマット -> 静的解析 -> テスト）:
 
 ```bash
 vendor/bin/pint --test
@@ -82,25 +82,25 @@ vendor/bin/phpstan analyse
 XDEBUG_MODE=coverage php artisan test --coverage
 ```
 
-## Phase 4: Security and Dependency Checks
+## フェーズ4: セキュリティと依存関係チェック
 
 ```bash
 composer audit
 ```
 
-## Phase 5: Database and Migrations
+## フェーズ5: データベースとマイグレーション
 
 ```bash
 php artisan migrate --pretend
 php artisan migrate:status
 ```
 
-- Review destructive migrations carefully
-- Ensure migration filenames follow `Y_m_d_His_*` (e.g., `2025_03_14_154210_create_orders_table.php`) and describe the change clearly
-- Ensure rollbacks are possible
-- Verify `down()` methods and avoid irreversible data loss without explicit backups
+- 破壊的なマイグレーションは慎重にレビューする
+- マイグレーションファイル名が`Y_m_d_His_*`（例: `2025_03_14_154210_create_orders_table.php`）に従い、変更内容を明確に記述していることを確認
+- ロールバックが可能であることを確認
+- `down()`メソッドを検証し、明示的なバックアップなしに不可逆的なデータ損失がないことを確認
 
-## Phase 6: Build and Deployment Readiness
+## フェーズ6: ビルドとデプロイ準備
 
 ```bash
 php artisan optimize:clear
@@ -109,43 +109,43 @@ php artisan route:cache
 php artisan view:cache
 ```
 
-- Ensure cache warmups succeed in production configuration
-- Verify queue workers and scheduler are configured
-- Confirm `storage/` and `bootstrap/cache/` are writable in the target environment
+- 本番設定でキャッシュウォームアップが成功することを確認
+- キューワーカーとスケジューラが設定済みであることを確認
+- ターゲット環境で`storage/`と`bootstrap/cache/`が書き込み可能であることを確認
 
-## Phase 7: Queue and Scheduler Checks
+## フェーズ7: キューとスケジューラチェック
 
 ```bash
 php artisan schedule:list
 php artisan queue:failed
 ```
 
-If Horizon is used:
+Horizonを使用している場合:
 
 ```bash
 php artisan horizon:status
 ```
 
-If `queue:monitor` is available, use it to check backlog without processing jobs:
+`queue:monitor`が利用可能な場合、ジョブを処理せずにバックログを確認するために使用:
 
 ```bash
 php artisan queue:monitor default --max=100
 ```
 
-Active verification (staging only): dispatch a no-op job to a dedicated queue and run a single worker to process it (ensure a non-`sync` queue connection is configured).
+アクティブ検証（ステージングのみ）: 専用キューにno-opジョブをディスパッチし、単一のワーカーで処理する（`sync`以外のキュー接続が設定されていることを確認）。
 
 ```bash
 php artisan tinker --execute="dispatch((new App\\Jobs\\QueueHealthcheck())->onQueue('healthcheck'))"
 php artisan queue:work --once --queue=healthcheck
 ```
 
-Verify the job produced the expected side effect (log entry, healthcheck table row, or metric).
+ジョブが期待される副作用（ログエントリ、ヘルスチェックテーブルの行、またはメトリクス）を生成したことを検証する。
 
-Only run this on non-production environments where processing a test job is safe.
+これは非本番環境でのみ実行すること。テストジョブの処理が安全な環境に限る。
 
 ## 使用例
 
-Minimal flow:
+最小フロー:
 
 ```bash
 php -v
@@ -161,7 +161,7 @@ php artisan config:cache
 php artisan queue:failed
 ```
 
-CI-style pipeline:
+CI向けパイプライン:
 
 ```bash
 composer validate

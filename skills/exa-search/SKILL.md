@@ -6,20 +6,20 @@ origin: ECC
 
 # Exa Search
 
-Neural search for web content, code, companies, and people via the Exa MCP server.
+Exa MCP サーバーを介した Web コンテンツ、コード、企業、人物のニューラル検索。
 
 ## 発動条件
 
-- User needs current web information or news
-- Searching for code examples, API docs, or technical references
-- Researching companies, competitors, or market players
-- Finding professional profiles or people in a domain
-- Running background research for any development task
-- User says "search for", "look up", "find", or "what's the latest on"
+- ユーザーが最新の Web 情報やニュースを必要としている
+- コード例、API ドキュメント、技術リファレンスの検索
+- 企業、競合他社、市場プレイヤーの調査
+- 特定分野の専門家プロフィールや人物の検索
+- 開発タスクのバックグラウンドリサーチの実行
+- ユーザーが「検索して」「調べて」「探して」「最新情報は」と言った場合
 
-## MCP要件
+## MCP 要件
 
-Exa MCP server must be configured. Add to `~/.claude.json`:
+Exa MCP サーバーの設定が必要です。`~/.claude.json` に以下を追加してください：
 
 ```json
 "exa-web-search": {
@@ -29,75 +29,75 @@ Exa MCP server must be configured. Add to `~/.claude.json`:
 }
 ```
 
-Get an API key at [exa.ai](https://exa.ai).
-This repo's current Exa setup documents the tool surface exposed here: `web_search_exa` and `get_code_context_exa`.
-If your Exa server exposes additional tools, verify their exact names before depending on them in docs or prompts.
+API キーは [exa.ai](https://exa.ai) で取得できます。
+このリポジトリの現在の Exa セットアップは、ここで公開されているツールサーフェスを文書化しています: `web_search_exa` と `get_code_context_exa`。
+Exa サーバーが追加のツールを公開している場合、ドキュメントやプロンプトで使用する前に正確なツール名を確認してください。
 
-## Core Tools
+## コアツール
 
 ### web_search_exa
-General web search for current information, news, or facts.
+最新情報、ニュース、事実の一般的な Web 検索。
 
 ```
 web_search_exa(query: "latest AI developments 2026", numResults: 5)
 ```
 
-**Parameters:**
+**パラメータ:**
 
-| Param | Type | Default | Notes |
+| パラメータ | 型 | デフォルト | 備考 |
 |-------|------|---------|-------|
-| `query` | string | required | Search query |
-| `numResults` | number | 8 | Number of results |
-| `type` | string | `auto` | Search mode |
-| `livecrawl` | string | `fallback` | Prefer live crawling when needed |
-| `category` | string | none | Optional focus such as `company` or `research paper` |
+| `query` | string | 必須 | 検索クエリ |
+| `numResults` | number | 8 | 結果数 |
+| `type` | string | `auto` | 検索モード |
+| `livecrawl` | string | `fallback` | 必要に応じてライブクロールを優先 |
+| `category` | string | なし | `company` や `research paper` などのオプションフォーカス |
 
 ### get_code_context_exa
-Find code examples and documentation from GitHub, Stack Overflow, and docs sites.
+GitHub、Stack Overflow、ドキュメントサイトからコード例やドキュメントを検索。
 
 ```
 get_code_context_exa(query: "Python asyncio patterns", tokensNum: 3000)
 ```
 
-**Parameters:**
+**パラメータ:**
 
-| Param | Type | Default | Notes |
+| パラメータ | 型 | デフォルト | 備考 |
 |-------|------|---------|-------|
-| `query` | string | required | Code or API search query |
-| `tokensNum` | number | 5000 | Content tokens (1000-50000) |
+| `query` | string | 必須 | コードまたは API 検索クエリ |
+| `tokensNum` | number | 5000 | コンテンツトークン数（1000-50000） |
 
-## Usage Patterns
+## 使用パターン
 
-### Quick Lookup
+### クイックルックアップ
 ```
 web_search_exa(query: "Node.js 22 new features", numResults: 3)
 ```
 
-### Code Research
+### コードリサーチ
 ```
 get_code_context_exa(query: "Rust error handling patterns Result type", tokensNum: 3000)
 ```
 
-### Company or People Research
+### 企業・人物リサーチ
 ```
 web_search_exa(query: "Vercel funding valuation 2026", numResults: 3, category: "company")
 web_search_exa(query: "site:linkedin.com/in AI safety researchers Anthropic", numResults: 5)
 ```
 
-### Technical Deep Dive
+### 技術的な深掘り
 ```
 web_search_exa(query: "WebAssembly component model status and adoption", numResults: 5)
 get_code_context_exa(query: "WebAssembly component model examples", tokensNum: 4000)
 ```
 
-## Tips
+## ヒント
 
-- Use `web_search_exa` for current information, company lookups, and broad discovery
-- Use search operators like `site:`, quoted phrases, and `intitle:` to narrow results
-- Lower `tokensNum` (1000-2000) for focused code snippets, higher (5000+) for comprehensive context
-- Use `get_code_context_exa` when you need API usage or code examples rather than general web pages
+- 最新情報、企業検索、幅広い発見には `web_search_exa` を使用する
+- `site:`、引用フレーズ、`intitle:` などの検索演算子で結果を絞り込む
+- 焦点を絞ったコードスニペットには低い `tokensNum`（1000-2000）を、包括的なコンテキストには高い値（5000+）を使用する
+- 一般的な Web ページではなく API の使用方法やコード例が必要な場合は `get_code_context_exa` を使用する
 
 ## 関連スキル
 
-- `deep-research` — Full research workflow using firecrawl + exa together
-- `market-research` — Business-oriented research with decision frameworks
+- `deep-research` -- firecrawl + exa を組み合わせた完全なリサーチワークフロー
+- `market-research` -- 意思決定フレームワークを備えたビジネス指向のリサーチ

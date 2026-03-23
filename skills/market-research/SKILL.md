@@ -6,70 +6,70 @@ origin: ECC
 
 # マーケットリサーチ
 
-Produce research that supports decisions, not research theater.
+意思決定を支える調査を行う。形だけの調査ではない。
 
 ## 発動条件
 
-- researching a market, category, company, investor, or technology trend
-- building TAM/SAM/SOM estimates
-- comparing competitors or adjacent products
-- preparing investor dossiers before outreach
-- pressure-testing a thesis before building, funding, or entering a market
+- 市場、カテゴリ、企業、投資家、またはテクノロジートレンドの調査
+- TAM/SAM/SOM推定の構築
+- 競合製品や隣接プロダクトの比較
+- アウトリーチ前の投資家資料の準備
+- 構築、資金調達、または市場参入前のテーゼの検証
 
-## Research Standards
+## 調査基準
 
-1. Every important claim needs a source.
-2. Prefer recent data and call out stale data.
-3. Include contrarian evidence and downside cases.
-4. Translate findings into a decision, not just a summary.
-5. Separate fact, inference, and recommendation clearly.
+1. すべての重要な主張にはソースが必要。
+2. 最新のデータを優先し、古いデータはその旨を明記する。
+3. 反論的なエビデンスやダウンサイドケースを含める。
+4. 調査結果を単なる要約ではなく、意思決定に変換する。
+5. 事実、推論、提言を明確に区別する。
 
-## Common Research Modes
+## 一般的な調査モード
 
-### Investor / Fund Diligence
-Collect:
-- fund size, stage, and typical check size
-- relevant portfolio companies
-- public thesis and recent activity
-- reasons the fund is or is not a fit
-- any obvious red flags or mismatches
+### 投資家/ファンドのデューデリジェンス
+収集内容：
+- ファンド規模、ステージ、一般的なチェックサイズ
+- 関連するポートフォリオ企業
+- 公開されたテーゼと最近の活動
+- そのファンドが適合する理由または適合しない理由
+- 明らかなレッドフラグやミスマッチ
 
-### Competitive Analysis
-Collect:
-- product reality, not marketing copy
-- funding and investor history if public
-- traction metrics if public
-- distribution and pricing clues
-- strengths, weaknesses, and positioning gaps
+### 競合分析
+収集内容：
+- マーケティングコピーではなく、プロダクトの実態
+- 公開されている場合の資金調達・投資家履歴
+- 公開されている場合のトラクション指標
+- ディストリビューションと価格設定の手がかり
+- 強み、弱み、ポジショニングのギャップ
 
-### Market Sizing
-Use:
-- top-down estimates from reports or public datasets
-- bottom-up sanity checks from realistic customer acquisition assumptions
-- explicit assumptions for every leap in logic
+### 市場サイジング
+使用する手法：
+- レポートや公開データセットからのトップダウン推定
+- 現実的な顧客獲得の前提に基づくボトムアップのサニティチェック
+- ロジックの飛躍ごとに前提条件を明示
 
-### Technology / Vendor Research
-Collect:
-- how it works
-- trade-offs and adoption signals
-- integration complexity
-- lock-in, security, compliance, and operational risk
+### テクノロジー/ベンダー調査
+収集内容：
+- 仕組み
+- トレードオフと採用シグナル
+- 統合の複雑さ
+- ロックイン、セキュリティ、コンプライアンス、運用リスク
 
-## Output Format
+## 出力形式
 
-Default structure:
-1. executive summary
-2. key findings
-3. implications
-4. risks and caveats
-5. recommendation
-6. sources
+デフォルト構成：
+1. エグゼクティブサマリー
+2. 主要な発見
+3. 示唆
+4. リスクと注意事項
+5. 提言
+6. 情報源
 
 ## 品質ゲート
 
-Before delivering:
-- all numbers are sourced or labeled as estimates
-- old data is flagged
-- the recommendation follows from the evidence
-- risks and counterarguments are included
-- the output makes a decision easier
+提出前の確認事項：
+- すべての数値にソースがあるか、推定値としてラベル付けされている
+- 古いデータにはフラグが付いている
+- 提言がエビデンスから導かれている
+- リスクと反論が含まれている
+- 出力により意思決定が容易になる

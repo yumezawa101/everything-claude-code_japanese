@@ -6,19 +6,19 @@ origin: ECC
 
 # fal.ai メディア生成
 
-Generate images, videos, and audio using fal.ai models via MCP.
+fal.aiモデルをMCP経由で使用して、画像、動画、音声を生成する。
 
 ## 発動条件
 
-- User wants to generate images from text prompts
-- Creating videos from text or images
-- Generating speech, music, or sound effects
-- Any media generation task
-- User says "generate image", "create video", "text to speech", "make a thumbnail", or similar
+- テキストプロンプトから画像を生成したい場合
+- テキストまたは画像から動画を作成する場合
+- 音声、音楽、効果音を生成する場合
+- あらゆるメディア生成タスク
+- ユーザーが「画像を生成」「動画を作成」「テキスト読み上げ」「サムネイルを作って」などと言った場合
 
 ## MCP要件
 
-fal.ai MCP server must be configured. Add to `~/.claude.json`:
+fal.ai MCPサーバーの設定が必要。`~/.claude.json`に追加:
 
 ```json
 "fal-ai": {
@@ -28,27 +28,27 @@ fal.ai MCP server must be configured. Add to `~/.claude.json`:
 }
 ```
 
-Get an API key at [fal.ai](https://fal.ai).
+APIキーは[fal.ai](https://fal.ai)で取得。
 
-## MCP Tools
+## MCPツール
 
-The fal.ai MCP provides these tools:
-- `search` — Find available models by keyword
-- `find` — Get model details and parameters
-- `generate` — Run a model with parameters
-- `result` — Check async generation status
-- `status` — Check job status
-- `cancel` — Cancel a running job
-- `estimate_cost` — Estimate generation cost
-- `models` — List popular models
-- `upload` — Upload files for use as inputs
+fal.ai MCPが提供するツール:
+- `search` -- キーワードで利用可能なモデルを検索
+- `find` -- モデルの詳細とパラメータを取得
+- `generate` -- パラメータを指定してモデルを実行
+- `result` -- 非同期生成のステータスを確認
+- `status` -- ジョブのステータスを確認
+- `cancel` -- 実行中のジョブをキャンセル
+- `estimate_cost` -- 生成コストを見積もり
+- `models` -- 人気モデルを一覧表示
+- `upload` -- 入力として使用するファイルをアップロード
 
 ---
 
-## Image Generation
+## 画像生成
 
-### Nano Banana 2 (Fast)
-Best for: quick iterations, drafts, text-to-image, image editing.
+### Nano Banana 2（高速）
+最適な用途: 素早い反復、ドラフト、text-to-image、画像編集。
 
 ```
 generate(
@@ -62,8 +62,8 @@ generate(
 )
 ```
 
-### Nano Banana Pro (High Fidelity)
-Best for: production images, realism, typography, detailed prompts.
+### Nano Banana Pro（高忠実度）
+最適な用途: 本番用画像、リアリズム、タイポグラフィ、詳細なプロンプト。
 
 ```
 generate(
@@ -77,18 +77,18 @@ generate(
 )
 ```
 
-### Common Image Parameters
+### 画像パラメータ一覧
 
-| Param | Type | Options | Notes |
+| パラメータ | 型 | オプション | 備考 |
 |-------|------|---------|-------|
-| `prompt` | string | required | Describe what you want |
-| `image_size` | string | `square`, `portrait_4_3`, `landscape_16_9`, `portrait_16_9`, `landscape_4_3` | Aspect ratio |
-| `num_images` | number | 1-4 | How many to generate |
-| `seed` | number | any integer | Reproducibility |
-| `guidance_scale` | number | 1-20 | How closely to follow the prompt (higher = more literal) |
+| `prompt` | string | 必須 | 生成したい内容を記述 |
+| `image_size` | string | `square`, `portrait_4_3`, `landscape_16_9`, `portrait_16_9`, `landscape_4_3` | アスペクト比 |
+| `num_images` | number | 1-4 | 生成枚数 |
+| `seed` | number | 任意の整数 | 再現性 |
+| `guidance_scale` | number | 1-20 | プロンプトへの忠実度（高いほど忠実） |
 
-### Image Editing
-Use Nano Banana 2 with an input image for inpainting, outpainting, or style transfer:
+### 画像編集
+Nano Banana 2に入力画像を指定して、インペインティング、アウトペインティング、スタイル変換を行う:
 
 ```
 # First upload the source image
@@ -107,10 +107,10 @@ generate(
 
 ---
 
-## Video Generation
+## 動画生成
 
-### Seedance 1.0 Pro (ByteDance)
-Best for: text-to-video, image-to-video with high motion quality.
+### Seedance 1.0 Pro（ByteDance）
+最適な用途: text-to-video、高品質なモーションのimage-to-video。
 
 ```
 generate(
@@ -125,7 +125,7 @@ generate(
 ```
 
 ### Kling Video v3 Pro
-Best for: text/image-to-video with native audio generation.
+最適な用途: ネイティブ音声生成付きのtext/image-to-video。
 
 ```
 generate(
@@ -138,8 +138,8 @@ generate(
 )
 ```
 
-### Veo 3 (Google DeepMind)
-Best for: video with generated sound, high visual quality.
+### Veo 3（Google DeepMind）
+最適な用途: 生成サウンド付きの動画、高い映像品質。
 
 ```
 generate(
@@ -152,7 +152,7 @@ generate(
 ```
 
 ### Image-to-Video
-Start from an existing image:
+既存の画像から動画を生成:
 
 ```
 generate(
@@ -165,22 +165,22 @@ generate(
 )
 ```
 
-### Video Parameters
+### 動画パラメータ
 
-| Param | Type | Options | Notes |
+| パラメータ | 型 | オプション | 備考 |
 |-------|------|---------|-------|
-| `prompt` | string | required | Describe the video |
-| `duration` | string | `"5s"`, `"10s"` | Video length |
-| `aspect_ratio` | string | `"16:9"`, `"9:16"`, `"1:1"` | Frame ratio |
-| `seed` | number | any integer | Reproducibility |
-| `image_url` | string | URL | Source image for image-to-video |
+| `prompt` | string | 必須 | 動画の内容を記述 |
+| `duration` | string | `"5s"`, `"10s"` | 動画の長さ |
+| `aspect_ratio` | string | `"16:9"`, `"9:16"`, `"1:1"` | フレーム比率 |
+| `seed` | number | 任意の整数 | 再現性 |
+| `image_url` | string | URL | image-to-video用のソース画像 |
 
 ---
 
-## Audio Generation
+## 音声生成
 
-### CSM-1B (Conversational Speech)
-Text-to-speech with natural, conversational quality.
+### CSM-1B（会話音声）
+自然で会話的な品質のtext-to-speech。
 
 ```
 generate(
@@ -192,8 +192,8 @@ generate(
 )
 ```
 
-### ThinkSound (Video-to-Audio)
-Generate matching audio from video content.
+### ThinkSound（Video-to-Audio）
+動画コンテンツに合った音声を生成。
 
 ```
 generate(
@@ -205,8 +205,8 @@ generate(
 )
 ```
 
-### ElevenLabs (via API, no MCP)
-For professional voice synthesis, use ElevenLabs directly:
+### ElevenLabs（API経由、MCPなし）
+プロフェッショナルな音声合成にはElevenLabsを直接使用:
 
 ```python
 import os
@@ -229,7 +229,7 @@ with open("output.mp3", "wb") as f:
 ```
 
 ### VideoDB Generative Audio
-If VideoDB is configured, use its generative audio:
+VideoDBが設定済みの場合、生成音声機能を使用:
 
 ```python
 # Voice generation
@@ -244,9 +244,9 @@ sfx = coll.generate_sound_effect(prompt="thunder crack followed by rain")
 
 ---
 
-## Cost Estimation
+## コスト見積もり
 
-Before generating, check estimated cost:
+生成前に見積もりコストを確認:
 
 ```
 estimate_cost(
@@ -259,9 +259,9 @@ estimate_cost(
 )
 ```
 
-## Model Discovery
+## モデル検索
 
-Find models for specific tasks:
+特定タスク向けのモデルを検索:
 
 ```
 search(query: "text to video")
@@ -269,16 +269,16 @@ find(endpoint_ids: ["fal-ai/seedance-1-0-pro"])
 models()
 ```
 
-## Tips
+## ヒント
 
-- Use `seed` for reproducible results when iterating on prompts
-- Start with lower-cost models (Nano Banana 2) for prompt iteration, then switch to Pro for finals
-- For video, keep prompts descriptive but concise — focus on motion and scene
-- Image-to-video produces more controlled results than pure text-to-video
-- Check `estimate_cost` before running expensive video generations
+- プロンプトの反復時に再現可能な結果を得るには`seed`を使用する
+- プロンプト反復には低コストモデル（Nano Banana 2）から始め、最終版でProに切り替える
+- 動画のプロンプトは説明的だが簡潔にする -- モーションとシーンに焦点を当てる
+- image-to-videoは純粋なtext-to-videoよりも制御しやすい結果が得られる
+- 高コストな動画生成を実行する前に`estimate_cost`を確認する
 
 ## 関連スキル
 
-- `videodb` — Video processing, editing, and streaming
-- `video-editing` — AI-powered video editing workflows
-- `content-engine` — Content creation for social platforms
+- `videodb` -- 動画処理、編集、ストリーミング
+- `video-editing` -- AI搭載の動画編集ワークフロー
+- `content-engine` -- ソーシャルプラットフォーム向けコンテンツ作成

@@ -4,53 +4,53 @@ description: PHPUnitとPestによるLaravelのテスト駆動開発 -- ファク
 origin: ECC
 ---
 
-# Laravel TDDワークフロー
+# Laravel TDD ワークフロー
 
-Test-driven development for Laravel applications using PHPUnit and Pest with 80%+ coverage (unit + feature).
+PHPUnit と Pest を使用した Laravel アプリケーションのテスト駆動開発で、80% 以上のカバレッジ（ユニット + フィーチャー）を目指します。
 
 ## 使用タイミング
 
-- New features or endpoints in Laravel
-- Bug fixes or refactors
-- Testing Eloquent models, policies, jobs, and notifications
-- Prefer Pest for new tests unless the project already standardizes on PHPUnit
+- Laravel での新機能やエンドポイント
+- バグ修正やリファクタリング
+- Eloquent モデル、ポリシー、ジョブ、通知のテスト
+- プロジェクトが既に PHPUnit で標準化されていない限り、新しいテストには Pest を推奨
 
 ## 仕組み
 
-### Red-Green-Refactor Cycle
+### Red-Green-Refactor サイクル
 
-1) Write a failing test
-2) Implement the minimal change to pass
-3) Refactor while keeping tests green
+1) 失敗するテストを書く
+2) テストをパスするための最小限の変更を実装する
+3) テストをグリーンに保ちながらリファクタリングする
 
-### Test Layers
+### テストレイヤー
 
-- **Unit**: pure PHP classes, value objects, services
-- **Feature**: HTTP endpoints, auth, validation, policies
-- **Integration**: database + queue + external boundaries
+- **Unit**: 純粋な PHP クラス、値オブジェクト、サービス
+- **Feature**: HTTP エンドポイント、認証、バリデーション、ポリシー
+- **Integration**: データベース + キュー + 外部境界
 
-Choose layers based on scope:
+スコープに基づいてレイヤーを選択:
 
-- Use **Unit** tests for pure business logic and services.
-- Use **Feature** tests for HTTP, auth, validation, and response shape.
-- Use **Integration** tests when validating DB/queues/external services together.
+- 純粋なビジネスロジックとサービスには **Unit** テストを使用。
+- HTTP、認証、バリデーション、レスポンス形式には **Feature** テストを使用。
+- DB/キュー/外部サービスを合わせて検証する場合は **Integration** テストを使用。
 
-### Database Strategy
+### データベース戦略
 
-- `RefreshDatabase` for most feature/integration tests (runs migrations once per test run, then wraps each test in a transaction when supported; in-memory databases may re-migrate per test)
-- `DatabaseTransactions` when the schema is already migrated and you only need per-test rollback
-- `DatabaseMigrations` when you need a full migrate/fresh for every test and can afford the cost
+- `RefreshDatabase` はほとんどのフィーチャー/インテグレーションテストに使用（テスト実行ごとに1回マイグレーションを実行し、サポートされている場合は各テストをトランザクションでラップ。インメモリデータベースはテストごとに再マイグレーションする場合あり）
+- `DatabaseTransactions` はスキーマが既にマイグレーション済みで、テストごとのロールバックのみ必要な場合に使用
+- `DatabaseMigrations` はテストごとに完全な migrate/fresh が必要で、そのコストを許容できる場合に使用
 
-Use `RefreshDatabase` as the default for tests that touch the database: for databases with transaction support, it runs migrations once per test run (via a static flag) and wraps each test in a transaction; for `:memory:` SQLite or connections without transactions, it migrates before each test. Use `DatabaseTransactions` when the schema is already migrated and you only need per-test rollbacks.
+データベースに触れるテストのデフォルトとして `RefreshDatabase` を使用します: トランザクションをサポートするデータベースの場合、静的フラグを使ってテスト実行ごとに1回マイグレーションを実行し、各テストをトランザクションでラップします。`:memory:` SQLite やトランザクション非対応の接続の場合、各テスト前にマイグレーションを実行します。スキーマが既にマイグレーション済みでテストごとのロールバックのみ必要な場合は `DatabaseTransactions` を使用します。
 
-### Testing Framework Choice
+### テストフレームワークの選択
 
-- Default to **Pest** for new tests when available.
-- Use **PHPUnit** only if the project already standardizes on it or requires PHPUnit-specific tooling.
+- 利用可能な場合、新しいテストはデフォルトで **Pest** を使用。
+- プロジェクトが既に PHPUnit で標準化されている場合、または PHPUnit 固有のツールが必要な場合のみ **PHPUnit** を使用。
 
 ## 使用例
 
-### PHPUnit Example
+### PHPUnit の例
 
 ```php
 use App\Models\User;
@@ -75,7 +75,7 @@ final class ProjectControllerTest extends TestCase
 }
 ```
 
-### Feature Test Example (HTTP Layer)
+### Feature テストの例（HTTP レイヤー）
 
 ```php
 use App\Models\Project;
@@ -100,7 +100,7 @@ final class ProjectIndexTest extends TestCase
 }
 ```
 
-### Pest Example
+### Pest の例
 
 ```php
 use App\Models\User;
@@ -123,7 +123,7 @@ test('owner can create project', function () {
 });
 ```
 
-### Feature Test Pest Example (HTTP Layer)
+### Feature テスト Pest の例（HTTP レイヤー）
 
 ```php
 use App\Models\Project;
@@ -145,22 +145,22 @@ test('projects index returns paginated results', function () {
 });
 ```
 
-### Factories and States
+### ファクトリとステート
 
-- Use factories for test data
-- Define states for edge cases (archived, admin, trial)
+- テストデータにはファクトリを使用
+- エッジケース用のステートを定義（archived、admin、trial）
 
 ```php
 $user = User::factory()->state(['role' => 'admin'])->create();
 ```
 
-### Database Testing
+### データベーステスト
 
-- Use `RefreshDatabase` for clean state
-- Keep tests isolated and deterministic
-- Prefer `assertDatabaseHas` over manual queries
+- クリーンな状態のために `RefreshDatabase` を使用
+- テストを分離し決定的に保つ
+- 手動クエリよりも `assertDatabaseHas` を推奨
 
-### Persistence Test Example
+### 永続化テストの例
 
 ```php
 use App\Models\Project;
@@ -182,12 +182,12 @@ final class ProjectRepositoryTest extends TestCase
 }
 ```
 
-### Fakes for Side Effects
+### 副作用のためのフェイク
 
-- `Bus::fake()` for jobs
-- `Queue::fake()` for queued work
-- `Mail::fake()` and `Notification::fake()` for notifications
-- `Event::fake()` for domain events
+- ジョブには `Bus::fake()`
+- キューワークには `Queue::fake()`
+- 通知には `Mail::fake()` と `Notification::fake()`
+- ドメインイベントには `Event::fake()`
 
 ```php
 use Illuminate\Support\Facades\Queue;
@@ -209,7 +209,7 @@ $user->notify(new InvoiceReady($invoice));
 Notification::assertSentTo($user, InvoiceReady::class);
 ```
 
-### Auth Testing (Sanctum)
+### 認証テスト（Sanctum）
 
 ```php
 use Laravel\Sanctum\Sanctum;
@@ -220,28 +220,28 @@ $response = $this->getJson('/api/projects');
 $response->assertOk();
 ```
 
-### HTTP and External Services
+### HTTP と外部サービス
 
-- Use `Http::fake()` to isolate external APIs
-- Assert outbound payloads with `Http::assertSent()`
+- 外部 API の分離には `Http::fake()` を使用
+- `Http::assertSent()` で送信ペイロードを検証
 
-### Coverage Targets
+### カバレッジ目標
 
-- Enforce 80%+ coverage for unit + feature tests
-- Use `pcov` or `XDEBUG_MODE=coverage` in CI
+- ユニット + フィーチャーテストで 80% 以上のカバレッジを強制
+- CI では `pcov` または `XDEBUG_MODE=coverage` を使用
 
-### Test Commands
+### テストコマンド
 
 - `php artisan test`
 - `vendor/bin/phpunit`
 - `vendor/bin/pest`
 
-### Test Configuration
+### テスト設定
 
-- Use `phpunit.xml` to set `DB_CONNECTION=sqlite` and `DB_DATABASE=:memory:` for fast tests
-- Keep separate env for tests to avoid touching dev/prod data
+- `phpunit.xml` で `DB_CONNECTION=sqlite` と `DB_DATABASE=:memory:` を設定して高速テストを実現
+- 開発/本番データに触れないよう、テスト用の別環境を維持
 
-### Authorization Tests
+### 認可テスト
 
 ```php
 use Illuminate\Support\Facades\Gate;
@@ -250,9 +250,9 @@ $this->assertTrue(Gate::forUser($user)->allows('update', $project));
 $this->assertFalse(Gate::forUser($otherUser)->allows('update', $project));
 ```
 
-### Inertia Feature Tests
+### Inertia Feature テスト
 
-When using Inertia.js, assert on the component name and props with the Inertia testing helpers.
+Inertia.js を使用する場合、Inertia テストヘルパーでコンポーネント名と props を検証します。
 
 ```php
 use App\Models\User;
@@ -280,4 +280,4 @@ final class DashboardInertiaTest extends TestCase
 }
 ```
 
-Prefer `assertInertia` over raw JSON assertions to keep tests aligned with Inertia responses.
+Inertia レスポンスとテストの整合性を保つため、生の JSON アサーションよりも `assertInertia` を推奨します。

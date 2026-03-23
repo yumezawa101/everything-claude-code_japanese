@@ -6,45 +6,45 @@ origin: ECC
 
 # Enterprise Agent Ops
 
-Use this skill for cloud-hosted or continuously running agent systems that need operational controls beyond single CLI sessions.
+単一のCLIセッションを超えた運用制御が必要な、クラウドホスト型または継続的に実行されるエージェントシステムに対してこのスキルを使用する。
 
-## Operational Domains
+## 運用ドメイン
 
-1. runtime lifecycle (start, pause, stop, restart)
-2. observability (logs, metrics, traces)
-3. safety controls (scopes, permissions, kill switches)
-4. change management (rollout, rollback, audit)
+1. ランタイムライフサイクル（start、pause、stop、restart）
+2. オブザーバビリティ（ログ、メトリクス、トレース）
+3. セーフティコントロール（スコープ、パーミッション、キルスイッチ）
+4. 変更管理（ロールアウト、ロールバック、監査）
 
-## Baseline Controls
+## ベースラインコントロール
 
-- immutable deployment artifacts
-- least-privilege credentials
-- environment-level secret injection
-- hard timeout and retry budgets
-- audit log for high-risk actions
+- イミュータブルなデプロイメントアーティファクト
+- 最小権限の認証情報
+- 環境レベルのシークレットインジェクション
+- ハードタイムアウトとリトライバジェット
+- 高リスクアクションの監査ログ
 
-## Metrics to Track
+## 追跡すべきメトリクス
 
-- success rate
-- mean retries per task
-- time to recovery
-- cost per successful task
-- failure class distribution
+- 成功率
+- タスクあたりの平均リトライ回数
+- 復旧までの時間
+- 成功タスクあたりのコスト
+- 障害クラスの分布
 
-## Incident Pattern
+## インシデントパターン
 
-When failure spikes:
-1. freeze new rollout
-2. capture representative traces
-3. isolate failing route
-4. patch with smallest safe change
-5. run regression + security checks
-6. resume gradually
+障害が急増した場合：
+1. 新規ロールアウトを凍結
+2. 代表的なトレースをキャプチャ
+3. 障害ルートを分離
+4. 最小限の安全な変更でパッチ
+5. リグレッション + セキュリティチェックを実行
+6. 段階的に再開
 
-## Deployment Integrations
+## デプロイメント統合
 
-This skill pairs with:
-- PM2 workflows
-- systemd services
-- container orchestrators
-- CI/CD gates
+このスキルは以下と組み合わせて使用する：
+- PM2 ワークフロー
+- systemd サービス
+- コンテナオーケストレーター
+- CI/CD ゲート
