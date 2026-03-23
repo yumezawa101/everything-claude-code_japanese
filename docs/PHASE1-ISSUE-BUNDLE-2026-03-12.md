@@ -1,35 +1,32 @@
-# Phase 1 Issue Bundle — March 12, 2026
+# Phase 1 Issue バンドル -- 2026年3月12日
 
-## Status
+## ステータス
 
-These issue drafts were prepared from the March 11 mega plan plus the March 12
-handoff. I attempted to open them directly in GitHub, but issue creation was
-blocked by missing GitHub authentication in the MCP session.
+これらの Issue ドラフトは、3月11日のメガプランと3月12日のハンドオフから作成されました。GitHub に直接オープンしようとしましたが、MCP セッションで GitHub 認証が不足していたため、Issue の作成がブロックされました。
 
-## GitHub Status
+## GitHub ステータス
 
-These drafts were later posted via `gh`:
+これらのドラフトは後に `gh` 経由で投稿されました:
 
-- `#423` Implement manifest-driven selective install profiles for ECC
-- `#421` Add ECC install-state plus uninstall / doctor / repair lifecycle
-- `#424` Define canonical session adapter contract for ECC 2.0 control plane
-- `#422` Define generated skill placement and provenance policy
-- `#425` Define governance and visibility past the tool call
+- `#423` ECC にマニフェスト駆動の selective install プロファイルを実装
+- `#421` ECC install-state とアンインストール / doctor / repair ライフサイクルを追加
+- `#424` ECC 2.0 コントロールプレーン用の正規セッションアダプターコントラクトを定義
+- `#422` 生成スキルの配置と来歴ポリシーを定義
+- `#425` ツール呼び出し以降のガバナンスと可視性を定義
 
-The bodies below are preserved as the local source bundle used to create the
-issues.
+以下の本文は、Issue 作成に使用されたローカルソースバンドルとして保存されています。
 
 ## Issue 1
 
-### Title
+### タイトル
 
-Implement manifest-driven selective install profiles for ECC
+ECC にマニフェスト駆動の selective install プロファイルを実装
 
-### Labels
+### ラベル
 
 - `enhancement`
 
-### Body
+### 本文
 
 ```md
 ## Problem
@@ -83,15 +80,15 @@ Add first-pass support for:
 
 ## Issue 2
 
-### Title
+### タイトル
 
-Add ECC install-state plus uninstall / doctor / repair lifecycle
+ECC install-state とアンインストール / doctor / repair ライフサイクルを追加
 
-### Labels
+### ラベル
 
 - `enhancement`
 
-### Body
+### 本文
 
 ```md
 ## Problem
@@ -154,15 +151,15 @@ The state file should capture at minimum:
 
 ## Issue 3
 
-### Title
+### タイトル
 
-Define canonical session adapter contract for ECC 2.0 control plane
+ECC 2.0 コントロールプレーン用の正規セッションアダプターコントラクトを定義
 
-### Labels
+### ラベル
 
 - `enhancement`
 
-### Body
+### 本文
 
 ```md
 ## Problem
@@ -219,15 +216,15 @@ Suggested deliverables:
 
 ## Issue 4
 
-### Title
+### タイトル
 
-Define generated skill placement and provenance policy
+生成スキルの配置と来歴ポリシーを定義
 
-### Labels
+### ラベル
 
 - `enhancement`
 
-### Body
+### 本文
 
 ```md
 ## Problem

@@ -3,23 +3,23 @@ paths:
   - "**/*.py"
   - "**/*.pyi"
 ---
-# Python Testing
+# Python テスト
 
-> This file extends [common/testing.md](../common/testing.md) with Python specific content.
+> このファイルは [common/testing.md](../common/testing.md) を Python 固有のコンテンツで拡張します。
 
-## Framework
+## フレームワーク
 
-Use **pytest** as the testing framework.
+テストフレームワークとして **pytest** を使用。
 
-## Coverage
+## カバレッジ
 
 ```bash
 pytest --cov=src --cov-report=term-missing
 ```
 
-## Test Organization
+## テストの整理
 
-Use `pytest.mark` for test categorization:
+テストの分類に `pytest.mark` を使用:
 
 ```python
 import pytest
@@ -33,6 +33,6 @@ def test_database_connection():
     ...
 ```
 
-## Reference
+## リファレンス
 
-See skill: `python-testing` for detailed pytest patterns and fixtures.
+詳細な pytest パターンとフィクスチャについては、スキル: `python-testing` を参照。

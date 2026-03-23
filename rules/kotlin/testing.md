@@ -3,18 +3,18 @@ paths:
   - "**/*.kt"
   - "**/*.kts"
 ---
-# Kotlin Testing
+# Kotlin テスト
 
-> This file extends [common/testing.md](../common/testing.md) with Kotlin and Android/KMP-specific content.
+> このファイルは [common/testing.md](../common/testing.md) を Kotlin および Android/KMP 固有のコンテンツで拡張します。
 
-## Test Framework
+## テストフレームワーク
 
-- **kotlin.test** for multiplatform (KMP) — `@Test`, `assertEquals`, `assertTrue`
-- **JUnit 4/5** for Android-specific tests
-- **Turbine** for testing Flows and StateFlow
-- **kotlinx-coroutines-test** for coroutine testing (`runTest`, `TestDispatcher`)
+- **kotlin.test**: マルチプラットフォーム（KMP）用 -- `@Test`、`assertEquals`、`assertTrue`
+- **JUnit 4/5**: Android 固有のテスト用
+- **Turbine**: Flow と StateFlow のテスト用
+- **kotlinx-coroutines-test**: Coroutine テスト用（`runTest`、`TestDispatcher`）
 
-## ViewModel Testing with Turbine
+## Turbine を使用した ViewModel テスト
 
 ```kotlin
 @Test
@@ -32,9 +32,9 @@ fun `loading state emitted then data`() = runTest {
 }
 ```
 
-## Fakes Over Mocks
+## モックよりフェイクを優先
 
-Prefer hand-written fakes over mocking frameworks:
+モッキングフレームワークよりも手書きのフェイクを優先:
 
 ```kotlin
 class FakeItemRepository : ItemRepository {
@@ -52,7 +52,7 @@ class FakeItemRepository : ItemRepository {
 }
 ```
 
-## Coroutine Testing
+## Coroutine テスト
 
 ```kotlin
 @Test
@@ -65,7 +65,7 @@ fun `parallel operations complete`() = runTest {
 }
 ```
 
-Use `runTest` — it auto-advances virtual time and provides `TestScope`.
+`runTest` を使用 -- 仮想時間を自動的に進め、`TestScope` を提供する。
 
 ## Ktor MockEngine
 
@@ -85,10 +85,10 @@ val client = HttpClient(mockEngine) {
 }
 ```
 
-## Room/SQLDelight Testing
+## Room/SQLDelight テスト
 
-- Room: Use `Room.inMemoryDatabaseBuilder()` for in-memory testing
-- SQLDelight: Use `JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)` for JVM tests
+- Room: インメモリテストに `Room.inMemoryDatabaseBuilder()` を使用
+- SQLDelight: JVM テストに `JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)` を使用
 
 ```kotlin
 @Test
@@ -103,9 +103,9 @@ fun `insert and query items`() = runTest {
 }
 ```
 
-## Test Naming
+## テスト命名
 
-Use backtick-quoted descriptive names:
+バッククォートで囲んだ記述的な名前を使用:
 
 ```kotlin
 @Test
@@ -115,14 +115,14 @@ fun `search with empty query returns all items`() = runTest { }
 fun `delete item emits updated list without deleted item`() = runTest { }
 ```
 
-## Test Organization
+## テストの整理
 
 ```
 src/
-├── commonTest/kotlin/     # Shared tests (ViewModel, UseCase, Repository)
-├── androidUnitTest/kotlin/ # Android unit tests (JUnit)
-├── androidInstrumentedTest/kotlin/  # Instrumented tests (Room, UI)
-└── iosTest/kotlin/        # iOS-specific tests
+├── commonTest/kotlin/     # 共有テスト（ViewModel、UseCase、Repository）
+├── androidUnitTest/kotlin/ # Android ユニットテスト（JUnit）
+├── androidInstrumentedTest/kotlin/  # インストルメントテスト（Room、UI）
+└── iosTest/kotlin/        # iOS 固有のテスト
 ```
 
-Minimum test coverage: ViewModel + UseCase for every feature.
+最低限のテストカバレッジ: すべての機能に対して ViewModel + UseCase。

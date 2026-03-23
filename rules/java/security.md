@@ -2,39 +2,39 @@
 paths:
   - "**/*.java"
 ---
-# Java Security
+# Java セキュリティ
 
-> This file extends [common/security.md](../common/security.md) with Java-specific content.
+> このファイルは [common/security.md](../common/security.md) を Java 固有のコンテンツで拡張します。
 
-## Secrets Management
+## シークレット管理
 
-- Never hardcode API keys, tokens, or credentials in source code
-- Use environment variables: `System.getenv("API_KEY")`
-- Use a secret manager (Vault, AWS Secrets Manager) for production secrets
-- Keep local config files with secrets in `.gitignore`
+- API キー、トークン、クレデンシャルをソースコードにハードコードしない
+- 環境変数を使用: `System.getenv("API_KEY")`
+- 本番環境のシークレットにはシークレットマネージャ（Vault、AWS Secrets Manager）を使用
+- シークレットを含むローカル設定ファイルは `.gitignore` に追加
 
 ```java
 // BAD
 private static final String API_KEY = "sk-abc123...";
 
-// GOOD — environment variable
+// GOOD — 環境変数
 String apiKey = System.getenv("PAYMENT_API_KEY");
 Objects.requireNonNull(apiKey, "PAYMENT_API_KEY must be set");
 ```
 
-## SQL Injection Prevention
+## SQL インジェクション防止
 
-- Always use parameterized queries — never concatenate user input into SQL
-- Use `PreparedStatement` or your framework's parameterized query API
-- Validate and sanitize any input used in native queries
+- 常にパラメータ化クエリを使用 -- ユーザー入力を SQL に連結しない
+- `PreparedStatement` またはフレームワークのパラメータ化クエリ API を使用
+- ネイティブクエリで使用される入力はすべてバリデーションとサニタイズを行う
 
 ```java
-// BAD — SQL injection via string concatenation
+// BAD — 文字列連結による SQL インジェクション
 Statement stmt = conn.createStatement();
 String sql = "SELECT * FROM orders WHERE name = '" + name + "'";
 stmt.executeQuery(sql);
 
-// GOOD — PreparedStatement with parameterized query
+// GOOD — パラメータ化クエリの PreparedStatement
 PreparedStatement ps = conn.prepareStatement("SELECT * FROM orders WHERE name = ?");
 ps.setString(1, name);
 
@@ -42,15 +42,15 @@ ps.setString(1, name);
 jdbcTemplate.query("SELECT * FROM orders WHERE name = ?", mapper, name);
 ```
 
-## Input Validation
+## 入力バリデーション
 
-- Validate all user input at system boundaries before processing
-- Use Bean Validation (`@NotNull`, `@NotBlank`, `@Size`) on DTOs when using a validation framework
-- Sanitize file paths and user-provided strings before use
-- Reject input that fails validation with clear error messages
+- すべてのユーザー入力を処理前にシステム境界でバリデーションする
+- バリデーションフレームワーク使用時は DTO に Bean Validation（`@NotNull`、`@NotBlank`、`@Size`）を使用
+- ファイルパスやユーザー提供の文字列は使用前にサニタイズ
+- バリデーション失敗時は明確なエラーメッセージで入力を拒否
 
 ```java
-// Validate manually in plain Java
+// プレーンな Java での手動バリデーション
 public Order createOrder(String customerName, BigDecimal amount) {
     if (customerName == null || customerName.isBlank()) {
         throw new IllegalArgumentException("Customer name is required");
@@ -62,39 +62,39 @@ public Order createOrder(String customerName, BigDecimal amount) {
 }
 ```
 
-## Authentication and Authorization
+## 認証と認可
 
-- Never implement custom auth crypto — use established libraries
-- Store passwords with bcrypt or Argon2, never MD5/SHA1
-- Enforce authorization checks at service boundaries
-- Clear sensitive data from logs — never log passwords, tokens, or PII
+- カスタムの暗号化認証を実装しない -- 実績のあるライブラリを使用
+- パスワードは bcrypt または Argon2 で保存、MD5/SHA1 は使用しない
+- Service 境界で認可チェックを強制
+- ログから機密データをクリア -- パスワード、トークン、PII をログに記録しない
 
-## Dependency Security
+## 依存関係のセキュリティ
 
-- Run `mvn dependency:tree` or `./gradlew dependencies` to audit transitive dependencies
-- Use OWASP Dependency-Check or Snyk to scan for known CVEs
-- Keep dependencies updated — set up Dependabot or Renovate
+- `mvn dependency:tree` または `./gradlew dependencies` で推移的依存関係を監査
+- OWASP Dependency-Check または Snyk で既知の CVE をスキャン
+- 依存関係を最新に保つ -- Dependabot または Renovate を設定
 
-## Error Messages
+## エラーメッセージ
 
-- Never expose stack traces, internal paths, or SQL errors in API responses
-- Map exceptions to safe, generic client messages at handler boundaries
-- Log detailed errors server-side; return generic messages to clients
+- API レスポンスでスタックトレース、内部パス、SQL エラーを公開しない
+- ハンドラ境界で例外を安全で一般的なクライアントメッセージにマッピング
+- 詳細なエラーはサーバーサイドでログ; クライアントには一般的なメッセージを返す
 
 ```java
-// Log the detail, return a generic message
+// 詳細をログに記録し、一般的なメッセージを返す
 try {
     return orderService.findById(id);
 } catch (OrderNotFoundException ex) {
     log.warn("Order not found: id={}", id);
-    return ApiResponse.error("Resource not found");  // generic, no internals
+    return ApiResponse.error("Resource not found");  // 一般的、内部情報なし
 } catch (Exception ex) {
     log.error("Unexpected error processing order id={}", id, ex);
-    return ApiResponse.error("Internal server error");  // never expose ex.getMessage()
+    return ApiResponse.error("Internal server error");  // ex.getMessage() を公開しない
 }
 ```
 
-## References
+## リファレンス
 
-See skill: `springboot-security` for Spring Security authentication and authorization patterns.
-See skill: `security-review` for general security checklists.
+Spring Security の認証・認可パターンについては、スキル: `springboot-security` を参照。
+一般的なセキュリティチェックリストについては、スキル: `security-review` を参照。

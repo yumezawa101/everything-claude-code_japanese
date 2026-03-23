@@ -1,28 +1,23 @@
-# Mega Plan Repo Prompt List — March 12, 2026
+# メガプラン リポジトリプロンプト一覧 -- 2026年3月12日
 
-## Purpose
+## 目的
 
-Use these prompts to split the remaining March 11 mega-plan work by repo.
-They are written for parallel agents and assume the March 12 orchestration and
-Windows CI lane is already merged via `#417`.
+これらのプロンプトを使用して、残りの3月11日メガプラン作業をリポジトリごとに分割します。並列 agent 向けに書かれており、3月12日のオーケストレーションと Windows CI レーンが `#417` 経由で既にマージ済みであることを前提としています。
 
-## Current Snapshot
+## 現在のスナップショット
 
-- `everything-claude-code` has finished the orchestration, Codex baseline, and
-  Windows CI recovery lane.
-- The next open ECC Phase 1 items are:
-  - review `#399`
-  - convert recurring discussion pressure into tracked issues
-  - define selective-install architecture
-  - write the ECC 2.0 discovery doc
-- `agentshield`, `ECC-website`, and `skill-creator-app` all have dirty
-  `main` worktrees and should not be edited directly on `main`.
-- `applications/` is not a standalone git repo. It lives inside the parent
-  workspace repo at `<ECC_ROOT>`.
+- `everything-claude-code` はオーケストレーション、Codex ベースライン、Windows CI リカバリレーンを完了済み。
+- 次のオープンな ECC Phase 1 項目:
+  - `#399` のレビュー
+  - 繰り返し発生するディスカッションの圧力をトラッキングされた Issue に変換
+  - selective-install アーキテクチャの定義
+  - ECC 2.0 探索ドキュメントの作成
+- `agentshield`、`ECC-website`、`skill-creator-app` はすべて `main` worktree がダーティであり、`main` 上で直接編集すべきではない。
+- `applications/` は独立した git リポジトリではない。`<ECC_ROOT>` の親ワークスペースリポジトリ内に存在する。
 
-## Repo: `everything-claude-code`
+## リポジトリ: `everything-claude-code`
 
-### Prompt A — PR `#399` Review and Merge Readiness
+### プロンプト A -- PR `#399` レビューとマージ準備状況
 
 ```text
 Work in: <ECC_ROOT>/everything-claude-code
@@ -55,7 +50,7 @@ Deliverables:
 - test commands run
 ```
 
-### Prompt B — Roadmap Issues Extraction
+### プロンプト B -- ロードマップ Issue の抽出
 
 ```text
 Work in: <ECC_ROOT>/everything-claude-code
@@ -88,7 +83,7 @@ Deliverables:
 - duplication notes against existing issues
 ```
 
-### Prompt C — ECC 2.0 Discovery and Adapter Spec
+### プロンプト C -- ECC 2.0 探索とアダプター仕様
 
 ```text
 Work in: <ECC_ROOT>/everything-claude-code
@@ -120,9 +115,9 @@ Deliverables:
 - unresolved questions list
 ```
 
-## Repo: `agentshield`
+## リポジトリ: `agentshield`
 
-### Prompt — False Positive Audit and Regression Plan
+### プロンプト -- 誤検知監査とリグレッション計画
 
 ```text
 Work in: <ECC_ROOT>/agentshield
@@ -160,9 +155,9 @@ Deliverables:
 - remaining edge cases
 ```
 
-## Repo: `ECC-website`
+## リポジトリ: `ECC-website`
 
-### Prompt — Landing Rewrite and Product Framing
+### プロンプト -- ランディングページの書き直しとプロダクトフレーミング
 
 ```text
 Work in: <ECC_ROOT>/ECC-website
@@ -204,9 +199,9 @@ Deliverables:
 - deployment readiness notes
 ```
 
-## Repo: `skill-creator-app`
+## リポジトリ: `skill-creator-app`
 
-### Prompt — Skill Import Pipeline and Product Fit
+### プロンプト -- スキルインポートパイプラインとプロダクトフィット
 
 ```text
 Work in: <ECC_ROOT>/skill-creator-app
@@ -242,9 +237,9 @@ Deliverables:
 - code changes if they are small and clearly justified
 ```
 
-## Repo: `ECC` Workspace (`applications/`, `knowledge/`, `tasks/`)
+## リポジトリ: `ECC` ワークスペース (`applications/`, `knowledge/`, `tasks/`)
 
-### Prompt — Example Apps and Workflow Reliability Proofs
+### プロンプト -- サンプルアプリとワークフロー信頼性の証明
 
 ```text
 Work in: <ECC_ROOT>
@@ -276,11 +271,10 @@ Deliverables:
 - follow-up branch/worktree plan
 ```
 
-## Local Continuation
+## ローカル継続
 
-The current worktree should stay on ECC-native Phase 1 work that does not touch
-the existing dirty skill-file changes here. The best next local tasks are:
+現在の worktree は、ここにある既存のダーティなスキルファイル変更に触れない ECC ネイティブの Phase 1 作業にとどまるべきです。最も適切な次のローカルタスクは:
 
-1. selective-install architecture
-2. ECC 2.0 discovery doc
-3. PR `#399` review
+1. selective-install アーキテクチャ
+2. ECC 2.0 探索ドキュメント
+3. PR `#399` レビュー

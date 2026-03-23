@@ -1,37 +1,37 @@
-# Plugin Manifest Schema Notes
+# プラグインマニフェストスキーマに関する注意事項
 
-This document captures **undocumented but enforced constraints** of the Claude Code plugin manifest validator.
+このドキュメントは、Claude Code プラグインマニフェストバリデータの**文書化されていないが強制される制約**をまとめたものです。
 
-These rules are based on real installation failures, validator behavior, and comparison with known working plugins.
-They exist to prevent silent breakage and repeated regressions.
+これらのルールは、実際のインストール失敗、バリデータの動作、および動作確認済みプラグインとの比較に基づいています。
+サイレントな破損や繰り返しのリグレッションを防ぐために存在します。
 
-If you edit `.claude-plugin/plugin.json`, read this first.
-
----
-
-## Summary (Read This First)
-
-The Claude plugin manifest validator is **strict and opinionated**.
-It enforces rules that are not fully documented in public schema references.
-
-The most common failure mode is:
-
-> The manifest looks reasonable, but the validator rejects it with vague errors like
-> `agents: Invalid input`
-
-This document explains why.
+`.claude-plugin/plugin.json` を編集する場合は、まずこのドキュメントを読んでください。
 
 ---
 
-## Required Fields
+## 概要（最初にお読みください）
 
-### `version` (MANDATORY)
+Claude プラグインマニフェストバリデータは**厳格かつ独自の方針**を持っています。
+公開されているスキーマリファレンスには完全に記載されていないルールを強制します。
 
-The `version` field is required by the validator even if omitted from some examples.
+最も一般的な失敗パターン:
 
-If missing, installation may fail during marketplace install or CLI validation.
+> マニフェストは正しそうに見えるが、バリデータが `agents: Invalid input` のような
+> 曖昧なエラーで拒否する
 
-Example:
+このドキュメントでは、その理由を説明します。
+
+---
+
+## 必須フィールド
+
+### `version`（必須）
+
+`version` フィールドは、一部の例では省略されていても、バリデータにより必須とされています。
+
+欠落している場合、マーケットプレイスインストールまたは CLI バリデーション時にインストールが失敗する可能性があります。
+
+例:
 
 ```json
 {
@@ -41,18 +41,18 @@ Example:
 
 ---
 
-## Field Shape Rules
+## フィールド形式のルール
 
-The following fields **must always be arrays**:
+以下のフィールドは**常に配列でなければなりません**:
 
 * `agents`
 * `commands`
 * `skills`
-* `hooks` (if present)
+* `hooks`（存在する場合）
 
-Even if there is only one entry, **strings are not accepted**.
+エントリが1つしかない場合でも、**文字列は受け付けられません**。
 
-### Invalid
+### 不正
 
 ```json
 {
@@ -60,7 +60,7 @@ Even if there is only one entry, **strings are not accepted**.
 }
 ```
 
-### Valid
+### 正しい
 
 ```json
 {
@@ -68,17 +68,17 @@ Even if there is only one entry, **strings are not accepted**.
 }
 ```
 
-This applies consistently across all component path fields.
+これはすべてのコンポーネントパスフィールドに一貫して適用されます。
 
 ---
 
-## Path Resolution Rules (Critical)
+## パス解決ルール（重要）
 
-### Agents MUST use explicit file paths
+### agents は明示的なファイルパスを使用する必要がある
 
-The validator **does not accept directory paths for `agents`**.
+バリデータは **`agents` にディレクトリパスを受け付けません**。
 
-Even the following will fail:
+以下のようなパスでも失敗します:
 
 ```json
 {
@@ -86,7 +86,7 @@ Even the following will fail:
 }
 ```
 
-Instead, you must enumerate agent files explicitly:
+代わりに、agent ファイルを明示的に列挙する必要があります:
 
 ```json
 {
@@ -98,33 +98,33 @@ Instead, you must enumerate agent files explicitly:
 }
 ```
 
-This is the most common source of validation errors.
+これがバリデーションエラーの最も一般的な原因です。
 
-### Commands and Skills
+### commands と skills
 
-* `commands` and `skills` accept directory paths **only when wrapped in arrays**
-* Explicit file paths are safest and most future-proof
-
----
-
-## Validator Behavior Notes
-
-* `claude plugin validate` is stricter than some marketplace previews
-* Validation may pass locally but fail during install if paths are ambiguous
-* Errors are often generic (`Invalid input`) and do not indicate root cause
-* Cross-platform installs (especially Windows) are less forgiving of path assumptions
-
-Assume the validator is hostile and literal.
+* `commands` と `skills` は**配列でラップされている場合のみ**ディレクトリパスを受け付ける
+* 明示的なファイルパスが最も安全で将来性がある
 
 ---
 
-## The `hooks` Field: DO NOT ADD
+## バリデータの動作に関する注意
 
-> ⚠️ **CRITICAL:** Do NOT add a `"hooks"` field to `plugin.json`. This is enforced by a regression test.
+* `claude plugin validate` は一部のマーケットプレイスプレビューよりも厳格
+* ローカルでバリデーションに通過しても、パスが曖昧な場合はインストール時に失敗する可能性がある
+* エラーは多くの場合汎用的（`Invalid input`）で、根本原因を示さない
+* クロスプラットフォームインストール（特に Windows）ではパスの仮定に対してより厳格
 
-### Why This Matters
+バリデータは敵対的かつ字義通りに解釈するものと想定してください。
 
-Claude Code v2.1+ **automatically loads** `hooks/hooks.json` from any installed plugin by convention. If you also declare it in `plugin.json`, you get:
+---
+
+## `hooks` フィールド: 追加しないこと
+
+> **重要:** `plugin.json` に `"hooks"` フィールドを追加しないでください。これはリグレッションテストにより強制されています。
+
+### なぜこれが重要か
+
+Claude Code v2.1 以降は、インストール済みプラグインの `hooks/hooks.json` を規約により**自動的に読み込みます**。`plugin.json` にも宣言すると、以下のエラーが発生します:
 
 ```
 Duplicate hooks file detected: ./hooks/hooks.json resolves to already-loaded file.
@@ -132,45 +132,45 @@ The standard hooks/hooks.json is loaded automatically, so manifest.hooks should
 only reference additional hook files.
 ```
 
-### The Flip-Flop History
+### 修正と差し戻しの履歴
 
-This has caused repeated fix/revert cycles in this repo:
+このリポジトリでは、修正と差し戻しのサイクルが繰り返されています:
 
-| Commit | Action | Trigger |
+| コミット | アクション | きっかけ |
 |--------|--------|---------|
-| `22ad036` | ADD hooks | Users reported "hooks not loading" |
-| `a7bc5f2` | REMOVE hooks | Users reported "duplicate hooks error" (#52) |
-| `779085e` | ADD hooks | Users reported "agents not loading" (#88) |
-| `e3a1306` | REMOVE hooks | Users reported "duplicate hooks error" (#103) |
+| `22ad036` | hooks を追加 | ユーザーが「hooks が読み込まれない」と報告 |
+| `a7bc5f2` | hooks を削除 | ユーザーが「hooks 重複エラー」を報告 (#52) |
+| `779085e` | hooks を追加 | ユーザーが「agents が読み込まれない」と報告 (#88) |
+| `e3a1306` | hooks を削除 | ユーザーが「hooks 重複エラー」を報告 (#103) |
 
-**Root cause:** Claude Code CLI changed behavior between versions:
-- Pre-v2.1: Required explicit `hooks` declaration
-- v2.1+: Auto-loads by convention, errors on duplicate
+**根本原因:** Claude Code CLI がバージョン間で動作を変更:
+- v2.1 より前: 明示的な `hooks` 宣言が必要
+- v2.1 以降: 規約により自動読み込み、重複するとエラー
 
-### Current Rule (Enforced by Test)
+### 現在のルール（テストにより強制）
 
-The test `plugin.json does NOT have explicit hooks declaration` in `tests/hooks/hooks.test.js` prevents this from being reintroduced.
+`tests/hooks/hooks.test.js` のテスト `plugin.json does NOT have explicit hooks declaration` により、再導入が防止されています。
 
-**If you're adding additional hook files** (not `hooks/hooks.json`), those CAN be declared. But the standard `hooks/hooks.json` must NOT be declared.
-
----
-
-## Known Anti-Patterns
-
-These look correct but are rejected:
-
-* String values instead of arrays
-* Arrays of directories for `agents`
-* Missing `version`
-* Relying on inferred paths
-* Assuming marketplace behavior matches local validation
-* **Adding `"hooks": "./hooks/hooks.json"`** - auto-loaded by convention, causes duplicate error
-
-Avoid cleverness. Be explicit.
+**追加の hook ファイル**（`hooks/hooks.json` 以外）を追加する場合は宣言できます。ただし、標準の `hooks/hooks.json` は宣言してはいけません。
 
 ---
 
-## Minimal Known-Good Example
+## 既知のアンチパターン
+
+正しそうに見えるが拒否されるもの:
+
+* 配列の代わりに文字列値
+* `agents` にディレクトリの配列
+* `version` の欠落
+* 推論されたパスへの依存
+* マーケットプレイスの動作がローカルバリデーションと一致すると想定すること
+* **`"hooks": "./hooks/hooks.json"` の追加** -- 規約により自動読み込みされ、重複エラーの原因になる
+
+凝った書き方を避け、明示的に記述してください。
+
+---
+
+## 動作確認済みの最小構成例
 
 ```json
 {
@@ -184,37 +184,37 @@ Avoid cleverness. Be explicit.
 }
 ```
 
-This structure has been validated against the Claude plugin validator.
+この構成は Claude プラグインバリデータに対して検証済みです。
 
-**Important:** Notice there is NO `"hooks"` field. The `hooks/hooks.json` file is loaded automatically by convention. Adding it explicitly causes a duplicate error.
+**重要:** `"hooks"` フィールドがないことに注意してください。`hooks/hooks.json` ファイルは規約により自動的に読み込まれます。明示的に追加すると重複エラーが発生します。
 
 ---
 
-## Recommendation for Contributors
+## コントリビューターへの推奨事項
 
-Before submitting changes that touch `plugin.json`:
+`plugin.json` に変更を加える前に:
 
-1. Use explicit file paths for agents
-2. Ensure all component fields are arrays
-3. Include a `version`
-4. Run:
+1. agents には明示的なファイルパスを使用する
+2. すべてのコンポーネントフィールドが配列であることを確認する
+3. `version` を含める
+4. 以下を実行する:
 
 ```bash
 claude plugin validate .claude-plugin/plugin.json
 ```
 
-If in doubt, choose verbosity over convenience.
+迷った場合は、利便性より冗長性を選んでください。
 
 ---
 
-## Why This File Exists
+## このファイルが存在する理由
 
-This repository is widely forked and used as a reference implementation.
+このリポジトリは広く fork され、リファレンス実装として使用されています。
 
-Documenting validator quirks here:
+バリデータの癖をここに文書化することで:
 
-* Prevents repeated issues
-* Reduces contributor frustration
-* Preserves plugin stability as the ecosystem evolves
+* 繰り返し発生する問題を防止
+* コントリビューターのフラストレーションを軽減
+* エコシステムの進化に伴うプラグインの安定性を維持
 
-If the validator changes, update this document first.
+バリデータが変更された場合は、まずこのドキュメントを更新してください。

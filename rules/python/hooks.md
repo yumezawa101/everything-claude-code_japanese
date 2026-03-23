@@ -5,15 +5,15 @@ paths:
 ---
 # Python Hooks
 
-> This file extends [common/hooks.md](../common/hooks.md) with Python specific content.
+> このファイルは [common/hooks.md](../common/hooks.md) を Python 固有のコンテンツで拡張します。
 
 ## PostToolUse Hooks
 
-Configure in `~/.claude/settings.json`:
+`~/.claude/settings.json` で設定:
 
-- **black/ruff**: Auto-format `.py` files after edit
-- **mypy/pyright**: Run type checking after editing `.py` files
+- **black/ruff**: 編集後に `.py` ファイルを自動フォーマット
+- **mypy/pyright**: `.py` ファイルの編集後に型チェックを実行
 
-## Warnings
+## 警告
 
-- Warn about `print()` statements in edited files (use `logging` module instead)
+- 編集されたファイル内の `print()` 文について警告（代わりに `logging` モジュールを使用）

@@ -6,12 +6,12 @@ paths:
 ---
 # Go Hooks
 
-> This file extends [common/hooks.md](../common/hooks.md) with Go specific content.
+> このファイルは [common/hooks.md](../common/hooks.md) を Go 固有のコンテンツで拡張します。
 
 ## PostToolUse Hooks
 
-Configure in `~/.claude/settings.json`:
+`~/.claude/settings.json` で設定:
 
-- **gofmt/goimports**: Auto-format `.go` files after edit
-- **go vet**: Run static analysis after editing `.go` files
-- **staticcheck**: Run extended static checks on modified packages
+- **gofmt/goimports**: 編集後に `.go` ファイルを自動フォーマット
+- **go vet**: `.go` ファイルの編集後に静的解析を実行
+- **staticcheck**: 変更されたパッケージに対して拡張静的チェックを実行

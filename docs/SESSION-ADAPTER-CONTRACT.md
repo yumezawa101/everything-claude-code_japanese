@@ -1,27 +1,22 @@
-# Session Adapter Contract
+# セッションアダプターコントラクト
 
-This document defines the canonical ECC session snapshot contract for
-`ecc.session.v1`.
+本ドキュメントは `ecc.session.v1` の正規 ECC セッションスナップショットコントラクトを定義します。
 
-The contract is implemented in
-`scripts/lib/session-adapters/canonical-session.js`. This document is the
-normative specification for adapters and consumers.
+コントラクトは `scripts/lib/session-adapters/canonical-session.js` で実装されています。本ドキュメントはアダプターとコンシューマーの規範的仕様です。
 
-## Purpose
+## 目的
 
-ECC has multiple session sources:
+ECC には複数のセッションソースがあります:
 
-- tmux-orchestrated worktree sessions
-- Claude local session history
-- future harnesses and control-plane backends
+- tmux オーケストレーション worktree セッション
+- Claude ローカルセッション履歴
+- 将来のハーネスとコントロールプレーンバックエンド
 
-Adapters normalize those sources into one control-plane-safe snapshot shape so
-inspection, persistence, and future UI layers do not depend on harness-specific
-files or runtime details.
+アダプターはこれらのソースを1つのコントロールプレーン安全なスナップショット形状に正規化し、検査、永続化、将来の UI レイヤーがハーネス固有のファイルやランタイム詳細に依存しないようにします。
 
-## Canonical Snapshot
+## 正規スナップショット
 
-Every adapter MUST return a JSON-serializable object with this top-level shape:
+すべてのアダプターはこのトップレベル形状を持つ JSON シリアライズ可能なオブジェクトを返す必要があります:
 
 ```json
 {
@@ -76,210 +71,194 @@ Every adapter MUST return a JSON-serializable object with this top-level shape:
 }
 ```
 
-## Required Fields
+## 必須フィールド
 
-### Top level
+### トップレベル
 
-| Field | Type | Notes |
+| フィールド | 型 | 備考 |
 | --- | --- | --- |
-| `schemaVersion` | string | MUST be exactly `ecc.session.v1` for this contract |
-| `adapterId` | string | Stable adapter identifier such as `dmux-tmux` or `claude-history` |
-| `session` | object | Canonical session metadata |
-| `workers` | array | Canonical worker records; may be empty |
-| `aggregates` | object | Derived worker counts |
+| `schemaVersion` | string | このコントラクトでは正確に `ecc.session.v1` であること |
+| `adapterId` | string | `dmux-tmux` や `claude-history` などの安定したアダプター識別子 |
+| `session` | object | 正規セッションメタデータ |
+| `workers` | array | 正規ワーカーレコード、空の場合もある |
+| `aggregates` | object | 派生ワーカー数 |
 
 ### `session`
 
-| Field | Type | Notes |
+| フィールド | 型 | 備考 |
 | --- | --- | --- |
-| `id` | string | Stable identifier within the adapter domain |
-| `kind` | string | High-level session family such as `orchestrated` or `history` |
-| `state` | string | Canonical session state |
-| `sourceTarget` | object | Provenance for the target that opened the session |
+| `id` | string | アダプタードメイン内の安定した識別子 |
+| `kind` | string | `orchestrated` や `history` などの高レベルセッションファミリー |
+| `state` | string | 正規セッション状態 |
+| `sourceTarget` | object | セッションを開いたターゲットの来歴 |
 
 ### `session.sourceTarget`
 
-| Field | Type | Notes |
+| フィールド | 型 | 備考 |
 | --- | --- | --- |
-| `type` | string | Lookup class such as `plan`, `session`, `claude-history`, `claude-alias`, or `session-file` |
-| `value` | string | Raw target value or resolved path |
+| `type` | string | `plan`、`session`、`claude-history`、`claude-alias`、`session-file` などのルックアップクラス |
+| `value` | string | 生のターゲット値または解決済みパス |
 
 ### `workers[]`
 
-| Field | Type | Notes |
+| フィールド | 型 | 備考 |
 | --- | --- | --- |
-| `id` | string | Stable worker identifier in adapter scope |
-| `label` | string | Operator-facing label |
-| `state` | string | Canonical worker state |
-| `runtime` | object | Execution/runtime metadata |
-| `intent` | object | Why this worker/session exists |
-| `outputs` | object | Structured outcomes and checks |
-| `artifacts` | object | Adapter-owned file/path references |
+| `id` | string | アダプタースコープ内の安定したワーカー識別子 |
+| `label` | string | オペレーター向けラベル |
+| `state` | string | 正規ワーカー状態 |
+| `runtime` | object | 実行/ランタイムメタデータ |
+| `intent` | object | このワーカー/セッションが存在する理由 |
+| `outputs` | object | 構造化された成果とチェック |
+| `artifacts` | object | アダプターが所有するファイル/パス参照 |
 
 ### `workers[].runtime`
 
-| Field | Type | Notes |
+| フィールド | 型 | 備考 |
 | --- | --- | --- |
-| `kind` | string | Runtime family such as `tmux-pane` or `claude-session` |
-| `active` | boolean | Whether the runtime is active now |
-| `dead` | boolean | Whether the runtime is known dead/finished |
+| `kind` | string | `tmux-pane` や `claude-session` などのランタイムファミリー |
+| `active` | boolean | ランタイムが現在アクティブかどうか |
+| `dead` | boolean | ランタイムが終了/完了と判明しているかどうか |
 
 ### `workers[].intent`
 
-| Field | Type | Notes |
+| フィールド | 型 | 備考 |
 | --- | --- | --- |
-| `objective` | string | Primary objective or title |
-| `seedPaths` | string[] | Seed or context paths associated with the worker/session |
+| `objective` | string | 主要な目的またはタイトル |
+| `seedPaths` | string[] | ワーカー/セッションに関連するシードまたはコンテキストパス |
 
 ### `workers[].outputs`
 
-| Field | Type | Notes |
+| フィールド | 型 | 備考 |
 | --- | --- | --- |
-| `summary` | string[] | Completed outputs or summary items |
-| `validation` | string[] | Validation evidence or checks |
-| `remainingRisks` | string[] | Open risks, follow-ups, or notes |
+| `summary` | string[] | 完了した出力またはサマリー項目 |
+| `validation` | string[] | バリデーションのエビデンスまたはチェック |
+| `remainingRisks` | string[] | 未解決のリスク、フォローアップ、備考 |
 
 ### `aggregates`
 
-| Field | Type | Notes |
+| フィールド | 型 | 備考 |
 | --- | --- | --- |
-| `workerCount` | integer | MUST equal `workers.length` |
-| `states` | object | Count map derived from `workers[].state` |
+| `workerCount` | integer | `workers.length` と一致しなければならない |
+| `states` | object | `workers[].state` から派生したカウントマップ |
 
-## Optional Fields
+## オプションフィールド
 
-Optional fields MAY be omitted, but if emitted they MUST preserve the documented
-type:
+オプションフィールドは省略可能ですが、出力する場合はドキュメント化された型を保持しなければなりません:
 
-| Field | Type | Notes |
+| フィールド | 型 | 備考 |
 | --- | --- | --- |
-| `session.repoRoot` | `string \| null` | Repo/worktree root when known |
-| `workers[].branch` | `string \| null` | Branch name when known |
-| `workers[].worktree` | `string \| null` | Worktree path when known |
-| `workers[].runtime.command` | `string \| null` | Active command when known |
-| `workers[].runtime.pid` | `number \| null` | Process id when known |
-| `workers[].artifacts.*` | adapter-defined | File paths or structured references owned by the adapter |
+| `session.repoRoot` | `string \| null` | 既知の場合のリポジトリ/worktree ルート |
+| `workers[].branch` | `string \| null` | 既知の場合のブランチ名 |
+| `workers[].worktree` | `string \| null` | 既知の場合の worktree パス |
+| `workers[].runtime.command` | `string \| null` | 既知の場合のアクティブコマンド |
+| `workers[].runtime.pid` | `number \| null` | 既知の場合のプロセス ID |
+| `workers[].artifacts.*` | アダプター定義 | アダプターが所有するファイルパスまたは構造化参照 |
 
-Adapter-specific optional fields belong inside `runtime`, `artifacts`, or other
-documented nested objects. Adapters MUST NOT invent new top-level fields without
-updating this contract.
+アダプター固有のオプションフィールドは `runtime`、`artifacts`、またはその他のドキュメント化されたネストオブジェクト内に配置されるべきです。アダプターはこのコントラクトを更新せずに新しいトップレベルフィールドを追加してはなりません。
 
-## State Semantics
+## 状態セマンティクス
 
-The contract intentionally keeps `session.state` and `workers[].state` flexible
-enough for multiple harnesses, but current adapters use these values:
+コントラクトは意図的に `session.state` と `workers[].state` を複数のハーネスに対して十分柔軟に保っていますが、現在のアダプターは以下の値を使用します:
 
 - `dmux-tmux`
-  - session states: `active`, `completed`, `failed`, `idle`, `missing`
-  - worker states: derived from worker status files, for example `running` or
-    `completed`
+  - セッション状態: `active`、`completed`、`failed`、`idle`、`missing`
+  - ワーカー状態: ワーカーステータスファイルから派生、例: `running` や `completed`
 - `claude-history`
-  - session state: `recorded`
-  - worker state: `recorded`
+  - セッション状態: `recorded`
+  - ワーカー状態: `recorded`
 
-Consumers MUST treat unknown state strings as valid adapter-specific values and
-degrade gracefully.
+コンシューマーは未知の状態文字列を有効なアダプター固有の値として扱い、グレースフルにデグレードしなければなりません。
 
-## Versioning Strategy
+## バージョニング戦略
 
-`schemaVersion` is the only compatibility gate. Consumers MUST branch on it.
+`schemaVersion` が唯一の互換性ゲートです。コンシューマーはこれに基づいて分岐しなければなりません。
 
-### Allowed in `ecc.session.v1`
+### `ecc.session.v1` で許容されるもの
 
-- adding new optional nested fields
-- adding new adapter ids
-- adding new state string values
-- adding new artifact keys inside `workers[].artifacts`
+- 新しいオプションのネストフィールドの追加
+- 新しいアダプター ID の追加
+- 新しい状態文字列値の追加
+- `workers[].artifacts` 内の新しいアーティファクトキーの追加
 
-### Requires a new schema version
+### 新しいスキーマバージョンが必要なもの
 
-- removing a required field
-- renaming a field
-- changing a field type
-- changing the meaning of an existing field in a non-compatible way
-- moving data from one field to another while keeping the same version string
+- 必須フィールドの削除
+- フィールドのリネーム
+- フィールド型の変更
+- 既存フィールドの意味を非互換な方法で変更
+- 同じバージョン文字列を維持したまま、あるフィールドから別のフィールドへのデータ移動
 
-If any of those happen, the producer MUST emit a new version string such as
-`ecc.session.v2`.
+これらのいずれかが発生した場合、プロデューサーは `ecc.session.v2` などの新しいバージョン文字列を出力しなければなりません。
 
-## Adapter Compliance Requirements
+## アダプター準拠要件
 
-Every ECC session adapter MUST:
+すべての ECC セッションアダプターは:
 
-1. Emit `schemaVersion: "ecc.session.v1"` exactly.
-2. Return a snapshot that satisfies all required fields and types.
-3. Use `null` for unknown optional scalar values and empty arrays for unknown
-   list values.
-4. Keep adapter-specific details nested under `runtime`, `artifacts`, or other
-   documented nested objects.
-5. Ensure `aggregates.workerCount === workers.length`.
-6. Ensure `aggregates.states` matches the emitted worker states.
-7. Produce plain JSON-serializable values only.
-8. Validate the canonical shape before persistence or downstream use.
-9. Persist the normalized canonical snapshot through the session recording shim.
-   In this repo, that shim first attempts `scripts/lib/state-store` and falls
-   back to a JSON recording file only when the state store module is not
-   available yet.
+1. 正確に `schemaVersion: "ecc.session.v1"` を出力すること。
+2. すべての必須フィールドと型を満たすスナップショットを返すこと。
+3. 不明なオプションスカラー値には `null`、不明なリスト値には空配列を使用すること。
+4. アダプター固有の詳細は `runtime`、`artifacts`、またはその他のドキュメント化されたネストオブジェクト内にネストすること。
+5. `aggregates.workerCount === workers.length` を保証すること。
+6. `aggregates.states` が出力されたワーカー状態と一致することを保証すること。
+7. プレーンな JSON シリアライズ可能な値のみを生成すること。
+8. 永続化またはダウンストリーム使用前に正規形状をバリデートすること。
+9. セッション記録シムを通じて正規化された正規スナップショットを永続化すること。
+   このリポジトリでは、そのシムはまず `scripts/lib/state-store` を試み、state store モジュールがまだ利用できない場合にのみ JSON 記録ファイルにフォールバックします。
 
-## Consumer Expectations
+## コンシューマーの期待
 
-Consumers SHOULD:
+コンシューマーは:
 
-- rely only on documented fields for `ecc.session.v1`
-- ignore unknown optional fields
-- treat `adapterId`, `session.kind`, and `runtime.kind` as routing hints rather
-  than exhaustive enums
-- expect adapter-specific artifact keys inside `workers[].artifacts`
+- `ecc.session.v1` のドキュメント化されたフィールドのみに依存すべき
+- 不明なオプションフィールドを無視すべき
+- `adapterId`、`session.kind`、`runtime.kind` を網羅的な列挙型ではなくルーティングヒントとして扱うべき
+- `workers[].artifacts` 内にアダプター固有のアーティファクトキーを期待すべき
 
-Consumers MUST NOT:
+コンシューマーは:
 
-- infer harness-specific behavior from undocumented fields
-- assume all adapters have tmux panes, git worktrees, or markdown coordination
-  files
-- reject snapshots only because a state string is unfamiliar
+- ドキュメント化されていないフィールドからハーネス固有の動作を推論してはならない
+- すべてのアダプターが tmux ペイン、git worktree、Markdown 調整ファイルを持つと仮定してはならない
+- 状態文字列が見慣れないという理由だけでスナップショットを拒否してはならない
 
-## Current Adapter Mappings
+## 現在のアダプターマッピング
 
 ### `dmux-tmux`
 
-- Source: `scripts/lib/orchestration-session.js`
-- Session id: orchestration session name
-- Session kind: `orchestrated`
-- Session source target: plan path or session name
-- Worker runtime kind: `tmux-pane`
-- Artifacts: `statusFile`, `taskFile`, `handoffFile`
+- ソース: `scripts/lib/orchestration-session.js`
+- セッション id: オーケストレーションセッション名
+- セッション kind: `orchestrated`
+- セッション source target: プランパスまたはセッション名
+- ワーカーランタイム kind: `tmux-pane`
+- アーティファクト: `statusFile`、`taskFile`、`handoffFile`
 
 ### `claude-history`
 
-- Source: `scripts/lib/session-manager.js`
-- Session id: Claude short id when present, otherwise session filename-derived id
-- Session kind: `history`
-- Session source target: explicit history target, alias, or `.tmp` session file
-- Worker runtime kind: `claude-session`
-- Intent seed paths: parsed from `### Context to Load`
-- Artifacts: `sessionFile`, `context`
+- ソース: `scripts/lib/session-manager.js`
+- セッション id: Claude の短縮 id（存在する場合）、それ以外はセッションファイル名由来の id
+- セッション kind: `history`
+- セッション source target: 明示的な履歴ターゲット、エイリアス、または `.tmp` セッションファイル
+- ワーカーランタイム kind: `claude-session`
+- Intent seed paths: `### Context to Load` からパース
+- アーティファクト: `sessionFile`、`context`
 
-## Validation Reference
+## バリデーションリファレンス
 
-The repo implementation validates:
+リポジトリの実装は以下をバリデートします:
 
-- required object structure
-- required string fields
-- boolean runtime flags
-- string-array outputs and seed paths
-- aggregate count consistency
+- 必須オブジェクト構造
+- 必須文字列フィールド
+- ブーリアンランタイムフラグ
+- 文字列配列の outputs と seed paths
+- 集計カウントの一貫性
 
-Adapters should treat validation failures as contract bugs, not user input
-errors.
+アダプターはバリデーション失敗をユーザー入力エラーではなく、コントラクトのバグとして扱うべきです。
 
-## Recording Fallback Behavior
+## 記録フォールバック動作
 
-The JSON fallback recorder is a temporary compatibility shim for the period
-before the dedicated state store lands. Its behavior is:
+JSON フォールバックレコーダーは、専用の state store がランディングする前の一時的な互換性シムです。その動作は:
 
-- latest snapshot is always replaced in-place
-- history records only distinct snapshot bodies
-- unchanged repeated reads do not append duplicate history entries
+- 最新のスナップショットは常にインプレースで置き換えられる
+- 履歴レコードは異なるスナップショット本文のみを記録
+- 変更のない繰り返し読み取りは重複する履歴エントリを追加しない
 
-This keeps `session-inspect` and other polling-style reads from growing
-unbounded history for the same unchanged session snapshot.
+これにより、`session-inspect` やその他のポーリングスタイルの読み取りが、同じ変更のないセッションスナップショットに対して無制限の履歴を増大させることを防ぎます。

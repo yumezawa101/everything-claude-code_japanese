@@ -2,40 +2,40 @@
 paths:
   - "**/*.rs"
 ---
-# Rust Testing
+# Rust テスト
 
-> This file extends [common/testing.md](../common/testing.md) with Rust-specific content.
+> このファイルは [common/testing.md](../common/testing.md) を Rust 固有のコンテンツで拡張します。
 
-## Test Framework
+## テストフレームワーク
 
-- **`#[test]`** with `#[cfg(test)]` modules for unit tests
-- **rstest** for parameterized tests and fixtures
-- **proptest** for property-based testing
-- **mockall** for trait-based mocking
-- **`#[tokio::test]`** for async tests
+- **`#[test]`** と `#[cfg(test)]` モジュールでユニットテスト
+- **rstest** でパラメータ化テストとフィクスチャ
+- **proptest** でプロパティベーステスト
+- **mockall** でトレイトベースのモック
+- **`#[tokio::test]`** で非同期テスト
 
-## Test Organization
+## テストの整理
 
 ```text
 my_crate/
 ├── src/
-│   ├── lib.rs           # Unit tests in #[cfg(test)] modules
+│   ├── lib.rs           # #[cfg(test)] モジュール内のユニットテスト
 │   ├── auth/
 │   │   └── mod.rs       # #[cfg(test)] mod tests { ... }
 │   └── orders/
 │       └── service.rs   # #[cfg(test)] mod tests { ... }
-├── tests/               # Integration tests (each file = separate binary)
+├── tests/               # インテグレーションテスト（各ファイル = 個別バイナリ）
 │   ├── api_test.rs
 │   ├── db_test.rs
-│   └── common/          # Shared test utilities
+│   └── common/          # 共有テストユーティリティ
 │       └── mod.rs
-└── benches/             # Criterion benchmarks
+└── benches/             # Criterion ベンチマーク
     └── benchmark.rs
 ```
 
-Unit tests go inside `#[cfg(test)]` modules in the same file. Integration tests go in `tests/`.
+ユニットテストは同じファイル内の `#[cfg(test)]` モジュールに配置。インテグレーションテストは `tests/` に配置。
 
-## Unit Test Pattern
+## ユニットテストパターン
 
 ```rust
 #[cfg(test)]
@@ -57,7 +57,7 @@ mod tests {
 }
 ```
 
-## Parameterized Tests
+## パラメータ化テスト
 
 ```rust
 use rstest::rstest;
@@ -71,7 +71,7 @@ fn test_string_length(#[case] input: &str, #[case] expected: usize) {
 }
 ```
 
-## Async Tests
+## 非同期テスト
 
 ```rust
 #[tokio::test]
@@ -82,12 +82,12 @@ async fn fetches_data_successfully() {
 }
 ```
 
-## Mocking with mockall
+## mockall によるモック
 
-Define traits in production code; generate mocks in test modules:
+本番コードでトレイトを定義; テストモジュールでモックを生成:
 
 ```rust
-// Production trait — pub so integration tests can import it
+// 本番トレイト — pub なのでインテグレーションテストからインポート可能
 pub trait UserRepository {
     fn find_by_id(&self, id: u64) -> Option<User>;
 }
@@ -119,36 +119,36 @@ mod tests {
 }
 ```
 
-## Test Naming
+## テスト命名
 
-Use descriptive names that explain the scenario:
+シナリオを説明する記述的な名前を使用:
 - `creates_user_with_valid_email()`
 - `rejects_order_when_insufficient_stock()`
 - `returns_none_when_not_found()`
 
-## Coverage
+## カバレッジ
 
-- Target 80%+ line coverage
-- Use **cargo-llvm-cov** for coverage reporting
-- Focus on business logic — exclude generated code and FFI bindings
-
-```bash
-cargo llvm-cov                       # Summary
-cargo llvm-cov --html                # HTML report
-cargo llvm-cov --fail-under-lines 80 # Fail if below threshold
-```
-
-## Testing Commands
+- 80%以上の行カバレッジを目標
+- カバレッジレポートに **cargo-llvm-cov** を使用
+- ビジネスロジックに集中 -- 生成コードと FFI バインディングは除外
 
 ```bash
-cargo test                       # Run all tests
-cargo test -- --nocapture        # Show println output
-cargo test test_name             # Run tests matching pattern
-cargo test --lib                 # Unit tests only
-cargo test --test api_test       # Specific integration test (tests/api_test.rs)
-cargo test --doc                 # Doc tests only
+cargo llvm-cov                       # サマリー
+cargo llvm-cov --html                # HTML レポート
+cargo llvm-cov --fail-under-lines 80 # しきい値未満で失敗
 ```
 
-## References
+## テストコマンド
 
-See skill: `rust-testing` for comprehensive testing patterns including property-based testing, fixtures, and benchmarking with Criterion.
+```bash
+cargo test                       # すべてのテストを実行
+cargo test -- --nocapture        # println 出力を表示
+cargo test test_name             # パターンにマッチするテストを実行
+cargo test --lib                 # ユニットテストのみ
+cargo test --test api_test       # 特定のインテグレーションテスト（tests/api_test.rs）
+cargo test --doc                 # Doc テストのみ
+```
+
+## リファレンス
+
+プロパティベーステスト、フィクスチャ、Criterion によるベンチマークを含む包括的なテストパターンについては、スキル: `rust-testing` を参照。

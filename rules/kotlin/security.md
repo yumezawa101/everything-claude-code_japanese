@@ -3,34 +3,34 @@ paths:
   - "**/*.kt"
   - "**/*.kts"
 ---
-# Kotlin Security
+# Kotlin セキュリティ
 
-> This file extends [common/security.md](../common/security.md) with Kotlin and Android/KMP-specific content.
+> このファイルは [common/security.md](../common/security.md) を Kotlin および Android/KMP 固有のコンテンツで拡張します。
 
-## Secrets Management
+## シークレット管理
 
-- Never hardcode API keys, tokens, or credentials in source code
-- Use `local.properties` (git-ignored) for local development secrets
-- Use `BuildConfig` fields generated from CI secrets for release builds
-- Use `EncryptedSharedPreferences` (Android) or Keychain (iOS) for runtime secret storage
+- API キー、トークン、クレデンシャルをソースコードにハードコードしない
+- ローカル開発のシークレットには `local.properties`（git-ignored）を使用
+- リリースビルドには CI シークレットから生成される `BuildConfig` フィールドを使用
+- ランタイムのシークレット保存には `EncryptedSharedPreferences`（Android）または Keychain（iOS）を使用
 
 ```kotlin
 // BAD
 val apiKey = "sk-abc123..."
 
-// GOOD — from BuildConfig (generated at build time)
+// GOOD — BuildConfig から（ビルド時に生成）
 val apiKey = BuildConfig.API_KEY
 
-// GOOD — from secure storage at runtime
+// GOOD — ランタイムにセキュアストレージから
 val token = secureStorage.get("auth_token")
 ```
 
-## Network Security
+## ネットワークセキュリティ
 
-- Use HTTPS exclusively — configure `network_security_config.xml` to block cleartext
-- Pin certificates for sensitive endpoints using OkHttp `CertificatePinner` or Ktor equivalent
-- Set timeouts on all HTTP clients — never leave defaults (which may be infinite)
-- Validate and sanitize all server responses before use
+- HTTPS のみを使用 -- `network_security_config.xml` でクリアテキストをブロックするよう設定
+- 機密性の高いエンドポイントには OkHttp の `CertificatePinner` または Ktor 相当の機能で証明書ピンニング
+- すべての HTTP クライアントにタイムアウトを設定 -- デフォルト（無限になる場合がある）のままにしない
+- すべてのサーバーレスポンスを使用前にバリデーションとサニタイズ
 
 ```xml
 <!-- res/xml/network_security_config.xml -->
@@ -39,44 +39,44 @@ val token = secureStorage.get("auth_token")
 </network-security-config>
 ```
 
-## Input Validation
+## 入力バリデーション
 
-- Validate all user input before processing or sending to API
-- Use parameterized queries for Room/SQLDelight — never concatenate user input into SQL
-- Sanitize file paths from user input to prevent path traversal
+- すべてのユーザー入力を処理または API 送信前にバリデーション
+- Room/SQLDelight にはパラメータ化クエリを使用 -- ユーザー入力を SQL に連結しない
+- パストラバーサルを防止するためにユーザー入力からのファイルパスをサニタイズ
 
 ```kotlin
-// BAD — SQL injection
+// BAD — SQL インジェクション
 @Query("SELECT * FROM items WHERE name = '$input'")
 
-// GOOD — parameterized
+// GOOD — パラメータ化
 @Query("SELECT * FROM items WHERE name = :input")
 fun findByName(input: String): List<ItemEntity>
 ```
 
-## Data Protection
+## データ保護
 
-- Use `EncryptedSharedPreferences` for sensitive key-value data on Android
-- Use `@Serializable` with explicit field names — don't leak internal property names
-- Clear sensitive data from memory when no longer needed
-- Use `@Keep` or ProGuard rules for serialized classes to prevent name mangling
+- Android での機密性の高いキーバリューデータには `EncryptedSharedPreferences` を使用
+- 明示的なフィールド名を持つ `@Serializable` を使用 -- 内部プロパティ名を漏洩させない
+- 不要になった機密データはメモリからクリア
+- シリアライズされたクラスには `@Keep` または ProGuard ルールで名前マングリングを防止
 
-## Authentication
+## 認証
 
-- Store tokens in secure storage, not in plain SharedPreferences
-- Implement token refresh with proper 401/403 handling
-- Clear all auth state on logout (tokens, cached user data, cookies)
-- Use biometric authentication (`BiometricPrompt`) for sensitive operations
+- トークンはプレーンな SharedPreferences ではなくセキュアストレージに保存
+- 適切な 401/403 ハンドリングでトークンリフレッシュを実装
+- ログアウト時にすべての認証状態をクリア（トークン、キャッシュされたユーザーデータ、Cookie）
+- 機密操作にはバイオメトリクス認証（`BiometricPrompt`）を使用
 
 ## ProGuard / R8
 
-- Keep rules for all serialized models (`@Serializable`, Gson, Moshi)
-- Keep rules for reflection-based libraries (Koin, Retrofit)
-- Test release builds — obfuscation can break serialization silently
+- すべてのシリアライズされたモデルに keep ルール（`@Serializable`、Gson、Moshi）
+- リフレクションベースのライブラリに keep ルール（Koin、Retrofit）
+- リリースビルドをテスト -- 難読化はシリアライゼーションを無言で壊す可能性がある
 
-## WebView Security
+## WebView セキュリティ
 
-- Disable JavaScript unless explicitly needed: `settings.javaScriptEnabled = false`
-- Validate URLs before loading in WebView
-- Never expose `@JavascriptInterface` methods that access sensitive data
-- Use `WebViewClient.shouldOverrideUrlLoading()` to control navigation
+- 明示的に必要でない限り JavaScript を無効化: `settings.javaScriptEnabled = false`
+- WebView にロードする前に URL をバリデーション
+- 機密データにアクセスする `@JavascriptInterface` メソッドを公開しない
+- `WebViewClient.shouldOverrideUrlLoading()` でナビゲーションを制御

@@ -1,136 +1,121 @@
-# ECC Selective Install Design
+# ECC Selective Install 設計
 
-## Purpose
+## 目的
 
-This document defines the user-facing selective-install design for ECC.
+本ドキュメントは ECC のユーザー向け selective-install 設計を定義します。
 
-It complements
-`docs/SELECTIVE-INSTALL-ARCHITECTURE.md`, which focuses on internal runtime
-architecture and code boundaries.
+内部ランタイムアーキテクチャとコード境界に焦点を当てた `docs/SELECTIVE-INSTALL-ARCHITECTURE.md` を補完します。
 
-This document answers the product and operator questions first:
+本ドキュメントはまずプロダクトとオペレーターの質問に回答します:
 
-- how users choose ECC components
-- what the CLI should feel like
-- what config file should exist
-- how installation should behave across harness targets
-- how the design maps onto the current ECC codebase without requiring a rewrite
+- ユーザーが ECC コンポーネントをどう選択するか
+- CLI がどのような体験であるべきか
+- どのような設定ファイルが存在すべきか
+- ハーネスターゲット間でインストールがどう動作すべきか
+- 設計が書き直しを必要とせずに現在の ECC コードベースにどうマッピングされるか
 
-## Problem
+## 問題
 
-Today ECC still feels like a large payload installer even though the repo now
-has first-pass manifest and lifecycle support.
+現在の ECC はリポジトリにファーストパスのマニフェストとライフサイクルサポートがあるにもかかわらず、依然として大きなペイロードインストーラーのように感じられます。
 
-Users need a simpler mental model:
+ユーザーにはよりシンプルなメンタルモデルが必要です:
 
-- install the baseline
-- add the language packs they actually use
-- add the framework configs they actually want
-- add optional capability packs like security, research, or orchestration
+- ベースラインをインストール
+- 実際に使用する言語パックを追加
+- 実際に必要なフレームワーク設定を追加
+- セキュリティ、リサーチ、オーケストレーションなどのオプション機能パックを追加
 
-The selective-install system should make ECC feel composable instead of
-all-or-nothing.
+selective-install システムにより、ECC はオール・オア・ナッシングではなくコンポーザブルに感じられるべきです。
 
-In the current substrate, user-facing components are still an alias layer over
-coarser internal install modules. That means include/exclude is already useful
-at the module-selection level, but some file-level boundaries remain imperfect
-until the underlying module graph is split more finely.
+現在の基盤では、ユーザー向けコンポーネントは依然としてより粗い内部インストールモジュールのエイリアスレイヤーです。つまり include/exclude はモジュール選択レベルで既に有用ですが、一部のファイルレベルの境界は基盤のモジュールグラフがより細かく分割されるまで不完全なままです。
 
-## Goals
+## 目標
 
-1. Let users install a small default ECC footprint quickly.
-2. Let users compose installs from reusable component families:
-   - core rules
-   - language packs
-   - framework packs
-   - capability packs
-   - target/platform configs
-3. Keep one consistent UX across Claude, Cursor, Antigravity, Codex, and
-   OpenCode.
-4. Keep installs inspectable, repairable, and uninstallable.
-5. Preserve backward compatibility with the current `ecc-install typescript`
-   style during rollout.
+1. ユーザーが小さなデフォルト ECC フットプリントを迅速にインストールできるようにする。
+2. ユーザーが再利用可能なコンポーネントファミリーからインストールを構成できるようにする:
+   - コアルール
+   - 言語パック
+   - フレームワークパック
+   - 機能パック
+   - ターゲット/プラットフォーム設定
+3. Claude、Cursor、Antigravity、Codex、OpenCode 間で一貫した UX を維持。
+4. インストールを検査可能、修復可能、アンインストール可能に保つ。
+5. ロールアウト中は現在の `ecc-install typescript` スタイルとの後方互換性を維持。
 
-## Non-Goals
+## 非目標
 
-- packaging ECC into multiple npm packages in the first phase
-- building a remote marketplace
-- full control-plane UI in the same phase
-- solving every skill-classification problem before selective install ships
+- 第一フェーズで ECC を複数の npm パッケージに分割
+- リモートマーケットプレイスの構築
+- 同一フェーズでの完全なコントロールプレーン UI
+- selective install の出荷前にすべてのスキル分類問題を解決
 
-## User Experience Principles
+## ユーザーエクスペリエンスの原則
 
-### 1. Start Small
+### 1. 小さく始める
 
-A user should be able to get a useful ECC install with one command:
+ユーザーは1つのコマンドで有用な ECC インストールを取得できるべきです:
 
 ```bash
 ecc install --target claude --profile core
 ```
 
-The default experience should not assume the user wants every skill family and
-every framework.
+デフォルトの体験は、ユーザーがすべてのスキルファミリーとすべてのフレームワークを望んでいると仮定すべきではありません。
 
-### 2. Build Up By Intent
+### 2. 意図に基づいて構築
 
-The user should think in terms of:
+ユーザーは以下の観点で考えるべきです:
 
-- "I want the developer baseline"
-- "I need TypeScript and Python"
-- "I want Next.js and Django"
-- "I want the security pack"
+- 「開発者ベースラインが欲しい」
+- 「TypeScript と Python が必要」
+- 「Next.js と Django が欲しい」
+- 「セキュリティパックが欲しい」
 
-The user should not have to know raw internal repo paths.
+ユーザーは生の内部リポジトリパスを知る必要がないべきです。
 
-### 3. Preview Before Mutation
+### 3. ミューテーション前にプレビュー
 
-Every install path should support dry-run planning:
+すべてのインストールパスはドライラン計画をサポートすべきです:
 
 ```bash
 ecc install --target cursor --profile developer --with lang:typescript --with framework:nextjs --dry-run
 ```
 
-The plan should clearly show:
+プランは以下を明確に表示すべきです:
 
-- selected components
-- skipped components
-- target root
-- managed paths
-- expected install-state location
+- 選択されたコンポーネント
+- スキップされたコンポーネント
+- ターゲットルート
+- 管理パス
+- 想定される install-state の場所
 
-### 4. Local Configuration Should Be First-Class
+### 4. ローカル設定をファーストクラスに
 
-Teams should be able to commit a project-level install config and use:
+チームはプロジェクトレベルのインストール設定をコミットし、以下を使用できるべきです:
 
 ```bash
 ecc install --config ecc-install.json
 ```
 
-That allows deterministic installs across contributors and CI.
+これにより、コントリビューターと CI 間で決定論的なインストールが可能になります。
 
-## Component Model
+## コンポーネントモデル
 
-The current manifest already uses install modules and profiles. The user-facing
-design should keep that internal structure, but present it as four main
-component families.
+現在のマニフェストは既にインストールモジュールとプロファイルを使用しています。ユーザー向け設計はその内部構造を維持しつつ、4つの主要コンポーネントファミリーとして提示すべきです。
 
-Near-term implementation note: some user-facing component IDs still resolve to
-shared internal modules, especially in the language/framework layer. The
-catalog improves UX immediately while preserving a clean path toward finer
-module granularity in later phases.
+短期的な実装の注意: 一部のユーザー向けコンポーネント ID は、特に言語/フレームワークレイヤーで共有内部モジュールに解決されます。カタログは UX を即座に改善しつつ、後のフェーズでより細かいモジュール粒度へのクリーンなパスを保持します。
 
-### 1. Baseline
+### 1. ベースライン
 
-These are the default ECC building blocks:
+ECC のデフォルト構成要素:
 
-- core rules
-- baseline agents
-- core commands
-- runtime hooks
-- platform configs
-- workflow quality primitives
+- コアルール
+- ベースライン agent
+- コアコマンド
+- ランタイム hook
+- プラットフォーム設定
+- ワークフロー品質プリミティブ
 
-Examples of current internal modules:
+現在の内部モジュールの例:
 
 - `rules-core`
 - `agents-core`
@@ -139,11 +124,11 @@ Examples of current internal modules:
 - `platform-configs`
 - `workflow-quality`
 
-### 2. Language Packs
+### 2. 言語パック
 
-Language packs group rules, guidance, and workflows for a language ecosystem.
+言語パックは言語エコシステム向けのルール、ガイダンス、ワークフローをグループ化します。
 
-Examples:
+例:
 
 - `lang:typescript`
 - `lang:python`
@@ -151,15 +136,13 @@ Examples:
 - `lang:java`
 - `lang:rust`
 
-Each language pack should resolve to one or more internal modules plus
-target-specific assets.
+各言語パックは1つ以上の内部モジュールとターゲット固有のアセットに解決されるべきです。
 
-### 3. Framework Packs
+### 3. フレームワークパック
 
-Framework packs sit above language packs and pull in framework-specific rules,
-skills, and optional setup.
+フレームワークパックは言語パックの上に位置し、フレームワーク固有のルール、スキル、オプションのセットアップを取り込みます。
 
-Examples:
+例:
 
 - `framework:react`
 - `framework:nextjs`
@@ -167,14 +150,13 @@ Examples:
 - `framework:springboot`
 - `framework:laravel`
 
-Framework packs should depend on the correct language pack or baseline
-primitives where appropriate.
+フレームワークパックは適切な場合、正しい言語パックまたはベースラインプリミティブに依存すべきです。
 
-### 4. Capability Packs
+### 4. 機能パック
 
-Capability packs are cross-cutting ECC feature bundles.
+機能パックは横断的な ECC 機能バンドルです。
 
-Examples:
+例:
 
 - `capability:security`
 - `capability:research`
@@ -182,37 +164,36 @@ Examples:
 - `capability:media`
 - `capability:content`
 
-These should map onto the current module families already being introduced in
-the manifests.
+これらはマニフェストで既に導入されている現在のモジュールファミリーにマッピングされるべきです。
 
-## Profiles
+## プロファイル
 
-Profiles remain the fastest on-ramp.
+プロファイルは最速のオンランプのままです。
 
-Recommended user-facing profiles:
+推奨されるユーザー向けプロファイル:
 
 - `core`
-  minimal baseline, safe default for most users trying ECC
+  最小ベースライン、ECC を試すほとんどのユーザーに安全なデフォルト
 - `developer`
-  best default for active software engineering work
+  アクティブなソフトウェアエンジニアリング作業に最適なデフォルト
 - `security`
-  baseline plus security-heavy guidance
+  ベースラインにセキュリティ重視のガイダンスを追加
 - `research`
-  baseline plus research/content/investigation tools
+  ベースラインにリサーチ/コンテンツ/調査ツールを追加
 - `full`
-  everything classified and currently supported
+  分類済みかつ現在サポートされているすべて
 
-Profiles should be composable with additional `--with` and `--without` flags.
+プロファイルは追加の `--with` と `--without` フラグでコンポーザブルであるべきです。
 
-Example:
+例:
 
 ```bash
 ecc install --target claude --profile developer --with lang:typescript --with framework:nextjs --without capability:orchestration
 ```
 
-## Proposed CLI Design
+## 提案される CLI 設計
 
-### Primary Commands
+### 主要コマンド
 
 ```bash
 ecc install
@@ -226,13 +207,13 @@ ecc catalog
 
 ### Install CLI
 
-Recommended shape:
+推奨される形状:
 
 ```bash
 ecc install [--target <target>] [--profile <name>] [--with <component>]... [--without <component>]... [--config <path>] [--dry-run] [--json]
 ```
 
-Examples:
+例:
 
 ```bash
 ecc install --target claude --profile core
@@ -243,20 +224,20 @@ ecc install --config ecc-install.json
 
 ### Plan CLI
 
-Recommended shape:
+推奨される形状:
 
 ```bash
 ecc plan [same selection flags as install]
 ```
 
-Purpose:
+目的:
 
-- produce a preview without mutation
-- act as the canonical debugging surface for selective install
+- ミューテーションなしでプレビューを生成
+- selective install の正規デバッグサーフェスとして機能
 
 ### Catalog CLI
 
-Recommended shape:
+推奨される形状:
 
 ```bash
 ecc catalog profiles
@@ -265,14 +246,14 @@ ecc catalog components --family language
 ecc catalog show framework:nextjs
 ```
 
-Purpose:
+目的:
 
-- let users discover valid component names without reading docs
-- keep config authoring approachable
+- ユーザーがドキュメントを読まずに有効なコンポーネント名を発見
+- 設定のオーサリングを親しみやすく保つ
 
-### Compatibility CLI
+### 互換性 CLI
 
-These legacy flows should still work during migration:
+移行中はこれらのレガシーフローが引き続き動作すべきです:
 
 ```bash
 ecc-install typescript
@@ -280,22 +261,21 @@ ecc-install --target cursor typescript
 ecc typescript
 ```
 
-Internally these should normalize into the new request model and write
-install-state the same way as modern installs.
+内部的にはこれらが新しいリクエストモデルに正規化され、モダンインストールと同じ方法で install-state を書き込むべきです。
 
-## Proposed Config File
+## 提案される設定ファイル
 
-### Filename
+### ファイル名
 
-Recommended default:
+推奨デフォルト:
 
 - `ecc-install.json`
 
-Optional future support:
+将来のオプションサポート:
 
 - `.ecc/install.json`
 
-### Config Shape
+### 設定の形状
 
 ```json
 {
@@ -320,170 +300,161 @@ Optional future support:
 }
 ```
 
-### Field Semantics
+### フィールドセマンティクス
 
 - `target`
-  selected harness target such as `claude`, `cursor`, or `antigravity`
+  `claude`、`cursor`、`antigravity` などの選択されたハーネスターゲット
 - `profile`
-  baseline profile to start from
+  開始元となるベースラインプロファイル
 - `include`
-  additional components to add
+  追加するコンポーネント
 - `exclude`
-  components to subtract from the profile result
+  プロファイル結果から除外するコンポーネント
 - `options`
-  target/runtime tuning flags that do not change component identity
+  コンポーネントのアイデンティティを変更しないターゲット/ランタイムチューニングフラグ
 
-### Precedence Rules
+### 優先順位ルール
 
-1. CLI arguments override config file values.
-2. config file overrides profile defaults.
-3. profile defaults override internal module defaults.
+1. CLI 引数が設定ファイルの値をオーバーライド。
+2. 設定ファイルがプロファイルデフォルトをオーバーライド。
+3. プロファイルデフォルトが内部モジュールデフォルトをオーバーライド。
 
-This keeps the behavior predictable and easy to explain.
+これにより動作が予測可能で説明しやすくなります。
 
-## Modular Installation Flow
+## モジュラーインストールフロー
 
-The user-facing flow should be:
+ユーザー向けフローは:
 
-1. load config file if provided or auto-detected
-2. merge CLI intent on top of config intent
-3. normalize the request into a canonical selection
-4. expand profile into baseline components
-5. add `include` components
-6. subtract `exclude` components
-7. resolve dependencies and target compatibility
-8. render a plan
-9. apply operations if not in dry-run mode
-10. write install-state
+1. 提供された、または自動検出された設定ファイルを読み込む
+2. 設定意図の上に CLI 意図をマージ
+3. リクエストを正規選択に正規化
+4. プロファイルをベースラインコンポーネントに展開
+5. `include` コンポーネントを追加
+6. `exclude` コンポーネントを除外
+7. 依存関係とターゲット互換性を解決
+8. プランをレンダリング
+9. ドライランモードでなければオペレーションを適用
+10. install-state を書き込む
 
-The important UX property is that the exact same flow powers:
+重要な UX 特性は、まったく同じフローが以下を駆動すること:
 
 - `install`
 - `plan`
 - `repair`
 - `uninstall`
 
-The commands differ in action, not in how ECC understands the selected install.
+コマンドはアクションが異なるだけで、ECC が選択されたインストールを理解する方法は同じです。
 
-## Target Behavior
+## ターゲット動作
 
-Selective install should preserve the same conceptual component graph across all
-targets, while letting target adapters decide how content lands.
+Selective install はすべてのターゲットで同じ概念的コンポーネントグラフを保持しつつ、ターゲットアダプターがコンテンツのランディング方法を決定できるようにすべきです。
 
 ### Claude
 
-Best fit for:
+最適な用途:
 
-- home-scoped ECC baseline
-- commands, agents, rules, hooks, platform config, orchestration
+- ホームスコープの ECC ベースライン
+- コマンド、agent、ルール、hook、プラットフォーム設定、オーケストレーション
 
 ### Cursor
 
-Best fit for:
+最適な用途:
 
-- project-scoped installs
-- rules plus project-local automation and config
+- プロジェクトスコープのインストール
+- ルールとプロジェクトローカルの自動化と設定
 
 ### Antigravity
 
-Best fit for:
+最適な用途:
 
-- project-scoped agent/rule/workflow installs
+- プロジェクトスコープの agent/ルール/ワークフローインストール
 
 ### Codex / OpenCode
 
-Should remain additive targets rather than special forks of the installer.
+インストーラーの特殊フォークではなく、追加ターゲットとして残るべきです。
 
-The selective-install design should make these just new adapters plus new
-target-specific mapping rules, not new installer architectures.
+selective-install 設計はこれらを新しいインストーラーアーキテクチャではなく、新しいアダプターと新しいターゲット固有マッピングルールにするだけであるべきです。
 
-## Technical Feasibility
+## 技術的実現可能性
 
-This design is feasible because the repo already has:
+リポジトリには既に以下が存在するため、この設計は実現可能です:
 
-- install module and profile manifests
-- target adapters with install-state paths
-- plan inspection
-- install-state recording
-- lifecycle commands
-- a unified `ecc` CLI surface
+- インストールモジュールとプロファイルマニフェスト
+- install-state パス付きのターゲットアダプター
+- プラン検査
+- install-state の記録
+- ライフサイクルコマンド
+- 統一 `ecc` CLI サーフェス
 
-The missing work is not conceptual invention. The missing work is productizing
-the current substrate into a cleaner user-facing component model.
+欠けている作業は概念的な発明ではありません。欠けている作業は、現在の基盤をよりクリーンなユーザー向けコンポーネントモデルに製品化することです。
 
-### Feasible In Phase 1
+### Phase 1 で実現可能
 
-- profile + include/exclude selection
-- `ecc-install.json` config file parsing
-- catalog/discovery command
-- alias mapping from user-facing component IDs to internal module sets
-- dry-run and JSON planning
+- プロファイル + include/exclude 選択
+- `ecc-install.json` 設定ファイルパース
+- カタログ/発見コマンド
+- ユーザー向けコンポーネント ID から内部モジュールセットへのエイリアスマッピング
+- ドライランと JSON 計画
 
-### Feasible In Phase 2
+### Phase 2 で実現可能
 
-- richer target adapter semantics
-- merge-aware operations for config-like assets
-- stronger repair/uninstall behavior for non-copy operations
+- より豊富なターゲットアダプターセマンティクス
+- 設定系アセットのマージ対応オペレーション
+- 非コピーオペレーションに対するより強力な repair/uninstall 動作
 
-### Later
+### 後日
 
-- reduced publish surface
-- generated slim bundles
-- remote component fetch
+- 公開サーフェスの縮小
+- 生成されたスリムバンドル
+- リモートコンポーネントフェッチ
 
-## Mapping To Current ECC Manifests
+## 現在の ECC マニフェストへのマッピング
 
-The current manifests do not yet expose a true user-facing `lang:*` /
-`framework:*` / `capability:*` taxonomy. That should be introduced as a
-presentation layer on top of the existing modules, not as a second installer
-engine.
+現在のマニフェストはまだ真のユーザー向け `lang:*` / `framework:*` / `capability:*` タクソノミーを公開していません。これは2番目のインストーラーエンジンとしてではなく、既存モジュールの上のプレゼンテーションレイヤーとして導入されるべきです。
 
-Recommended approach:
+推奨アプローチ:
 
-- keep `install-modules.json` as the internal resolution catalog
-- add a user-facing component catalog that maps friendly component IDs to one or
-  more internal modules
-- let profiles reference either internal modules or user-facing component IDs
-  during the migration window
+- `install-modules.json` を内部解決カタログとして維持
+- フレンドリーなコンポーネント ID を1つ以上の内部モジュールにマッピングするユーザー向けコンポーネントカタログを追加
+- 移行ウィンドウ中はプロファイルが内部モジュールまたはユーザー向けコンポーネント ID のいずれかを参照可能に
 
-That avoids breaking the current selective-install substrate while improving UX.
+これにより、UX を改善しつつ現在の selective-install 基盤を壊さずに済みます。
 
-## Suggested Rollout
+## 推奨ロールアウト
 
-### Phase 1: Design And Discovery
+### Phase 1: 設計と探索
 
-- finalize the user-facing component taxonomy
-- add the config schema
-- add CLI design and precedence rules
+- ユーザー向けコンポーネントタクソノミーの確定
+- 設定スキーマの追加
+- CLI 設計と優先順位ルール
 
-### Phase 2: User-Facing Resolution Layer
+### Phase 2: ユーザー向け解決レイヤー
 
-- implement component aliases
-- implement config-file parsing
-- implement `include` / `exclude`
-- implement `catalog`
+- コンポーネントエイリアスの実装
+- 設定ファイルパースの実装
+- `include` / `exclude` の実装
+- `catalog` の実装
 
-### Phase 3: Stronger Target Semantics
+### Phase 3: より強力なターゲットセマンティクス
 
-- move more logic into target-owned planning
-- support merge/generate operations cleanly
-- improve repair/uninstall fidelity
+- より多くのロジックをターゲット所有の計画に移動
+- マージ/生成オペレーションのクリーンなサポート
+- repair/uninstall 忠実度の改善
 
-### Phase 4: Packaging Optimization
+### Phase 4: パッケージング最適化
 
-- narrow published surface
-- evaluate generated bundles
+- 公開サーフェスの縮小
+- 生成バンドルの評価
 
-## Recommendation
+## 推奨事項
 
-The next implementation move should not be "rewrite the installer."
+次の実装の動きは「インストーラーの書き直し」であるべきではありません。
 
-It should be:
+以下であるべきです:
 
-1. keep the current manifest/runtime substrate
-2. add a user-facing component catalog and config file
-3. add `include` / `exclude` selection and catalog discovery
-4. let the existing planner and lifecycle stack consume that model
+1. 現在のマニフェスト/ランタイム基盤を維持
+2. ユーザー向けコンポーネントカタログと設定ファイルを追加
+3. `include` / `exclude` 選択とカタログ発見を追加
+4. 既存のプランナーとライフサイクルスタックにそのモデルを消費させる
 
-That is the shortest path from the current ECC codebase to a real selective
-install experience that feels like ECC 2.0 instead of a large legacy installer.
+これが、現在の ECC コードベースから大きなレガシーインストーラーではなく ECC 2.0 のように感じられる真の selective install 体験への最短パスです。

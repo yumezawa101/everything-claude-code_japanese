@@ -3,15 +3,15 @@ paths:
   - "**/*.swift"
   - "**/Package.swift"
 ---
-# Swift Security
+# Swift セキュリティ
 
-> This file extends [common/security.md](../common/security.md) with Swift specific content.
+> このファイルは [common/security.md](../common/security.md) を Swift 固有のコンテンツで拡張します。
 
-## Secret Management
+## シークレット管理
 
-- Use **Keychain Services** for sensitive data (tokens, passwords, keys) — never `UserDefaults`
-- Use environment variables or `.xcconfig` files for build-time secrets
-- Never hardcode secrets in source — decompilation tools extract them trivially
+- 機密データ（トークン、パスワード、キー）には **Keychain Services** を使用 -- `UserDefaults` は使用しない
+- ビルド時のシークレットには環境変数または `.xcconfig` ファイルを使用
+- ソースコードにシークレットをハードコードしない -- デコンパイルツールで容易に抽出される
 
 ```swift
 let apiKey = ProcessInfo.processInfo.environment["API_KEY"]
@@ -20,14 +20,14 @@ guard let apiKey, !apiKey.isEmpty else {
 }
 ```
 
-## Transport Security
+## トランスポートセキュリティ
 
-- App Transport Security (ATS) is enforced by default — do not disable it
-- Use certificate pinning for critical endpoints
-- Validate all server certificates
+- App Transport Security（ATS）はデフォルトで強制 -- 無効化しない
+- 重要なエンドポイントには証明書ピンニングを使用
+- すべてのサーバー証明書をバリデーション
 
-## Input Validation
+## 入力バリデーション
 
-- Sanitize all user input before display to prevent injection
-- Use `URL(string:)` with validation rather than force-unwrapping
-- Validate data from external sources (APIs, deep links, pasteboard) before processing
+- インジェクション防止のためにすべてのユーザー入力を表示前にサニタイズ
+- 強制アンラップではなくバリデーション付きの `URL(string:)` を使用
+- 外部ソース（API、ディープリンク、ペーストボード）からのデータは処理前にバリデーション

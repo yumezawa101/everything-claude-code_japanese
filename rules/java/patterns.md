@@ -2,13 +2,13 @@
 paths:
   - "**/*.java"
 ---
-# Java Patterns
+# Java パターン
 
-> This file extends [common/patterns.md](../common/patterns.md) with Java-specific content.
+> このファイルは [common/patterns.md](../common/patterns.md) を Java 固有のコンテンツで拡張します。
 
-## Repository Pattern
+## Repository パターン
 
-Encapsulate data access behind an interface:
+データアクセスをインターフェースの背後にカプセル化する:
 
 ```java
 public interface OrderRepository {
@@ -19,11 +19,11 @@ public interface OrderRepository {
 }
 ```
 
-Concrete implementations handle storage details (JPA, JDBC, in-memory for tests).
+具象実装がストレージの詳細を処理する（JPA、JDBC、テスト用のインメモリ）。
 
-## Service Layer
+## Service レイヤー
 
-Business logic in service classes; keep controllers and repositories thin:
+ビジネスロジックは Service クラスに配置; コントローラとリポジトリは薄く保つ:
 
 ```java
 public class OrderService {
@@ -44,12 +44,12 @@ public class OrderService {
 }
 ```
 
-## Constructor Injection
+## コンストラクタインジェクション
 
-Always use constructor injection — never field injection:
+常にコンストラクタインジェクションを使用 -- フィールドインジェクションは使わない:
 
 ```java
-// GOOD — constructor injection (testable, immutable)
+// GOOD — コンストラクタインジェクション（テスト可能、イミュータブル）
 public class NotificationService {
     private final EmailSender emailSender;
 
@@ -58,16 +58,16 @@ public class NotificationService {
     }
 }
 
-// BAD — field injection (untestable without reflection, requires framework magic)
+// BAD — フィールドインジェクション（リフレクションなしではテスト不可、フレームワークのマジックが必要）
 public class NotificationService {
     @Inject // or @Autowired
     private EmailSender emailSender;
 }
 ```
 
-## DTO Mapping
+## DTO マッピング
 
-Use records for DTOs. Map at service/controller boundaries:
+DTO には Record を使用。Service/Controller の境界でマッピングする:
 
 ```java
 public record OrderResponse(Long id, String customer, BigDecimal total) {
@@ -77,9 +77,9 @@ public record OrderResponse(Long id, String customer, BigDecimal total) {
 }
 ```
 
-## Builder Pattern
+## Builder パターン
 
-Use for objects with many optional parameters:
+多数のオプションパラメータを持つオブジェクトに使用:
 
 ```java
 public class SearchCriteria {
@@ -110,7 +110,7 @@ public class SearchCriteria {
 }
 ```
 
-## Sealed Types for Domain Models
+## ドメインモデルの Sealed 型
 
 ```java
 public sealed interface PaymentResult permits PaymentSuccess, PaymentFailure {
@@ -118,16 +118,16 @@ public sealed interface PaymentResult permits PaymentSuccess, PaymentFailure {
     record PaymentFailure(String errorCode, String message) implements PaymentResult {}
 }
 
-// Exhaustive handling (Java 21+)
+// 網羅的な処理（Java 21+）
 String message = switch (result) {
     case PaymentSuccess s -> "Paid: " + s.transactionId();
     case PaymentFailure f -> "Failed: " + f.errorCode();
 };
 ```
 
-## API Response Envelope
+## API レスポンスエンベロープ
 
-Consistent API responses:
+一貫した API レスポンス:
 
 ```java
 public record ApiResponse<T>(boolean success, T data, String error) {
@@ -140,7 +140,7 @@ public record ApiResponse<T>(boolean success, T data, String error) {
 }
 ```
 
-## References
+## リファレンス
 
-See skill: `springboot-patterns` for Spring Boot architecture patterns.
-See skill: `jpa-patterns` for entity design and query optimization.
+Spring Boot アーキテクチャパターンについては、スキル: `springboot-patterns` を参照。
+エンティティ設計とクエリ最適化については、スキル: `jpa-patterns` を参照。

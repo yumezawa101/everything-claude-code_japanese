@@ -4,9 +4,9 @@ paths:
   - "**/go.mod"
   - "**/go.sum"
 ---
-# Go Patterns
+# Go パターン
 
-> This file extends [common/patterns.md](../common/patterns.md) with Go specific content.
+> このファイルは [common/patterns.md](../common/patterns.md) を Go 固有のコンテンツで拡張します。
 
 ## Functional Options
 
@@ -26,13 +26,13 @@ func NewServer(opts ...Option) *Server {
 }
 ```
 
-## Small Interfaces
+## 小さなインターフェース
 
-Define interfaces where they are used, not where they are implemented.
+インターフェースは実装する場所ではなく、使用する場所で定義する。
 
-## Dependency Injection
+## 依存性注入
 
-Use constructor functions to inject dependencies:
+コンストラクタ関数を使用して依存性を注入する:
 
 ```go
 func NewUserService(repo UserRepository, logger Logger) *UserService {
@@ -40,6 +40,6 @@ func NewUserService(repo UserRepository, logger Logger) *UserService {
 }
 ```
 
-## Reference
+## リファレンス
 
-See skill: `golang-patterns` for comprehensive Go patterns including concurrency, error handling, and package organization.
+並行処理、エラーハンドリング、パッケージ構成を含む包括的な Go パターンについては、スキル: `golang-patterns` を参照。

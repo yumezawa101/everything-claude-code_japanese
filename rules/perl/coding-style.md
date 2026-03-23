@@ -6,41 +6,41 @@ paths:
   - "**/*.psgi"
   - "**/*.cgi"
 ---
-# Perl Coding Style
+# Perl コーディングスタイル
 
-> This file extends [common/coding-style.md](../common/coding-style.md) with Perl-specific content.
+> このファイルは [common/coding-style.md](../common/coding-style.md) を Perl 固有のコンテンツで拡張します。
 
-## Standards
+## 標準
 
-- Always `use v5.36` (enables `strict`, `warnings`, `say`, subroutine signatures)
-- Use subroutine signatures — never unpack `@_` manually
-- Prefer `say` over `print` with explicit newlines
+- 常に `use v5.36`（`strict`、`warnings`、`say`、サブルーチンシグネチャを有効化）
+- サブルーチンシグネチャを使用 -- `@_` を手動でアンパックしない
+- 明示的な改行付き `print` よりも `say` を優先
 
-## Immutability
+## イミュータビリティ
 
-- Use **Moo** with `is => 'ro'` and `Types::Standard` for all attributes
-- Never use blessed hashrefs directly — always use Moo/Moose accessors
-- **OO override note**: Moo `has` attributes with `builder` or `default` are acceptable for computed read-only values
+- すべてのアトリビュートに **Moo** の `is => 'ro'` と **Types::Standard** を使用
+- blessed ハッシュリファレンスを直接使用しない -- 常に Moo/Moose アクセサを使用
+- **OO のオーバーライドに関する注意**: `builder` または `default` を持つ Moo `has` アトリビュートは計算された読み取り専用値として許容
 
-## Formatting
+## フォーマット
 
-Use **perltidy** with these settings:
+以下の設定で **perltidy** を使用:
 
 ```
--i=4    # 4-space indent
--l=100  # 100 char line length
+-i=4    # 4 スペースインデント
+-l=100  # 100 文字行長
 -ce     # cuddled else
--bar    # opening brace always right
+-bar    # 開き波括弧は常に右
 ```
 
-## Linting
+## リント
 
-Use **perlcritic** at severity 3 with themes: `core`, `pbp`, `security`.
+severity 3 で **perlcritic** を使用、テーマ: `core`、`pbp`、`security`。
 
 ```bash
 perlcritic --severity 3 --theme 'core || pbp || security' lib/
 ```
 
-## Reference
+## リファレンス
 
-See skill: `perl-patterns` for comprehensive modern Perl idioms and best practices.
+包括的なモダン Perl イディオムとベストプラクティスについては、スキル: `perl-patterns` を参照。

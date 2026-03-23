@@ -2,29 +2,29 @@
 paths:
   - "**/*.rs"
 ---
-# Rust Coding Style
+# Rust コーディングスタイル
 
-> This file extends [common/coding-style.md](../common/coding-style.md) with Rust-specific content.
+> このファイルは [common/coding-style.md](../common/coding-style.md) を Rust 固有のコンテンツで拡張します。
 
-## Formatting
+## フォーマット
 
-- **rustfmt** for enforcement — always run `cargo fmt` before committing
-- **clippy** for lints — `cargo clippy -- -D warnings` (treat warnings as errors)
-- 4-space indent (rustfmt default)
-- Max line width: 100 characters (rustfmt default)
+- **rustfmt** で強制 -- コミット前に常に `cargo fmt` を実行
+- **clippy** でリント -- `cargo clippy -- -D warnings`（警告をエラーとして扱う）
+- 4 スペースインデント（rustfmt デフォルト）
+- 最大行幅: 100 文字（rustfmt デフォルト）
 
-## Immutability
+## イミュータビリティ
 
-Rust variables are immutable by default — embrace this:
+Rust の変数はデフォルトでイミュータブル -- これを活用する:
 
-- Use `let` by default; only use `let mut` when mutation is required
-- Prefer returning new values over mutating in place
-- Use `Cow<'_, T>` when a function may or may not need to allocate
+- デフォルトで `let` を使用; ミューテーションが必要な場合のみ `let mut` を使用
+- ミューテーションよりも新しい値を返すことを優先
+- 関数がアロケーションを必要とするかもしれないし必要としないかもしれない場合は `Cow<'_, T>` を使用
 
 ```rust
 use std::borrow::Cow;
 
-// GOOD — immutable by default, new value returned
+// GOOD — デフォルトでイミュータブル、新しい値を返す
 fn normalize(input: &str) -> Cow<'_, str> {
     if input.contains(' ') {
         Cow::Owned(input.replace(' ', "_"))
@@ -33,54 +33,54 @@ fn normalize(input: &str) -> Cow<'_, str> {
     }
 }
 
-// BAD — unnecessary mutation
+// BAD — 不必要なミューテーション
 fn normalize_bad(input: &mut String) {
     *input = input.replace(' ', "_");
 }
 ```
 
-## Naming
+## 命名規則
 
-Follow standard Rust conventions:
-- `snake_case` for functions, methods, variables, modules, crates
-- `PascalCase` (UpperCamelCase) for types, traits, enums, type parameters
-- `SCREAMING_SNAKE_CASE` for constants and statics
-- Lifetimes: short lowercase (`'a`, `'de`) — descriptive names for complex cases (`'input`)
+標準的な Rust の規約に従う:
+- `snake_case`: 関数、メソッド、変数、モジュール、クレート
+- `PascalCase`（UpperCamelCase）: 型、トレイト、列挙型、型パラメータ
+- `SCREAMING_SNAKE_CASE`: 定数とスタティック
+- ライフタイム: 短い小文字（`'a`、`'de`）-- 複雑な場合は記述的な名前（`'input`）
 
-## Ownership and Borrowing
+## 所有権と借用
 
-- Borrow (`&T`) by default; take ownership only when you need to store or consume
-- Never clone to satisfy the borrow checker without understanding the root cause
-- Accept `&str` over `String`, `&[T]` over `Vec<T>` in function parameters
-- Use `impl Into<String>` for constructors that need to own a `String`
+- デフォルトで借用（`&T`）; 保存または消費が必要な場合のみ所有権を取得
+- 根本原因を理解せずに借用チェッカーを満たすためだけにクローンしない
+- 関数パラメータでは `String` より `&str`、`Vec<T>` より `&[T]` を受け入れる
+- `String` を所有する必要があるコンストラクタには `impl Into<String>` を使用
 
 ```rust
-// GOOD — borrows when ownership isn't needed
+// GOOD — 所有権が不要な場合は借用
 fn word_count(text: &str) -> usize {
     text.split_whitespace().count()
 }
 
-// GOOD — takes ownership in constructor via Into
+// GOOD — Into を使ったコンストラクタで所有権を取得
 fn new(name: impl Into<String>) -> Self {
     Self { name: name.into() }
 }
 
-// BAD — takes String when &str suffices
+// BAD — &str で十分なのに String を取得
 fn word_count_bad(text: String) -> usize {
     text.split_whitespace().count()
 }
 ```
 
-## Error Handling
+## エラーハンドリング
 
-- Use `Result<T, E>` and `?` for propagation — never `unwrap()` in production code
-- **Libraries**: define typed errors with `thiserror`
-- **Applications**: use `anyhow` for flexible error context
-- Add context with `.with_context(|| format!("failed to ..."))?`
-- Reserve `unwrap()` / `expect()` for tests and truly unreachable states
+- `Result<T, E>` と `?` で伝播 -- 本番コードでは `unwrap()` を使用しない
+- **ライブラリ**: `thiserror` で型付きエラーを定義
+- **アプリケーション**: `anyhow` で柔軟なエラーコンテキストを使用
+- `.with_context(|| format!("failed to ..."))?` でコンテキストを追加
+- `unwrap()` / `expect()` はテストと本当に到達不可能な状態のみに予約
 
 ```rust
-// GOOD — library error with thiserror
+// GOOD — thiserror によるライブラリエラー
 #[derive(Debug, thiserror::Error)]
 pub enum ConfigError {
     #[error("failed to read config: {0}")]
@@ -89,7 +89,7 @@ pub enum ConfigError {
     Parse(String),
 }
 
-// GOOD — application error with anyhow
+// GOOD — anyhow によるアプリケーションエラー
 use anyhow::Context;
 
 fn load_config(path: &str) -> anyhow::Result<Config> {
@@ -100,18 +100,18 @@ fn load_config(path: &str) -> anyhow::Result<Config> {
 }
 ```
 
-## Iterators Over Loops
+## ループよりイテレータ
 
-Prefer iterator chains for transformations; use loops for complex control flow:
+変換にはイテレータチェーンを優先; 複雑な制御フローにはループを使用:
 
 ```rust
-// GOOD — declarative and composable
+// GOOD — 宣言的で合成可能
 let active_emails: Vec<&str> = users.iter()
     .filter(|u| u.is_active)
     .map(|u| u.email.as_str())
     .collect();
 
-// GOOD — loop for complex logic with early returns
+// GOOD — 早期リターンを含む複雑なロジックにはループ
 for user in &users {
     if let Some(verified) = verify_email(&user.email)? {
         send_welcome(&verified)?;
@@ -119,33 +119,33 @@ for user in &users {
 }
 ```
 
-## Module Organization
+## モジュール構成
 
-Organize by domain, not by type:
+型ではなくドメインで整理する:
 
 ```text
 src/
 ├── main.rs
 ├── lib.rs
-├── auth/           # Domain module
+├── auth/           # ドメインモジュール
 │   ├── mod.rs
 │   ├── token.rs
 │   └── middleware.rs
-├── orders/         # Domain module
+├── orders/         # ドメインモジュール
 │   ├── mod.rs
 │   ├── model.rs
 │   └── service.rs
-└── db/             # Infrastructure
+└── db/             # インフラストラクチャ
     ├── mod.rs
     └── pool.rs
 ```
 
-## Visibility
+## 可視性
 
-- Default to private; use `pub(crate)` for internal sharing
-- Only mark `pub` what is part of the crate's public API
-- Re-export public API from `lib.rs`
+- デフォルトは private; 内部共有には `pub(crate)` を使用
+- クレートの公開 API の一部のみを `pub` にする
+- `lib.rs` から公開 API を再エクスポート
 
-## References
+## リファレンス
 
-See skill: `rust-patterns` for comprehensive Rust idioms and patterns.
+包括的な Rust イディオムとパターンについては、スキル: `rust-patterns` を参照。

@@ -6,13 +6,13 @@ paths:
   - "**/*.psgi"
   - "**/*.cgi"
 ---
-# Perl Testing
+# Perl テスト
 
-> This file extends [common/testing.md](../common/testing.md) with Perl-specific content.
+> このファイルは [common/testing.md](../common/testing.md) を Perl 固有のコンテンツで拡張します。
 
-## Framework
+## フレームワーク
 
-Use **Test2::V0** for new projects (not Test::More):
+新しいプロジェクトには **Test2::V0** を使用（Test::More ではない）:
 
 ```perl
 use Test2::V0;
@@ -22,33 +22,33 @@ is($result, 42, 'answer is correct');
 done_testing;
 ```
 
-## Runner
+## ランナー
 
 ```bash
-prove -l t/              # adds lib/ to @INC
-prove -lr -j8 t/         # recursive, 8 parallel jobs
+prove -l t/              # lib/ を @INC に追加
+prove -lr -j8 t/         # 再帰、8 並列ジョブ
 ```
 
-Always use `-l` to ensure `lib/` is on `@INC`.
+`lib/` が `@INC` にあることを確実にするために常に `-l` を使用。
 
-## Coverage
+## カバレッジ
 
-Use **Devel::Cover** — target 80%+:
+**Devel::Cover** を使用 -- 80%以上を目標:
 
 ```bash
 cover -test
 ```
 
-## Mocking
+## モック
 
-- **Test::MockModule** — mock methods on existing modules
-- **Test::MockObject** — create test doubles from scratch
+- **Test::MockModule** -- 既存モジュールのメソッドをモック
+- **Test::MockObject** -- テストダブルをゼロから作成
 
-## Pitfalls
+## 注意点
 
-- Always end test files with `done_testing`
-- Never forget the `-l` flag with `prove`
+- テストファイルは常に `done_testing` で終了
+- `prove` で `-l` フラグを忘れない
 
-## Reference
+## リファレンス
 
-See skill: `perl-testing` for detailed Perl TDD patterns with Test2::V0, prove, and Devel::Cover.
+Test2::V0、prove、Devel::Cover を使用した詳細な Perl TDD パターンについては、スキル: `perl-testing` を参照。

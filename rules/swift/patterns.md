@@ -3,13 +3,13 @@ paths:
   - "**/*.swift"
   - "**/Package.swift"
 ---
-# Swift Patterns
+# Swift パターン
 
-> This file extends [common/patterns.md](../common/patterns.md) with Swift specific content.
+> このファイルは [common/patterns.md](../common/patterns.md) を Swift 固有のコンテンツで拡張します。
 
-## Protocol-Oriented Design
+## プロトコル指向設計
 
-Define small, focused protocols. Use protocol extensions for shared defaults:
+小さく焦点を絞ったプロトコルを定義。共有デフォルトにはプロトコル拡張を使用:
 
 ```swift
 protocol Repository: Sendable {
@@ -19,10 +19,10 @@ protocol Repository: Sendable {
 }
 ```
 
-## Value Types
+## 値型
 
-- Use structs for data transfer objects and models
-- Use enums with associated values to model distinct states:
+- データ転送オブジェクトとモデルには struct を使用
+- 異なる状態をモデル化するために関連値付き enum を使用:
 
 ```swift
 enum LoadState<T: Sendable>: Sendable {
@@ -33,9 +33,9 @@ enum LoadState<T: Sendable>: Sendable {
 }
 ```
 
-## Actor Pattern
+## Actor パターン
 
-Use actors for shared mutable state instead of locks or dispatch queues:
+ロックやディスパッチキューの代わりに、共有ミュータブル状態には Actor を使用:
 
 ```swift
 actor Cache<Key: Hashable & Sendable, Value: Sendable> {
@@ -46,9 +46,9 @@ actor Cache<Key: Hashable & Sendable, Value: Sendable> {
 }
 ```
 
-## Dependency Injection
+## 依存性注入
 
-Inject protocols with default parameters — production uses defaults, tests inject mocks:
+デフォルトパラメータ付きでプロトコルを注入 -- 本番環境はデフォルトを使用、テストはモックを注入:
 
 ```swift
 struct UserService {
@@ -60,7 +60,7 @@ struct UserService {
 }
 ```
 
-## References
+## リファレンス
 
-See skill: `swift-actor-persistence` for actor-based persistence patterns.
-See skill: `swift-protocol-di-testing` for protocol-based DI and testing.
+Actor ベースの永続化パターンについては、スキル: `swift-actor-persistence` を参照。
+プロトコルベースの DI とテストについては、スキル: `swift-protocol-di-testing` を参照。

@@ -5,15 +5,15 @@ paths:
   - "**/*.csproj"
   - "**/appsettings*.json"
 ---
-# C# Security
+# C# セキュリティ
 
-> This file extends [common/security.md](../common/security.md) with C#-specific content.
+> このファイルは [common/security.md](../common/security.md) を C# 固有のコンテンツで拡張します。
 
-## Secret Management
+## シークレット管理
 
-- Never hardcode API keys, tokens, or connection strings in source code
-- Use environment variables, user secrets for local development, and a secret manager in production
-- Keep `appsettings.*.json` free of real credentials
+- API キー、トークン、接続文字列をソースコードにハードコードしない
+- ローカル開発には環境変数やユーザーシークレット、本番環境にはシークレットマネージャを使用
+- `appsettings.*.json` に本物のクレデンシャルを含めない
 
 ```csharp
 // BAD
@@ -24,35 +24,35 @@ var apiKey = builder.Configuration["OpenAI:ApiKey"]
     ?? throw new InvalidOperationException("OpenAI:ApiKey is not configured.");
 ```
 
-## SQL Injection Prevention
+## SQL インジェクション防止
 
-- Always use parameterized queries with ADO.NET, Dapper, or EF Core
-- Never concatenate user input into SQL strings
-- Validate sort fields and filter operators before using dynamic query composition
+- ADO.NET、Dapper、EF Core で常にパラメータ化クエリを使用
+- ユーザー入力を SQL 文字列に連結しない
+- 動的クエリ構成を使用する前にソートフィールドとフィルタ演算子をバリデーション
 
 ```csharp
 const string sql = "SELECT * FROM Orders WHERE CustomerId = @customerId";
 await connection.QueryAsync<Order>(sql, new { customerId });
 ```
 
-## Input Validation
+## 入力バリデーション
 
-- Validate DTOs at the application boundary
-- Use data annotations, FluentValidation, or explicit guard clauses
-- Reject invalid model state before running business logic
+- アプリケーション境界で DTO をバリデーション
+- データアノテーション、FluentValidation、または明示的なガード句を使用
+- ビジネスロジック実行前に無効なモデル状態を拒否
 
-## Authentication and Authorization
+## 認証と認可
 
-- Prefer framework auth handlers instead of custom token parsing
-- Enforce authorization policies at endpoint or handler boundaries
-- Never log raw tokens, passwords, or PII
+- カスタムのトークン解析よりもフレームワークの認証ハンドラを優先
+- エンドポイントまたはハンドラの境界で認可ポリシーを強制
+- 生のトークン、パスワード、PII をログに記録しない
 
-## Error Handling
+## エラーハンドリング
 
-- Return safe client-facing messages
-- Log detailed exceptions with structured context server-side
-- Do not expose stack traces, SQL text, or filesystem paths in API responses
+- 安全なクライアント向けメッセージを返す
+- 詳細な例外は構造化されたコンテキスト付きでサーバーサイドにログ
+- API レスポンスでスタックトレース、SQL テキスト、ファイルシステムパスを公開しない
 
-## References
+## リファレンス
 
-See skill: `security-review` for broader application security review checklists.
+より広範なアプリケーションセキュリティレビューチェックリストについては、スキル: `security-review` を参照。

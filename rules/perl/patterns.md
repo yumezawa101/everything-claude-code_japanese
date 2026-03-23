@@ -6,13 +6,13 @@ paths:
   - "**/*.psgi"
   - "**/*.cgi"
 ---
-# Perl Patterns
+# Perl パターン
 
-> This file extends [common/patterns.md](../common/patterns.md) with Perl-specific content.
+> このファイルは [common/patterns.md](../common/patterns.md) を Perl 固有のコンテンツで拡張します。
 
-## Repository Pattern
+## Repository パターン
 
-Use **DBI** or **DBIx::Class** behind an interface:
+**DBI** または **DBIx::Class** をインターフェースの背後で使用:
 
 ```perl
 package MyApp::Repo::User;
@@ -27,9 +27,9 @@ sub find_by_id ($self, $id) {
 }
 ```
 
-## DTOs / Value Objects
+## DTO / 値オブジェクト
 
-Use **Moo** classes with **Types::Standard** (equivalent to Python dataclasses):
+**Moo** クラスと **Types::Standard** を使用（Python dataclass に相当）:
 
 ```perl
 package MyApp::DTO::User;
@@ -41,10 +41,10 @@ has email => (is => 'ro', isa => Str, required => 1);
 has age   => (is => 'ro', isa => Int);
 ```
 
-## Resource Management
+## リソース管理
 
-- Always use **three-arg open** with `autodie`
-- Use **Path::Tiny** for file operations
+- 常に **3 引数 open** を `autodie` と共に使用
+- ファイル操作には **Path::Tiny** を使用
 
 ```perl
 use autodie;
@@ -53,24 +53,24 @@ use Path::Tiny;
 my $content = path('config.json')->slurp_utf8;
 ```
 
-## Module Interface
+## モジュールインターフェース
 
-Use `Exporter 'import'` with `@EXPORT_OK` — never `@EXPORT`:
+`Exporter 'import'` と `@EXPORT_OK` を使用 -- `@EXPORT` は使わない:
 
 ```perl
 use Exporter 'import';
 our @EXPORT_OK = qw(parse_config validate_input);
 ```
 
-## Dependency Management
+## 依存関係管理
 
-Use **cpanfile** + **carton** for reproducible installs:
+再現可能なインストールに **cpanfile** + **carton** を使用:
 
 ```bash
 carton install
 carton exec prove -lr t/
 ```
 
-## Reference
+## リファレンス
 
-See skill: `perl-patterns` for comprehensive modern Perl patterns and idioms.
+包括的なモダン Perl パターンとイディオムについては、スキル: `perl-patterns` を参照。

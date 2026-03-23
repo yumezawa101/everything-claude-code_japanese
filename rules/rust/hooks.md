@@ -5,12 +5,12 @@ paths:
 ---
 # Rust Hooks
 
-> This file extends [common/hooks.md](../common/hooks.md) with Rust-specific content.
+> このファイルは [common/hooks.md](../common/hooks.md) を Rust 固有のコンテンツで拡張します。
 
 ## PostToolUse Hooks
 
-Configure in `~/.claude/settings.json`:
+`~/.claude/settings.json` で設定:
 
-- **cargo fmt**: Auto-format `.rs` files after edit
-- **cargo clippy**: Run lint checks after editing Rust files
-- **cargo check**: Verify compilation after changes (faster than `cargo build`)
+- **cargo fmt**: 編集後に `.rs` ファイルを自動フォーマット
+- **cargo clippy**: Rust ファイルの編集後にリントチェックを実行
+- **cargo check**: 変更後にコンパイルを検証（`cargo build` より高速）

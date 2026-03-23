@@ -1,53 +1,53 @@
-# Security Policy
+# セキュリティポリシー
 
-## Supported Versions
+## サポート対象バージョン
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.9.x   | :white_check_mark: |
-| 1.8.x   | :white_check_mark: |
-| < 1.8   | :x:                |
+| バージョン | サポート状況        |
+| ---------- | ------------------ |
+| 1.9.x      | :white_check_mark: |
+| 1.8.x      | :white_check_mark: |
+| < 1.8      | :x:                |
 
-## Reporting a Vulnerability
+## 脆弱性の報告
 
-If you discover a security vulnerability in ECC, please report it responsibly.
+ECC にセキュリティ上の脆弱性を発見した場合は、責任ある方法で報告してください。
 
-**Do not open a public GitHub issue for security vulnerabilities.**
+**セキュリティ脆弱性について、公開の GitHub Issue を作成しないでください。**
 
-Instead, email **security@ecc.tools** with:
+代わりに、以下の情報を **security@ecc.tools** にメールしてください:
 
-- A description of the vulnerability
-- Steps to reproduce
-- The affected version(s)
-- Any potential impact assessment
+- 脆弱性の説明
+- 再現手順
+- 影響を受けるバージョン
+- 想定される影響の評価
 
-You can expect:
+対応の目安:
 
-- **Acknowledgment** within 48 hours
-- **Status update** within 7 days
-- **Fix or mitigation** within 30 days for critical issues
+- 48時間以内に **受領確認**
+- 7日以内に **状況の更新**
+- 重大な問題については30日以内に **修正または緩和策**
 
-If the vulnerability is accepted, we will:
+脆弱性が承認された場合:
 
-- Credit you in the release notes (unless you prefer anonymity)
-- Fix the issue in a timely manner
-- Coordinate disclosure timing with you
+- リリースノートにクレジットを記載します（匿名を希望される場合を除く）
+- 迅速に問題を修正します
+- 開示のタイミングについてご相談します
 
-If the vulnerability is declined, we will explain why and provide guidance on whether it should be reported elsewhere.
+脆弱性が却下された場合は、その理由を説明し、他の報告先が適切かどうかについてガイダンスを提供します。
 
-## Scope
+## 対象範囲
 
-This policy covers:
+このポリシーの対象:
 
-- The ECC plugin and all scripts in this repository
-- Hook scripts that execute on your machine
-- Install/uninstall/repair lifecycle scripts
-- MCP configurations shipped with ECC
-- The AgentShield security scanner ([github.com/affaan-m/agentshield](https://github.com/affaan-m/agentshield))
+- ECC プラグインおよびこのリポジトリ内のすべてのスクリプト
+- マシン上で実行される hook スクリプト
+- install/uninstall/repair ライフサイクルスクリプト
+- ECC に同梱される MCP 設定
+- AgentShield セキュリティスキャナー ([github.com/affaan-m/agentshield](https://github.com/affaan-m/agentshield))
 
-## Security Resources
+## セキュリティリソース
 
-- **AgentShield**: Scan your agent config for vulnerabilities — `npx ecc-agentshield scan`
-- **Security Guide**: [The Shorthand Guide to Everything Agentic Security](./the-security-guide.md)
+- **AgentShield**: agent 設定の脆弱性をスキャン -- `npx ecc-agentshield scan`
+- **セキュリティガイド**: [The Shorthand Guide to Everything Agentic Security](./the-security-guide.md)
 - **OWASP MCP Top 10**: [owasp.org/www-project-mcp-top-10](https://owasp.org/www-project-mcp-top-10/)
 - **OWASP Agentic Applications Top 10**: [genai.owasp.org](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/)

@@ -8,17 +8,17 @@ paths:
 ---
 # PHP Hooks
 
-> This file extends [common/hooks.md](../common/hooks.md) with PHP specific content.
+> このファイルは [common/hooks.md](../common/hooks.md) を PHP 固有のコンテンツで拡張します。
 
 ## PostToolUse Hooks
 
-Configure in `~/.claude/settings.json`:
+`~/.claude/settings.json` で設定:
 
-- **Pint / PHP-CS-Fixer**: Auto-format edited `.php` files.
-- **PHPStan / Psalm**: Run static analysis after PHP edits in typed codebases.
-- **PHPUnit / Pest**: Run targeted tests for touched files or modules when edits affect behavior.
+- **Pint / PHP-CS-Fixer**: 編集された `.php` ファイルを自動フォーマット。
+- **PHPStan / Psalm**: 型付きコードベースでの PHP 編集後に静的解析を実行。
+- **PHPUnit / Pest**: 編集が振る舞いに影響する場合、対象のファイルやモジュールに対してテストを実行。
 
-## Warnings
+## 警告
 
-- Warn on `var_dump`, `dd`, `dump`, or `die()` left in edited files.
-- Warn when edited PHP files add raw SQL or disable CSRF/session protections.
+- 編集されたファイルに残された `var_dump`、`dd`、`dump`、`die()` について警告。
+- 編集された PHP ファイルが生 SQL を追加したり、CSRF/セッション保護を無効化した場合に警告。

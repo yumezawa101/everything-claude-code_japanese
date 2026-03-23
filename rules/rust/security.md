@@ -2,55 +2,55 @@
 paths:
   - "**/*.rs"
 ---
-# Rust Security
+# Rust セキュリティ
 
-> This file extends [common/security.md](../common/security.md) with Rust-specific content.
+> このファイルは [common/security.md](../common/security.md) を Rust 固有のコンテンツで拡張します。
 
-## Secrets Management
+## シークレット管理
 
-- Never hardcode API keys, tokens, or credentials in source code
-- Use environment variables: `std::env::var("API_KEY")`
-- Fail fast if required secrets are missing at startup
-- Keep `.env` files in `.gitignore`
+- API キー、トークン、クレデンシャルをソースコードにハードコードしない
+- 環境変数を使用: `std::env::var("API_KEY")`
+- 必要なシークレットが起動時に欠けている場合はフェイルファスト
+- `.env` ファイルは `.gitignore` に追加
 
 ```rust
 // BAD
 const API_KEY: &str = "sk-abc123...";
 
-// GOOD — environment variable with early validation
+// GOOD — 早期バリデーション付きの環境変数
 fn load_api_key() -> anyhow::Result<String> {
     std::env::var("PAYMENT_API_KEY")
         .context("PAYMENT_API_KEY must be set")
 }
 ```
 
-## SQL Injection Prevention
+## SQL インジェクション防止
 
-- Always use parameterized queries — never format user input into SQL strings
-- Use query builder or ORM (sqlx, diesel, sea-orm) with bind parameters
+- 常にパラメータ化クエリを使用 -- ユーザー入力を SQL 文字列にフォーマットしない
+- バインドパラメータ付きのクエリビルダまたは ORM（sqlx、diesel、sea-orm）を使用
 
 ```rust
-// BAD — SQL injection via format string
+// BAD — フォーマット文字列による SQL インジェクション
 let query = format!("SELECT * FROM users WHERE name = '{name}'");
 sqlx::query(&query).fetch_one(&pool).await?;
 
-// GOOD — parameterized query with sqlx
-// Placeholder syntax varies by backend: Postgres: $1  |  MySQL: ?  |  SQLite: $1
+// GOOD — sqlx によるパラメータ化クエリ
+// プレースホルダ構文はバックエンドにより異なる: Postgres: $1  |  MySQL: ?  |  SQLite: $1
 sqlx::query("SELECT * FROM users WHERE name = $1")
     .bind(&name)
     .fetch_one(&pool)
     .await?;
 ```
 
-## Input Validation
+## 入力バリデーション
 
-- Validate all user input at system boundaries before processing
-- Use the type system to enforce invariants (newtype pattern)
-- Parse, don't validate — convert unstructured data to typed structs at the boundary
-- Reject invalid input with clear error messages
+- すべてのユーザー入力を処理前にシステム境界でバリデーション
+- 型システムを使用して不変条件を強制（newtype パターン）
+- バリデーションではなくパース -- 境界で非構造化データを型付き構造体に変換
+- 無効な入力は明確なエラーメッセージで拒否
 
 ```rust
-// Parse, don't validate — invalid states are unrepresentable
+// パースする、バリデーションしない — 不正な状態は表現不可能
 pub struct Email(String);
 
 impl Email {
@@ -63,7 +63,7 @@ impl Email {
         if trimmed.len() > 254 || !domain.contains('.') {
             return Err(ValidationError::InvalidEmail(input.to_string()));
         }
-        // For production use, prefer a validated email crate (e.g., `email_address`)
+        // 本番環境では、バリデーション済みメールクレート（例: `email_address`）の使用を推奨
         Ok(Self(trimmed.to_string()))
     }
 
@@ -73,55 +73,55 @@ impl Email {
 }
 ```
 
-## Unsafe Code
+## Unsafe コード
 
-- Minimize `unsafe` blocks — prefer safe abstractions
-- Every `unsafe` block must have a `// SAFETY:` comment explaining the invariant
-- Never use `unsafe` to bypass the borrow checker for convenience
-- Audit all `unsafe` code during review — it is a red flag without justification
-- Prefer `safe` FFI wrappers around C libraries
+- `unsafe` ブロックを最小限に -- 安全な抽象化を優先
+- すべての `unsafe` ブロックには不変条件を説明する `// SAFETY:` コメントが必要
+- 利便性のために借用チェッカーをバイパスする目的で `unsafe` を使用しない
+- レビュー時にすべての `unsafe` コードを監査 -- 正当な理由がなければレッドフラグ
+- C ライブラリの周りには安全な FFI ラッパーを優先
 
 ```rust
-// GOOD — safety comment documents ALL required invariants
+// GOOD — safety コメントが必要なすべての不変条件を文書化
 let widget: &Widget = {
     // SAFETY: `ptr` is non-null, aligned, points to an initialized Widget,
     // and no mutable references or mutations exist for its lifetime.
     unsafe { &*ptr }
 };
 
-// BAD — no safety justification
+// BAD — safety の正当化なし
 unsafe { &*ptr }
 ```
 
-## Dependency Security
+## 依存関係のセキュリティ
 
-- Run `cargo audit` to scan for known CVEs in dependencies
-- Run `cargo deny check` for license and advisory compliance
-- Use `cargo tree` to audit transitive dependencies
-- Keep dependencies updated — set up Dependabot or Renovate
-- Minimize dependency count — evaluate before adding new crates
+- `cargo audit` で依存関係の既知の CVE をスキャン
+- `cargo deny check` でライセンスとアドバイザリのコンプライアンスを確認
+- `cargo tree` で推移的依存関係を監査
+- 依存関係を最新に保つ -- Dependabot または Renovate を設定
+- 依存関係の数を最小限に -- 新しいクレートを追加する前に評価
 
 ```bash
-# Security audit
+# セキュリティ監査
 cargo audit
 
-# Deny advisories, duplicate versions, and restricted licenses
+# アドバイザリ、重複バージョン、制限付きライセンスを拒否
 cargo deny check
 
-# Inspect dependency tree
+# 依存関係ツリーを調査
 cargo tree
-cargo tree -d  # Show duplicates only
+cargo tree -d  # 重複のみ表示
 ```
 
-## Error Messages
+## エラーメッセージ
 
-- Never expose internal paths, stack traces, or database errors in API responses
-- Log detailed errors server-side; return generic messages to clients
-- Use `tracing` or `log` for structured server-side logging
+- API レスポンスで内部パス、スタックトレース、データベースエラーを公開しない
+- 詳細なエラーはサーバーサイドでログ; クライアントには一般的なメッセージを返す
+- 構造化されたサーバーサイドロギングに `tracing` または `log` を使用
 
 ```rust
-// Map errors to appropriate status codes and generic messages
-// (Example uses axum; adapt the response type to your framework)
+// エラーを適切なステータスコードと一般的なメッセージにマッピング
+// （例では axum を使用; レスポンス型はフレームワークに合わせて適応）
 match order_service.find_by_id(id) {
     Ok(order) => Ok((StatusCode::OK, Json(order))),
     Err(ServiceError::NotFound(_)) => {
@@ -135,7 +135,7 @@ match order_service.find_by_id(id) {
 }
 ```
 
-## References
+## リファレンス
 
-See skill: `rust-patterns` for unsafe code guidelines and ownership patterns.
-See skill: `security-review` for general security checklists.
+unsafe コードのガイドラインと所有権パターンについては、スキル: `rust-patterns` を参照。
+一般的なセキュリティチェックリストについては、スキル: `security-review` を参照。

@@ -1,146 +1,146 @@
-# Architecture Improvement Recommendations
+# アーキテクチャ改善の推奨事項
 
-This document captures architect-level improvements for the Everything Claude Code (ECC) project. It is written from the perspective of a Claude Code coding architect aiming to improve maintainability, consistency, and long-term quality.
-
----
-
-## 1. Documentation and Single Source of Truth
-
-### 1.1 Agent / Command / Skill Count Sync
-
-**Issue:** AGENTS.md states "13 specialized agents, 50+ skills, 33 commands" while the repo has **16 agents**, **65+ skills**, and **40 commands**. README and other docs also vary. This causes confusion for contributors and users.
-
-**Recommendation:**
-
-- **Single source of truth:** Derive counts (and optionally tables) from the filesystem or a small manifest. Options:
-  - **Option A:** Add a script (e.g. `scripts/ci/catalog.js`) that scans `agents/*.md`, `commands/*.md`, and `skills/*/SKILL.md` and outputs JSON/Markdown. CI and docs can consume this.
-  - **Option B:** Maintain one `docs/catalog.json` (or YAML) that lists agents, commands, and skills with metadata; scripts and docs read from it. Requires discipline to update on add/remove.
-- **Short-term:** Manually sync AGENTS.md, README.md, and CLAUDE.md with actual counts and list any new agents (e.g. chief-of-staff, loop-operator, harness-optimizer) in the agent table.
-
-**Impact:** High — affects first impression and contributor trust.
+本ドキュメントは、Everything Claude Code (ECC) プロジェクトのアーキテクトレベルの改善点を記録します。保守性、一貫性、長期的な品質の向上を目指す Claude Code コーディングアーキテクトの視点で作成されています。
 
 ---
 
-### 1.2 Command → Agent / Skill Map
+## 1. ドキュメントと信頼できる唯一の情報源
 
-**Issue:** There is no single machine- or human-readable map of "which command uses which agent(s) or skill(s)." This lives in README tables and individual command `.md` files, which can drift.
+### 1.1 Agent / コマンド / スキル数の同期
 
-**Recommendation:**
+**問題:** AGENTS.md は「13の専門 agent、50以上のスキル、33のコマンド」と記載していますが、リポジトリには実際には **16の agent**、**65以上のスキル**、**40のコマンド** があります。README やその他のドキュメントも数値が異なっています。これはコントリビューターやユーザーに混乱を引き起こします。
 
-- Add a **command registry** (e.g. in `docs/` or as frontmatter in command files) that lists for each command: name, description, primary agent(s), skills referenced. Can be generated from command file content or maintained by hand.
-- Expose a "map" in docs (e.g. `docs/COMMAND-AGENT-MAP.md`) or in the generated catalog for discoverability and for tooling (e.g. "which commands use tdd-guide?").
+**推奨:**
 
-**Impact:** Medium — improves discoverability and refactoring safety.
+- **信頼できる唯一の情報源:** 数値（およびオプションでテーブル）をファイルシステムまたは小さなマニフェストから導出する。選択肢:
+  - **オプション A:** ファイルシステムの `agents/*.md`、`commands/*.md`、`skills/*/SKILL.md` をスキャンして JSON/Markdown を出力するスクリプト（例: `scripts/ci/catalog.js`）を追加。CI とドキュメントがこれを参照。
+  - **オプション B:** agent、コマンド、スキルをメタデータ付きでリストする `docs/catalog.json`（または YAML）を1つ管理。スクリプトとドキュメントがここから読み取る。追加/削除時の更新規律が必要。
+- **短期対応:** AGENTS.md、README.md、CLAUDE.md を実際の数値に手動で同期し、新しい agent（例: chief-of-staff、loop-operator、harness-optimizer）を agent テーブルに追加。
 
----
-
-## 2. Testing and Quality
-
-### 2.1 Test Discovery vs Hardcoded List
-
-**Issue:** `tests/run-all.js` uses a **hardcoded list** of test files. New test files are not run unless someone updates `run-all.js`, so coverage can be incomplete by omission.
-
-**Recommendation:**
-
-- **Glob-based discovery:** Discover test files by pattern (e.g. `**/*.test.js` under `tests/`) and run them, with an optional allowlist/denylist for special cases. This makes new tests automatically part of the suite.
-- Keep a single entry point (`tests/run-all.js`) that runs discovered tests and aggregates results.
-
-**Impact:** High — prevents regression where new tests exist but are never executed.
+**影響度:** 高 -- 第一印象とコントリビューターの信頼に影響。
 
 ---
 
-### 2.2 Test Coverage Metrics
+### 1.2 コマンド → Agent / スキル マップ
 
-**Issue:** There is no coverage tool (e.g. nyc/c8/istanbul). The project cannot assert "80%+ coverage" for its own scripts; coverage is implicit.
+**問題:** 「どのコマンドがどの agent やスキルを使用するか」を示す、機械可読または人間可読の単一マップが存在しない。この情報は README のテーブルや個々のコマンド `.md` ファイルに散在しており、ドリフトする可能性がある。
 
-**Recommendation:**
+**推奨:**
 
-- Introduce a coverage tool for Node scripts (e.g. `c8` or `nyc`) and run it in CI. Start with a baseline (e.g. 60%) and raise over time; or at least report coverage in CI without failing so the team can see trends.
-- Focus on `scripts/` (lib + hooks + ci) as the primary target; exclude one-off scripts if needed.
+- 各コマンドの名前、説明、主要 agent、参照スキルをリストする**コマンドレジストリ**（例: `docs/` 内、またはコマンドファイルの frontmatter として）を追加。コマンドファイルの内容から生成するか、手動で管理可能。
+- ドキュメント（例: `docs/COMMAND-AGENT-MAP.md`）または生成カタログに「マップ」を公開し、発見可能性とツーリング（例: 「tdd-guide を使用するコマンドはどれか?」）に活用。
 
-**Impact:** Medium — aligns the project with its own AGENTS.md guidance (80%+ coverage) and surfaces untested paths.
-
----
-
-## 3. Schema and Validation
-
-### 3.1 Use Hooks JSON Schema in CI
-
-**Issue:** `schemas/hooks.schema.json` exists and defines the hook configuration shape, but `scripts/ci/validate-hooks.js` does **not** use it. Validation is duplicated (VALID_EVENTS, structure) and can drift from the schema.
-
-**Recommendation:**
-
-- Use a JSON Schema validator (e.g. `ajv`) in `validate-hooks.js` to validate `hooks/hooks.json` against `schemas/hooks.schema.json`. Keep the validator as the single source of truth for structure; retain only hook-specific checks (e.g. inline JS syntax) in the script.
-- Ensures schema and validator stay in sync and allows IDE/editor validation via `$schema` in hooks.json.
-
-**Impact:** Medium — reduces drift and improves contributor experience when editing hooks.
+**影響度:** 中 -- 発見可能性とリファクタリングの安全性が向上。
 
 ---
 
-## 4. Cross-Harness and i18n
+## 2. テストと品質
 
-### 4.1 Skill/Agent Subset Sync (.agents/skills, .cursor/skills)
+### 2.1 テスト探索 vs ハードコードリスト
 
-**Issue:** `.agents/skills/` (Codex) and `.cursor/skills/` are subsets of `skills/`. Adding or removing a skill in the main repo requires manually updating these subsets, which can be forgotten.
+**問題:** `tests/run-all.js` はテストファイルの**ハードコードリスト**を使用している。新しいテストファイルは誰かが `run-all.js` を更新しない限り実行されないため、カバレッジが不完全になる可能性がある。
 
-**Recommendation:**
+**推奨:**
 
-- Document in CONTRIBUTING.md that adding a skill may require updating `.agents/skills` and `.cursor/skills` (and how to do it).
-- Optionally: a CI check or script that compares `skills/` to the subsets and fails or warns if a skill is in one set but not the other when it should be (e.g. by convention or by a small manifest).
+- **Glob ベースの探索:** パターン（例: `tests/` 配下の `**/*.test.js`）でテストファイルを探索し実行。特殊なケース用にオプションの許可/拒否リストを設ける。これにより新しいテストは自動的にスイートの一部になる。
+- 探索されたテストを実行し結果を集約する単一のエントリポイント（`tests/run-all.js`）を維持。
 
-**Impact:** Low–Medium — reduces cross-harness drift.
-
----
-
-### 4.2 Translation Drift (docs/ zh-CN, zh-TW, ja-JP)
-
-**Issue:** Translations in `docs/` duplicate agents, commands, skills. As the English source evolves, translations can become outdated without clear process or tooling.
-
-**Recommendation:**
-
-- Document a **translation process:** when to update (e.g. on release), who owns each locale, and how to detect stale content (e.g. diff file lists or key sections).
-- Consider: translation status file (e.g. `docs/i18n-status.md`) or CI that checks translation file existence/timestamps and warns if English was updated more recently than a translation.
-- Long-term: consider extraction/placeholder format (e.g. i18n keys) so translations reference the same structure as the English source.
-
-**Impact:** Medium — improves experience for non-English users and reduces confusion from outdated translations.
+**影響度:** 高 -- 新しいテストが存在するが実行されないというリグレッションを防止。
 
 ---
 
-## 5. Hooks and Scripts
+### 2.2 テストカバレッジメトリクス
 
-### 5.1 Hook Runtime Consistency
+**問題:** カバレッジツール（例: nyc/c8/istanbul）が存在しない。プロジェクト自身のスクリプトに対して「80%以上のカバレッジ」を主張できない。カバレッジは暗黙的。
 
-**Issue:** Most hooks invoke Node scripts via `run-with-flags.js`; one path uses `run-with-flags-shell.sh` + `observe.sh`. The mixed runtime is documented but could be simplified over time.
+**推奨:**
 
-**Recommendation:**
+- Node スクリプト用のカバレッジツール（例: `c8` または `nyc`）を導入し、CI で実行。ベースライン（例: 60%）から始めて徐々に引き上げるか、少なくとも失敗させずに CI でカバレッジを報告してトレンドを可視化。
+- `scripts/`（lib + hooks + ci）を主要ターゲットとし、必要に応じて単発スクリプトを除外。
 
-- Prefer Node for new hooks when possible (cross-platform, single runtime). If shell is required, document why and keep the surface small.
-- Ensure `ECC_HOOK_PROFILE` and `ECC_DISABLED_HOOKS` are respected in all code paths (including shell) so behavior is consistent.
-
-**Impact:** Low — maintains current design; improves if more hooks migrate to Node.
+**影響度:** 中 -- プロジェクト自身の AGENTS.md ガイダンス（80%以上のカバレッジ）に整合し、未テストパスを可視化。
 
 ---
 
-## 6. Summary Table
+## 3. スキーマとバリデーション
 
-| Area              | Improvement                          | Priority | Effort  |
+### 3.1 CI で Hooks JSON スキーマを使用
+
+**問題:** `schemas/hooks.schema.json` が存在し hook 設定の形状を定義しているが、`scripts/ci/validate-hooks.js` はこれを**使用していない**。バリデーションが重複（VALID_EVENTS、構造）しており、スキーマからドリフトする可能性がある。
+
+**推奨:**
+
+- `validate-hooks.js` で JSON スキーマバリデーター（例: `ajv`）を使用し、`hooks/hooks.json` を `schemas/hooks.schema.json` に対してバリデート。バリデーターを構造の信頼できる唯一の情報源とし、hook 固有のチェック（例: インライン JS 構文）のみをスクリプトに残す。
+- スキーマとバリデーターの同期を確保し、hooks.json の `$schema` を通じた IDE/エディターバリデーションを可能にする。
+
+**影響度:** 中 -- ドリフトを低減し、hook 編集時のコントリビューター体験を改善。
+
+---
+
+## 4. クロスハーネスと i18n
+
+### 4.1 スキル/Agent サブセットの同期 (.agents/skills, .cursor/skills)
+
+**問題:** `.agents/skills/`（Codex）と `.cursor/skills/` は `skills/` のサブセット。メインリポジトリでスキルを追加・削除する場合、これらのサブセットを手動で更新する必要があり、忘れられる可能性がある。
+
+**推奨:**
+
+- CONTRIBUTING.md にスキル追加時に `.agents/skills` と `.cursor/skills` の更新が必要な場合があること（およびその方法）を文書化。
+- オプション: `skills/` とサブセットを比較し、規約やマニフェストに基づいて一方にあって他方にないスキルがある場合に失敗または警告する CI チェックまたはスクリプト。
+
+**影響度:** 低～中 -- クロスハーネスのドリフトを低減。
+
+---
+
+### 4.2 翻訳のドリフト (docs/ zh-CN, zh-TW, ja-JP)
+
+**問題:** `docs/` の翻訳は agent、コマンド、スキルを複製している。英語ソースの進化に伴い、翻訳は明確なプロセスやツーリングなしに古くなる可能性がある。
+
+**推奨:**
+
+- **翻訳プロセス**を文書化: 更新タイミング（例: リリース時）、各ロケールの担当者、古いコンテンツの検出方法（例: ファイルリストや主要セクションの差分）。
+- 検討: 翻訳ステータスファイル（例: `docs/i18n-status.md`）または翻訳ファイルの存在/タイムスタンプをチェックし、英語が翻訳より最近更新された場合に警告する CI。
+- 長期: 翻訳が英語ソースと同じ構造を参照するよう、抽出/プレースホルダー形式（例: i18n キー）を検討。
+
+**影響度:** 中 -- 英語以外のユーザーの体験を改善し、古い翻訳による混乱を低減。
+
+---
+
+## 5. Hooks とスクリプト
+
+### 5.1 Hook ランタイムの一貫性
+
+**問題:** ほとんどの hook は `run-with-flags.js` 経由で Node スクリプトを呼び出すが、一部のパスは `run-with-flags-shell.sh` + `observe.sh` を使用。混在するランタイムは文書化されているが、時間をかけて簡素化できる可能性がある。
+
+**推奨:**
+
+- 可能な場合、新しい hook には Node を優先（クロスプラットフォーム、単一ランタイム）。シェルが必要な場合はその理由を文書化し、表面積を小さく保つ。
+- `ECC_HOOK_PROFILE` と `ECC_DISABLED_HOOKS` がすべてのコードパス（シェル含む）で尊重されることを確認し、動作の一貫性を保つ。
+
+**影響度:** 低 -- 現在の設計を維持しつつ、より多くの hook が Node に移行すれば改善。
+
+---
+
+## 6. サマリーテーブル
+
+| 分野              | 改善内容                          | 優先度 | 工数  |
 |-------------------|--------------------------------------|----------|---------|
-| Doc sync          | Sync AGENTS.md/README counts & table | High     | Low     |
-| Single source     | Catalog script or manifest           | High     | Medium  |
-| Test discovery    | Glob-based test runner               | High     | Low     |
-| Coverage          | Add c8/nyc and CI coverage           | Medium   | Medium  |
-| Hook schema in CI | Validate hooks.json via schema       | Medium   | Low     |
-| Command map       | Command → agent/skill registry       | Medium   | Medium  |
-| Subset sync       | Document/CI for .agents/.cursor       | Low–Med  | Low–Med |
-| Translations      | Process + stale detection             | Medium   | Medium  |
-| Hook runtime      | Prefer Node; document shell use       | Low      | Low     |
+| ドキュメント同期  | AGENTS.md/README の数値とテーブル同期 | 高     | 低     |
+| 唯一の情報源      | カタログスクリプトまたはマニフェスト   | 高     | 中  |
+| テスト探索        | Glob ベースのテストランナー           | 高     | 低     |
+| カバレッジ        | c8/nyc と CI カバレッジの追加         | 中   | 中  |
+| CI での Hook スキーマ | hooks.json をスキーマでバリデート   | 中   | 低     |
+| コマンドマップ    | コマンド → agent/スキル レジストリ    | 中   | 中  |
+| サブセット同期    | .agents/.cursor のドキュメント/CI     | 低～中  | 低～中 |
+| 翻訳              | プロセスと古さ検出                   | 中   | 中  |
+| Hook ランタイム   | Node 優先、シェル使用を文書化         | 低      | 低     |
 
 ---
 
-## 7. Quick Wins (Immediate)
+## 7. クイックウィン（即座に対応可能）
 
-1. **Update AGENTS.md:** Set agent count to 16; add chief-of-staff, loop-operator, harness-optimizer to the agent table; align skill/command counts with repo.
-2. **Test discovery:** Change `run-all.js` to discover `**/*.test.js` under `tests/` (with optional allowlist) so new tests are always run.
-3. **Wire hooks schema:** In `validate-hooks.js`, validate `hooks/hooks.json` against `schemas/hooks.schema.json` using ajv (or similar) and keep only hook-specific checks in the script.
+1. **AGENTS.md を更新:** agent 数を16に設定。chief-of-staff、loop-operator、harness-optimizer を agent テーブルに追加。スキル/コマンド数をリポジトリに合わせる。
+2. **テスト探索:** `run-all.js` を `tests/` 配下の `**/*.test.js` を探索するよう変更（オプションの許可リスト付き）し、新しいテストが常に実行されるようにする。
+3. **Hook スキーマの接続:** `validate-hooks.js` で ajv（または類似ツール）を使用して `hooks/hooks.json` を `schemas/hooks.schema.json` に対してバリデートし、hook 固有のチェックのみをスクリプトに残す。
 
-These three can be done in one or two sessions and materially improve consistency and reliability.
+これら3つは1～2回のセッションで完了でき、一貫性と信頼性を大幅に改善する。

@@ -1,104 +1,94 @@
-# PR Review And Queue Triage — March 13, 2026
+# PR レビューとキュートリアージ -- 2026年3月13日
 
-## Snapshot
+## スナップショット
 
-This document records a live GitHub triage snapshot for the
-`everything-claude-code` pull-request queue as of `2026-03-13T08:33:31Z`.
+本ドキュメントは、`2026-03-13T08:33:31Z` 時点での `everything-claude-code` プルリクエストキューのライブ GitHub トリアージスナップショットを記録します。
 
-Sources used:
+使用したソース:
 
 - `gh pr view`
 - `gh pr checks`
 - `gh pr diff --name-only`
-- targeted local verification against the merged `#399` head
+- マージ済み `#399` head に対するターゲットを絞ったローカル検証
 
-Stale threshold used for this pass:
+このパスで使用したスタール閾値:
 
-- `last updated before 2026-02-11` (`>30` days before March 13, 2026)
+- `2026-02-11 以前に最終更新`（2026年3月13日の `30` 日以上前）
 
-## PR `#399` Retrospective Review
+## PR `#399` 事後レビュー
 
 PR:
 
-- `#399` — `fix(observe): 5-layer automated session guard to prevent self-loop observations`
-- state: `MERGED`
-- merged at: `2026-03-13T06:40:03Z`
-- merge commit: `c52a28ace9e7e84c00309fc7b629955dfc46ecf9`
+- `#399` -- `fix(observe): 5-layer automated session guard to prevent self-loop observations`
+- 状態: `MERGED`
+- マージ日時: `2026-03-13T06:40:03Z`
+- マージコミット: `c52a28ace9e7e84c00309fc7b629955dfc46ecf9`
 
-Files changed:
+変更ファイル:
 
 - `skills/continuous-learning-v2/hooks/observe.sh`
 - `skills/continuous-learning-v2/agents/observer-loop.sh`
 
-Validation performed against merged head `546628182200c16cc222b97673ddd79e942eacce`:
+マージ済み head `546628182200c16cc222b97673ddd79e942eacce` に対して実施した検証:
 
-- `bash -n` on both changed shell scripts
-- `node tests/hooks/hooks.test.js` (`204` passed, `0` failed)
-- targeted hook invocations for:
-  - interactive CLI session
+- 変更された両方のシェルスクリプトに対する `bash -n`
+- `node tests/hooks/hooks.test.js`（`204` パス、`0` 失敗）
+- 以下に対するターゲットを絞った hook 呼び出し:
+  - インタラクティブ CLI セッション
   - `CLAUDE_CODE_ENTRYPOINT=mcp`
   - `ECC_HOOK_PROFILE=minimal`
   - `ECC_SKIP_OBSERVE=1`
-  - `agent_id` payload
-  - trimmed `ECC_OBSERVE_SKIP_PATHS`
+  - `agent_id` ペイロード
+  - トリミングされた `ECC_OBSERVE_SKIP_PATHS`
 
-Behavioral result:
+動作結果:
 
-- the core self-loop fix works
-- automated-session guard branches suppress observation writes as intended
-- the final `non-cli => exit` entrypoint logic is the correct fail-closed shape
+- コアの自己ループ修正は動作
+- 自動セッションガードブランチは意図通りに観察書き込みを抑制
+- 最終的な `non-cli => exit` エントリポイントロジックは正しいフェイルクローズ形状
 
-Remaining findings:
+残存する指摘事項:
 
-1. Medium: skipped automated sessions still create homunculus project state
-   before the new guards exit.
-   `observe.sh` resolves `cwd` and sources project detection before reaching the
-   automated-session guard block, so `detect-project.sh` still creates
-   `projects/<id>/...` directories and updates `projects.json` for sessions that
-   later exit early.
-2. Low: the new guard matrix shipped without direct regression coverage.
-   The hook test suite still validates adjacent behavior, but it does not
-   directly assert the new `CLAUDE_CODE_ENTRYPOINT`, `ECC_HOOK_PROFILE`,
-   `ECC_SKIP_OBSERVE`, `agent_id`, or trimmed skip-path branches.
+1. 中程度: スキップされた自動セッションは、新しいガードが exit する前に homunculus プロジェクト状態を依然として作成する。
+   `observe.sh` は自動セッションガードブロックに到達する前に `cwd` を解決し、プロジェクト検出をソースするため、`detect-project.sh` は後で早期 exit するセッションに対しても `projects/<id>/...` ディレクトリを作成し `projects.json` を更新する。
+2. 低: 新しいガードマトリックスは直接的なリグレッションカバレッジなしで出荷された。
+   hook テストスイートは隣接する動作を引き続き検証するが、新しい `CLAUDE_CODE_ENTRYPOINT`、`ECC_HOOK_PROFILE`、`ECC_SKIP_OBSERVE`、`agent_id`、またはトリミングされたスキップパスブランチを直接アサートしない。
 
-Verdict:
+判定:
 
-- `#399` is technically correct for its primary goal and was safe to merge as
-  the urgent loop-stop fix.
-- It still warrants a follow-up issue or patch to move automated-session guards
-  ahead of project-registration side effects and to add explicit guard-path
-  tests.
+- `#399` はその主要な目標に対して技術的に正しく、緊急のループ停止修正として安全にマージできた。
+- 自動セッションガードをプロジェクト登録の副作用より前に移動し、明示的なガードパステストを追加するためのフォローアップ Issue またはパッチがまだ必要。
 
-## Open PR Inventory
+## オープン PR インベントリ
 
-There are currently `4` open PRs.
+現在 `4` 件のオープン PR があります。
 
-### Queue Table
+### キューテーブル
 
-| PR | Title | Draft | Mergeable | Merge State | Updated | Stale | Current Verdict |
+| PR | タイトル | ドラフト | マージ可能 | マージ状態 | 更新日時 | スタール | 現在の判定 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `#292` | `chore(config): governance and config foundation (PR #272 split 1/6)` | `false` | `MERGEABLE` | `UNSTABLE` | `2026-03-13T07:26:55Z` | `No` | `Best current merge candidate` |
-| `#298` | `feat(agents,skills,rules): add Rust, Java, mobile, DevOps, and performance content` | `false` | `CONFLICTING` | `DIRTY` | `2026-03-11T04:29:07Z` | `No` | `Needs changes before review can finish` |
-| `#336` | `Customisation for Codex CLI - Features from Claude Code and OpenCode` | `true` | `MERGEABLE` | `UNSTABLE` | `2026-03-13T07:26:12Z` | `No` | `Needs manual review and draft exit` |
-| `#420` | `feat: add laravel skills` | `true` | `MERGEABLE` | `UNSTABLE` | `2026-03-12T22:57:36Z` | `No` | `Low-risk draft, review after draft exit` |
+| `#292` | `chore(config): governance and config foundation (PR #272 split 1/6)` | `false` | `MERGEABLE` | `UNSTABLE` | `2026-03-13T07:26:55Z` | `No` | `現在の最有力マージ候補` |
+| `#298` | `feat(agents,skills,rules): add Rust, Java, mobile, DevOps, and performance content` | `false` | `CONFLICTING` | `DIRTY` | `2026-03-11T04:29:07Z` | `No` | `レビュー完了前に変更が必要` |
+| `#336` | `Customisation for Codex CLI - Features from Claude Code and OpenCode` | `true` | `MERGEABLE` | `UNSTABLE` | `2026-03-13T07:26:12Z` | `No` | `手動レビューとドラフト解除が必要` |
+| `#420` | `feat: add laravel skills` | `true` | `MERGEABLE` | `UNSTABLE` | `2026-03-12T22:57:36Z` | `No` | `低リスクドラフト、ドラフト解除後にレビュー` |
 
-No currently open PR is stale by the `>30 days since last update` rule.
+`最終更新が30日以上前` ルールによるスタール PR は現在ありません。
 
-## Per-PR Assessment
+## PR 別アセスメント
 
-### `#292` — Governance / Config Foundation
+### `#292` -- ガバナンス / 設定基盤
 
-Live state:
+ライブ状態:
 
-- open
-- non-draft
+- オープン
+- 非ドラフト
 - `MERGEABLE`
-- merge state `UNSTABLE`
-- visible checks:
-  - `CodeRabbit` passed
-  - `GitGuardian Security Checks` passed
+- マージ状態 `UNSTABLE`
+- 確認できるチェック:
+  - `CodeRabbit` パス
+  - `GitGuardian Security Checks` パス
 
-Scope:
+スコープ:
 
 - `.env.example`
 - `.github/ISSUE_TEMPLATE/copilot-task.md`
@@ -108,70 +98,62 @@ Scope:
 - `.tool-versions`
 - `VERSION`
 
-Assessment:
+アセスメント:
 
-- This is the cleanest merge candidate in the current queue.
-- The branch was already refreshed onto current `main`.
-- The currently visible bot feedback is minor/nit-level rather than obviously
-  merge-blocking.
-- The main caution is that only external bot checks are visible right now; no
-  GitHub Actions matrix run appears in the current PR checks output.
+- 現在のキューで最もクリーンなマージ候補。
+- ブランチは既に現在の `main` にリフレッシュ済み。
+- 現在可視のボットフィードバックはマージブロッキングではなく、マイナー/nit レベル。
+- 主な注意点は、現在の PR チェック出力に GitHub Actions マトリックスランが表示されていないこと。
 
-Current recommendation:
+現在の推奨:
 
-- `Mergeable after one final owner pass.`
-- If you want a conservative path, do one quick human review of the remaining
-  `.env.example`, PR-template, and `.tool-versions` nitpicks before merge.
+- `オーナーによる最終パス後にマージ可能。`
+- 保守的なパスを取りたい場合は、マージ前に残りの `.env.example`、PR テンプレート、`.tool-versions` の nit を簡単にヒューマンレビュー。
 
-### `#298` — Large Multi-Domain Content Expansion
+### `#298` -- 大規模マルチドメインコンテンツ拡張
 
-Live state:
+ライブ状態:
 
-- open
-- non-draft
+- オープン
+- 非ドラフト
 - `CONFLICTING`
-- merge state `DIRTY`
-- visible checks:
-  - `CodeRabbit` passed
-  - `GitGuardian Security Checks` passed
-  - `cubic · AI code reviewer` passed
+- マージ状態 `DIRTY`
+- 確認できるチェック:
+  - `CodeRabbit` パス
+  - `GitGuardian Security Checks` パス
+  - `cubic · AI code reviewer` パス
 
-Scope:
+スコープ:
 
-- `35` files
-- large documentation and skill/rule expansion across Java, Rust, mobile,
-  DevOps, performance, data, and MLOps
+- `35` ファイル
+- Java、Rust、モバイル、DevOps、パフォーマンス、データ、MLOps にわたる大規模なドキュメントとスキル/ルール拡張
 
-Assessment:
+アセスメント:
 
-- This PR is not ready for merge.
-- It conflicts with current `main`, so it is not even mergeable at the branch
-  level yet.
-- cubic identified `34` issues across `35` files in the current review.
-  Those findings are substantive and technical, not just style cleanup, and
-  they cover broken or misleading examples across several new skills.
-- Even without the conflict, the scope is large enough that it needs a deliberate
-  content-fix pass rather than a quick merge decision.
+- この PR はマージの準備ができていない。
+- 現在の `main` とコンフリクトしているため、ブランチレベルでもマージ不可能。
+- cubic が現在のレビューで `35` ファイルにわたる `34` 件の問題を特定。それらの指摘はスタイルクリーンアップだけでなく、実質的で技術的なものであり、複数の新しいスキルにわたる壊れたまたは誤解を招く例をカバー。
+- コンフリクトがなくても、スコープが大きすぎるため、クイックマージ判断ではなく意図的なコンテンツ修正パスが必要。
 
-Current recommendation:
+現在の推奨:
 
-- `Needs changes.`
-- Rebase or restack first, then resolve the substantive example-quality issues.
-- If momentum matters, split by domain rather than carrying one very large PR.
+- `変更が必要。`
+- まず rebase またはリスタックし、次に実質的なサンプル品質の問題を解決。
+- モメンタムが重要な場合は、1つの非常に大きな PR を維持するのではなくドメインごとに分割。
 
-### `#336` — Codex CLI Customization
+### `#336` -- Codex CLI カスタマイゼーション
 
-Live state:
+ライブ状態:
 
-- open
-- draft
+- オープン
+- ドラフト
 - `MERGEABLE`
-- merge state `UNSTABLE`
-- visible checks:
-  - `CodeRabbit` passed
-  - `GitGuardian Security Checks` passed
+- マージ状態 `UNSTABLE`
+- 確認できるチェック:
+  - `CodeRabbit` パス
+  - `GitGuardian Security Checks` パス
 
-Scope:
+スコープ:
 
 - `scripts/codex-git-hooks/pre-commit`
 - `scripts/codex-git-hooks/pre-push`
@@ -179,38 +161,33 @@ Scope:
 - `scripts/codex/install-global-git-hooks.sh`
 - `scripts/sync-ecc-to-codex.sh`
 
-Assessment:
+アセスメント:
 
-- This PR is no longer conflicting, but it is still draft-only and has not had
-  a meaningful first-party review pass.
-- It modifies user-global Codex setup behavior and git-hook installation, so the
-  operational blast radius is higher than a docs-only PR.
-- The visible checks are only external bots; there is no full GitHub Actions run
-  shown in the current check set.
-- Because the branch comes from a contributor fork `main`, it also deserves an
-  extra sanity pass on what exactly is being proposed before changing status.
+- この PR はコンフリクトはなくなったが、依然としてドラフトのみで、意味のあるファーストパーティレビューがまだ行われていない。
+- ユーザーグローバルの Codex セットアップ動作と git-hook インストールを変更するため、運用上の影響範囲はドキュメントのみの PR よりも大きい。
+- 確認できるチェックは外部ボットのみ。現在のチェックセットに完全な GitHub Actions ランは表示されていない。
+- ブランチがコントリビューターフォークの `main` から来ているため、ステータスを変更する前に実際に何が提案されているかの追加サニティパスも必要。
 
-Current recommendation:
+現在の推奨:
 
-- `Needs changes before merge readiness`, where the required changes are process
-  and review oriented rather than an already-proven code defect:
-  - finish manual review
-  - run or confirm validation on the global-state scripts
-  - take it out of draft only after that review is complete
+- `マージ準備完了前に変更が必要`。必要な変更は、既に証明されたコード欠陥ではなく、プロセスとレビュー指向:
+  - 手動レビューを完了
+  - グローバルステートスクリプトのバリデーションを実行または確認
+  - そのレビューが完了した後にのみドラフトを解除
 
-### `#420` — Laravel Skills
+### `#420` -- Laravel スキル
 
-Live state:
+ライブ状態:
 
-- open
-- draft
+- オープン
+- ドラフト
 - `MERGEABLE`
-- merge state `UNSTABLE`
-- visible checks:
-  - `CodeRabbit` passed
-  - `GitGuardian Security Checks` passed
+- マージ状態 `UNSTABLE`
+- 確認できるチェック:
+  - `CodeRabbit` パス
+  - `GitGuardian Security Checks` パス
 
-Scope:
+スコープ:
 
 - `README.md`
 - `examples/laravel-api-CLAUDE.md`
@@ -223,131 +200,124 @@ Scope:
 - `skills/laravel-tdd/SKILL.md`
 - `skills/laravel-verification/SKILL.md`
 
-Assessment:
+アセスメント:
 
-- This is content-heavy and operationally lower risk than `#336`.
-- It is still draft and has not had a substantive human review pass yet.
-- The visible checks are external bots only.
-- Nothing in the live PR state suggests a merge blocker yet, but it is not ready
-  to be merged simply because it is still draft and under-reviewed.
+- コンテンツ中心で、運用上のリスクは `#336` よりも低い。
+- 依然としてドラフトで、実質的なヒューマンレビューがまだ行われていない。
+- 確認できるチェックは外部ボットのみ。
+- ライブ PR 状態にマージブロッカーを示すものはないが、依然としてドラフトでレビュー不足のため、マージ準備は未完了。
 
-Current recommendation:
+現在の推奨:
 
-- `Review next after the highest-priority non-draft work.`
-- Likely a good review candidate once the author is ready to exit draft.
+- `最優先の非ドラフト作業の後にレビュー。`
+- 著者がドラフト解除の準備ができたら、良いレビュー候補になる可能性が高い。
 
-## Mergeability Buckets
+## マージ可能性バケット
 
-### Mergeable Now Or After A Final Owner Pass
+### 最終オーナーパス後に即座にマージ可能
 
 - `#292`
 
-### Needs Changes Before Merge
+### マージ前に変更が必要
 
 - `#298`
 - `#336`
 
-### Draft / Needs Review Before Any Merge Decision
+### ドラフト / マージ判断前にレビューが必要
 
 - `#420`
 
-### Stale `>30 Days`
+### スタール `30日以上`
 
-- none
+- なし
 
-## Recommended Order
+## 推奨順序
 
 1. `#292`
-   This is the cleanest live merge candidate.
+   現在のキューで最もクリーンなライブマージ候補。
 2. `#420`
-   Low runtime risk, but wait for draft exit and a real review pass.
+   ランタイムリスクが低いが、ドラフト解除と実際のレビューパスを待つこと。
 3. `#336`
-   Review carefully because it changes global Codex sync and hook behavior.
+   グローバル Codex 同期と hook 動作を変更するため、慎重にレビュー。
 4. `#298`
-   Rebase and fix the substantive content issues before spending more review time
-   on it.
+   より多くのレビュー時間を費やす前に、rebase して実質的なコンテンツ/サンプルの修正を行うこと。
 
-## Bottom Line
+## 結論
 
-- `#399`: safe bugfix merge with one follow-up cleanup still warranted
-- `#292`: highest-priority merge candidate in the current open queue
-- `#298`: not mergeable; conflicts plus substantive content defects
-- `#336`: no longer conflicting, but not ready while still draft and lightly
-  validated
-- `#420`: draft, low-risk content lane, review after the non-draft queue
+- `#399`: 安全なバグ修正マージ。1つのフォローアップクリーンアップがまだ必要
+- `#292`: 現在のオープンキューで最優先のマージ候補
+- `#298`: マージ不可。コンフリクトと実質的なコンテンツ欠陥
+- `#336`: コンフリクトはなくなったが、ドラフトのまま軽い検証では準備不十分
+- `#420`: ドラフト、低リスクコンテンツレーン、非ドラフトキューの後にレビュー
 
-## Live Refresh
+## ライブリフレッシュ
 
-Refreshed at `2026-03-13T22:11:40Z`.
+`2026-03-13T22:11:40Z` にリフレッシュ。
 
-### Main Branch
+### メインブランチ
 
-- `origin/main` is green right now, including the Windows test matrix.
-- Mainline CI repair is not the current bottleneck.
+- `origin/main` は現在グリーンで、Windows テストマトリックスを含む。
+- メインライン CI 修復は現在のボトルネックではない。
 
-### Updated Queue Read
+### 更新されたキュー読み取り
 
-#### `#292` — Governance / Config Foundation
+#### `#292` -- ガバナンス / 設定基盤
 
-- open
-- non-draft
+- オープン
+- 非ドラフト
 - `MERGEABLE`
-- visible checks:
-  - `CodeRabbit` passed
-  - `GitGuardian Security Checks` passed
-- highest-signal remaining work is not CI repair; it is the small correctness
-  pass on `.env.example` and PR-template alignment before merge
+- 確認できるチェック:
+  - `CodeRabbit` パス
+  - `GitGuardian Security Checks` パス
+- 最もシグナルの高い残りの作業は CI 修復ではなく、マージ前の `.env.example` と PR テンプレートの整合性に関する小さな正確性パス
 
-Current recommendation:
+現在の推奨:
 
-- `Next actionable PR.`
-- Either patch the remaining doc/config correctness issues, or do one final
-  owner pass and merge if you accept the current tradeoffs.
+- `次にアクション可能な PR。`
+- 残りのドキュメント/設定の正確性問題にパッチを当てるか、現在のトレードオフを受け入れて最終オーナーパスを行いマージ。
 
-#### `#420` — Laravel Skills
+#### `#420` -- Laravel スキル
 
-- open
-- draft
+- オープン
+- ドラフト
 - `MERGEABLE`
-- visible checks:
-  - `CodeRabbit` skipped because the PR is draft
-  - `GitGuardian Security Checks` passed
-- no substantive human review is visible yet
+- 確認できるチェック:
+  - `CodeRabbit` は PR がドラフトのためスキップ
+  - `GitGuardian Security Checks` パス
+- 実質的なヒューマンレビューはまだ確認できない
 
-Current recommendation:
+現在の推奨:
 
-- `Review after the non-draft queue.`
-- Low implementation risk, but not merge-ready while still draft and
-  under-reviewed.
+- `非ドラフトキューの後にレビュー。`
+- 実装リスクは低いが、ドラフトのままレビュー不足ではマージ準備未完了。
 
-#### `#336` — Codex CLI Customization
+#### `#336` -- Codex CLI カスタマイゼーション
 
-- open
-- draft
+- オープン
+- ドラフト
 - `MERGEABLE`
-- visible checks:
-  - `CodeRabbit` passed
-  - `GitGuardian Security Checks` passed
-- still needs a deliberate manual review because it touches global Codex sync
-  and git-hook installation behavior
+- 確認できるチェック:
+  - `CodeRabbit` パス
+  - `GitGuardian Security Checks` パス
+- グローバル Codex 同期と git-hook インストール動作に触れるため、意図的な手動レビューがまだ必要
 
-Current recommendation:
+現在の推奨:
 
-- `Manual-review lane, not immediate merge lane.`
+- `手動レビューレーン。即座のマージレーンではない。`
 
-#### `#298` — Large Content Expansion
+#### `#298` -- 大規模コンテンツ拡張
 
-- open
-- non-draft
+- オープン
+- 非ドラフト
 - `CONFLICTING`
-- still the hardest remaining PR in the queue
+- キューの中で依然として最も困難な PR
 
-Current recommendation:
+現在の推奨:
 
-- `Last priority among current open PRs.`
-- Rebase first, then handle the substantive content/example corrections.
+- `現在のオープン PR の中で最後の優先度。`
+- まず rebase し、次に実質的なコンテンツ/サンプルの修正を対処。
 
-### Current Order
+### 現在の順序
 
 1. `#292`
 2. `#420`

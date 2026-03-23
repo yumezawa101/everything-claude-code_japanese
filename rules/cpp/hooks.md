@@ -10,30 +10,30 @@ paths:
 ---
 # C++ Hooks
 
-> This file extends [common/hooks.md](../common/hooks.md) with C++ specific content.
+> このファイルは [common/hooks.md](../common/hooks.md) を C++ 固有のコンテンツで拡張します。
 
-## Build Hooks
+## ビルド Hooks
 
-Run these checks before committing C++ changes:
+C++ の変更をコミットする前にこれらのチェックを実行:
 
 ```bash
-# Format check
+# フォーマットチェック
 clang-format --dry-run --Werror src/*.cpp src/*.hpp
 
-# Static analysis
+# 静的解析
 clang-tidy src/*.cpp -- -std=c++17
 
-# Build
+# ビルド
 cmake --build build
 
-# Tests
+# テスト
 ctest --test-dir build --output-on-failure
 ```
 
-## Recommended CI Pipeline
+## 推奨 CI パイプライン
 
-1. **clang-format** — formatting check
-2. **clang-tidy** — static analysis
-3. **cppcheck** — additional analysis
-4. **cmake build** — compilation
-5. **ctest** — test execution with sanitizers
+1. **clang-format** -- フォーマットチェック
+2. **clang-tidy** -- 静的解析
+3. **cppcheck** -- 追加の解析
+4. **cmake build** -- コンパイル
+5. **ctest** -- サニタイザ付きテスト実行

@@ -1,25 +1,25 @@
 #:schema https://developers.openai.com/codex/config-schema.json
 
-# Everything Claude Code (ECC) — Codex Reference Configuration
+# Everything Claude Code (ECC) -- Codex リファレンス設定
 #
-# Copy this file to ~/.codex/config.toml for global defaults, or keep it in
-# the project root as .codex/config.toml for project-local settings.
+# このファイルを ~/.codex/config.toml にコピーするとグローバルデフォルトになります。
+# プロジェクトルートに .codex/config.toml として配置するとプロジェクトローカル設定になります。
 #
-# Official docs:
+# 公式ドキュメント:
 # - https://developers.openai.com/codex/config-reference
 # - https://developers.openai.com/codex/multi-agent
 
-# Model selection
-# Leave `model` and `model_provider` unset so Codex CLI uses its current
-# built-in defaults. Uncomment and pin them only if you intentionally want
-# repo-local or global model overrides.
+# モデル選択
+# Codex CLI が現在のビルトインデフォルトを使用するよう、`model` と `model_provider` は
+# 未設定のままにしてください。意図的にリポジトリローカルまたはグローバルのモデル
+# オーバーライドが必要な場合のみ、コメントを解除してピン留めしてください。
 
-# Top-level runtime settings (current Codex schema)
+# トップレベルのランタイム設定（現在の Codex スキーマ）
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
 web_search = "live"
 
-# External notifications receive a JSON payload on stdin.
+# 外部通知は stdin で JSON ペイロードを受け取ります。
 notify = [
   "terminal-notifier",
   "-title", "Codex ECC",
@@ -27,14 +27,14 @@ notify = [
   "-sound", "default",
 ]
 
-# Prefer AGENTS.md and project-local .codex/AGENTS.md for instructions.
-# model_instructions_file replaces built-in instructions instead of AGENTS.md,
-# so leave it unset unless you intentionally want a single override file.
+# 命令には AGENTS.md とプロジェクトローカルの .codex/AGENTS.md を優先してください。
+# model_instructions_file は AGENTS.md の代わりにビルトイン命令を置き換えるため、
+# 単一のオーバーライドファイルを意図的に使用する場合以外は未設定のままにしてください。
 # model_instructions_file = "/absolute/path/to/instructions.md"
 
-# MCP servers
-# Keep the default project set lean. API-backed servers inherit credentials from
-# the launching environment or can be supplied by a user-level ~/.codex/config.toml.
+# MCP サーバー
+# デフォルトのプロジェクトセットは軽量に保ってください。API ベースのサーバーは
+# 起動環境から認証情報を継承するか、ユーザーレベルの ~/.codex/config.toml で提供できます。
 [mcp_servers.github]
 command = "npx"
 args = ["-y", "@modelcontextprotocol/server-github"]
@@ -58,7 +58,7 @@ args = ["-y", "@playwright/mcp@latest", "--extension"]
 command = "npx"
 args = ["-y", "@modelcontextprotocol/server-sequential-thinking"]
 
-# Additional MCP servers (uncomment as needed):
+# 追加の MCP サーバー（必要に応じてコメントを解除）:
 # [mcp_servers.supabase]
 # command = "npx"
 # args = ["-y", "supabase-mcp-server@latest", "--read-only"]
@@ -76,10 +76,10 @@ args = ["-y", "@modelcontextprotocol/server-sequential-thinking"]
 # args = ["-y", "@cloudflare/mcp-server-cloudflare"]
 
 [features]
-# Codex multi-agent support is experimental as of March 2026.
+# Codex マルチエージェントサポートは 2026年3月時点で実験的です。
 multi_agent = true
 
-# Profiles — switch with `codex -p <name>`
+# プロファイル -- `codex -p <name>` で切り替え
 [profiles.strict]
 approval_policy = "on-request"
 sandbox_mode = "read-only"

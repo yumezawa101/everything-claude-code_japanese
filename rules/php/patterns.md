@@ -3,31 +3,31 @@ paths:
   - "**/*.php"
   - "**/composer.json"
 ---
-# PHP Patterns
+# PHP パターン
 
-> This file extends [common/patterns.md](../common/patterns.md) with PHP specific content.
+> このファイルは [common/patterns.md](../common/patterns.md) を PHP 固有のコンテンツで拡張します。
 
-## Thin Controllers, Explicit Services
+## 薄いコントローラ、明示的な Service
 
-- Keep controllers focused on transport: auth, validation, serialization, status codes.
-- Move business rules into application/domain services that are easy to test without HTTP bootstrapping.
+- コントローラはトランスポートに集中: 認証、バリデーション、シリアライゼーション、ステータスコード。
+- ビジネスルールは HTTP ブートストラップなしでテストしやすいアプリケーション/ドメイン Service に移動。
 
-## DTOs and Value Objects
+## DTO と値オブジェクト
 
-- Replace shape-heavy associative arrays with DTOs for requests, commands, and external API payloads.
-- Use value objects for money, identifiers, date ranges, and other constrained concepts.
+- 構造が複雑な連想配列をリクエスト、コマンド、外部 API ペイロード用の DTO に置き換える。
+- 金額、識別子、日付範囲、その他の制約のある概念には値オブジェクトを使用。
 
-## Dependency Injection
+## 依存性注入
 
-- Depend on interfaces or narrow service contracts, not framework globals.
-- Pass collaborators through constructors so services are testable without service-locator lookups.
+- フレームワークのグローバルではなく、インターフェースや狭い Service コントラクトに依存。
+- コンストラクタ経由で協力者を渡し、Service ロケータのルックアップなしでテスト可能にする。
 
-## Boundaries
+## 境界
 
-- Isolate ORM models from domain decisions when the model layer is doing more than persistence.
-- Wrap third-party SDKs behind small adapters so the rest of the codebase depends on your contract, not theirs.
+- モデルレイヤーが永続化以上のことを行っている場合、ORM モデルをドメインの決定から分離。
+- サードパーティ SDK を小さなアダプタでラップし、コードベースの残りが相手のコントラクトではなく自分のコントラクトに依存するようにする。
 
-## Reference
+## リファレンス
 
-See skill: `api-design` for endpoint conventions and response-shape guidance.
-See skill: `laravel-patterns` for Laravel-specific architecture guidance.
+エンドポイント規約とレスポンス形式のガイダンスについては、スキル: `api-design` を参照。
+Laravel 固有のアーキテクチャガイダンスについては、スキル: `laravel-patterns` を参照。

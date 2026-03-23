@@ -2,30 +2,30 @@
 paths:
   - "**/*.java"
 ---
-# Java Testing
+# Java テスト
 
-> This file extends [common/testing.md](../common/testing.md) with Java-specific content.
+> このファイルは [common/testing.md](../common/testing.md) を Java 固有のコンテンツで拡張します。
 
-## Test Framework
+## テストフレームワーク
 
-- **JUnit 5** (`@Test`, `@ParameterizedTest`, `@Nested`, `@DisplayName`)
-- **AssertJ** for fluent assertions (`assertThat(result).isEqualTo(expected)`)
-- **Mockito** for mocking dependencies
-- **Testcontainers** for integration tests requiring databases or services
+- **JUnit 5**（`@Test`、`@ParameterizedTest`、`@Nested`、`@DisplayName`）
+- **AssertJ** で流暢なアサーション（`assertThat(result).isEqualTo(expected)`）
+- **Mockito** で依存関係のモック
+- **Testcontainers** でデータベースやサービスを必要とするインテグレーションテスト
 
-## Test Organization
+## テストの整理
 
 ```
 src/test/java/com/example/app/
-  service/           # Unit tests for service layer
-  controller/        # Web layer / API tests
-  repository/        # Data access tests
-  integration/       # Cross-layer integration tests
+  service/           # Service レイヤーのユニットテスト
+  controller/        # Web レイヤー / API テスト
+  repository/        # データアクセステスト
+  integration/       # クロスレイヤーインテグレーションテスト
 ```
 
-Mirror the `src/main/java` package structure in `src/test/java`.
+`src/test/java` で `src/main/java` のパッケージ構造をミラーリングする。
 
-## Unit Test Pattern
+## ユニットテストパターン
 
 ```java
 @ExtendWith(MockitoExtension.class)
@@ -65,7 +65,7 @@ class OrderServiceTest {
 }
 ```
 
-## Parameterized Tests
+## パラメータ化テスト
 
 ```java
 @ParameterizedTest
@@ -80,9 +80,9 @@ void applyDiscount(BigDecimal price, int pct, BigDecimal expected) {
 }
 ```
 
-## Integration Tests
+## インテグレーションテスト
 
-Use Testcontainers for real database integration:
+実際のデータベースとのインテグレーションに Testcontainers を使用:
 
 ```java
 @Testcontainers
@@ -111,21 +111,21 @@ class OrderRepositoryIT {
 }
 ```
 
-For Spring Boot integration tests, see skill: `springboot-tdd`.
+Spring Boot インテグレーションテストについては、スキル: `springboot-tdd` を参照。
 
-## Test Naming
+## テスト命名
 
-Use descriptive names with `@DisplayName`:
-- `methodName_scenario_expectedBehavior()` for method names
-- `@DisplayName("human-readable description")` for reports
+`@DisplayName` を使用した記述的な名前:
+- メソッド名は `methodName_scenario_expectedBehavior()` 形式
+- レポート用に `@DisplayName("人間が読める説明")` を使用
 
-## Coverage
+## カバレッジ
 
-- Target 80%+ line coverage
-- Use JaCoCo for coverage reporting
-- Focus on service and domain logic — skip trivial getters/config classes
+- 80%以上の行カバレッジを目標
+- カバレッジレポートに JaCoCo を使用
+- Service とドメインロジックに集中 -- 簡単な getter や設定クラスはスキップ
 
-## References
+## リファレンス
 
-See skill: `springboot-tdd` for Spring Boot TDD patterns with MockMvc and Testcontainers.
-See skill: `java-coding-standards` for testing expectations.
+MockMvc と Testcontainers を使用した Spring Boot TDD パターンについては、スキル: `springboot-tdd` を参照。
+テストに関する期待事項については、スキル: `java-coding-standards` を参照。

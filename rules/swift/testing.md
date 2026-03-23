@@ -3,13 +3,13 @@ paths:
   - "**/*.swift"
   - "**/Package.swift"
 ---
-# Swift Testing
+# Swift テスト
 
-> This file extends [common/testing.md](../common/testing.md) with Swift specific content.
+> このファイルは [common/testing.md](../common/testing.md) を Swift 固有のコンテンツで拡張します。
 
-## Framework
+## フレームワーク
 
-Use **Swift Testing** (`import Testing`) for new tests. Use `@Test` and `#expect`:
+新しいテストには **Swift Testing**（`import Testing`）を使用。`@Test` と `#expect` を使用:
 
 ```swift
 @Test("User creation validates email")
@@ -20,11 +20,11 @@ func userCreationValidatesEmail() throws {
 }
 ```
 
-## Test Isolation
+## テストの分離
 
-Each test gets a fresh instance — set up in `init`, tear down in `deinit`. No shared mutable state between tests.
+各テストはフレッシュなインスタンスを取得 -- `init` でセットアップ、`deinit` でティアダウン。テスト間で共有のミュータブル状態を持たない。
 
-## Parameterized Tests
+## パラメータ化テスト
 
 ```swift
 @Test("Validates formats", arguments: ["json", "xml", "csv"])
@@ -34,12 +34,12 @@ func validatesFormat(format: String) throws {
 }
 ```
 
-## Coverage
+## カバレッジ
 
 ```bash
 swift test --enable-code-coverage
 ```
 
-## Reference
+## リファレンス
 
-See skill: `swift-protocol-di-testing` for protocol-based dependency injection and mock patterns with Swift Testing.
+Swift Testing によるプロトコルベースの依存性注入とモックパターンについては、スキル: `swift-protocol-di-testing` を参照。

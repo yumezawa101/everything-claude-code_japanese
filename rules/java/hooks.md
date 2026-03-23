@@ -7,12 +7,12 @@ paths:
 ---
 # Java Hooks
 
-> This file extends [common/hooks.md](../common/hooks.md) with Java-specific content.
+> このファイルは [common/hooks.md](../common/hooks.md) を Java 固有のコンテンツで拡張します。
 
 ## PostToolUse Hooks
 
-Configure in `~/.claude/settings.json`:
+`~/.claude/settings.json` で設定:
 
-- **google-java-format**: Auto-format `.java` files after edit
-- **checkstyle**: Run style checks after editing Java files
-- **./mvnw compile** or **./gradlew compileJava**: Verify compilation after changes
+- **google-java-format**: 編集後に `.java` ファイルを自動フォーマット
+- **checkstyle**: Java ファイルの編集後にスタイルチェックを実行
+- **./mvnw compile** または **./gradlew compileJava**: 変更後にコンパイルを検証

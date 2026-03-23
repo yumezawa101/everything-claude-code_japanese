@@ -1,19 +1,19 @@
-# Metrics and Sponsorship Playbook
+# メトリクスとスポンサーシップ プレイブック
 
-This file is a practical script for sponsor calls and ecosystem partner reviews.
+本ファイルはスポンサー向けの電話やエコシステムパートナーレビュー用の実践的なスクリプトです。
 
-## What to Track
+## トラッキング対象
 
-Use four categories in every update:
+すべてのアップデートで以下の4カテゴリを使用:
 
-1. **Distribution** — npm packages and GitHub App installs
-2. **Adoption** — stars, forks, contributors, release cadence
-3. **Product surface** — commands/skills/agents and cross-platform support
-4. **Reliability** — test pass counts and production bug turnaround
+1. **配布** -- npm パッケージと GitHub App のインストール数
+2. **採用** -- スター、フォーク、コントリビューター、リリース頻度
+3. **プロダクトサーフェス** -- コマンド/スキル/agent とクロスプラットフォームサポート
+4. **信頼性** -- テストパス数と本番バグの対応速度
 
-## Pull Live Metrics
+## ライブメトリクスの取得
 
-### npm downloads
+### npm ダウンロード
 
 ```bash
 # Weekly downloads
@@ -25,50 +25,50 @@ curl -s https://api.npmjs.org/downloads/point/last-month/ecc-universal
 curl -s https://api.npmjs.org/downloads/point/last-month/ecc-agentshield
 ```
 
-### GitHub repository adoption
+### GitHub リポジトリの採用状況
 
 ```bash
 gh api repos/affaan-m/everything-claude-code \
   --jq '{stars:.stargazers_count,forks:.forks_count,contributors_url:.contributors_url,open_issues:.open_issues_count}'
 ```
 
-### GitHub traffic (maintainer access required)
+### GitHub トラフィック（メンテナーアクセスが必要）
 
 ```bash
 gh api repos/affaan-m/everything-claude-code/traffic/views
 gh api repos/affaan-m/everything-claude-code/traffic/clones
 ```
 
-### GitHub App installs
+### GitHub App インストール
 
-GitHub App install count is currently most reliable in the Marketplace/App dashboard.
-Use the latest value from:
+GitHub App のインストール数は現在、Marketplace/App ダッシュボードが最も信頼性が高い情報源です。
+以下から最新の値を取得:
 
 - [ECC Tools Marketplace](https://github.com/marketplace/ecc-tools)
 
-## What Cannot Be Measured Publicly (Yet)
+## 公開では測定できないもの（現時点）
 
-- Claude plugin install/download counts are not currently exposed via a public API.
-- For partner conversations, use npm metrics + GitHub App installs + repo traffic as the proxy bundle.
+- Claude プラグインのインストール/ダウンロード数は現在、公開 API 経由では公開されていない。
+- パートナーとの会話では、npm メトリクス + GitHub App インストール + リポジトリトラフィックをプロキシバンドルとして使用。
 
-## Suggested Sponsor Packaging
+## 推奨スポンサーパッケージ
 
-Use these as starting points in negotiation:
+交渉の出発点として使用:
 
-- **Pilot Partner:** `$200/month`
-  - Best for first partnership validation and simple monthly sponsor updates.
-- **Growth Partner:** `$500/month`
-  - Includes roadmap check-ins and implementation feedback loop.
-- **Strategic Partner:** `$1,000+/month`
-  - Multi-touch collaboration, launch support, and deeper operational alignment.
+- **Pilot Partner:** `$200/月`
+  - 最初のパートナーシップ検証と簡単な月次スポンサーアップデートに最適。
+- **Growth Partner:** `$500/月`
+  - ロードマップチェックインと実装フィードバックループを含む。
+- **Strategic Partner:** `$1,000+/月`
+  - マルチタッチコラボレーション、ローンチサポート、より深い運用上の連携。
 
-## 60-Second Talking Track
+## 60秒トーキングトラック
 
-Use this on calls:
+電話で使用:
 
-> ECC is now positioned as an agent harness performance system, not a config repo.  
-> We track adoption through npm distribution, GitHub App installs, and repository growth.  
-> Claude plugin installs are structurally undercounted publicly, so we use a blended metrics model.  
-> The project supports Claude Code, Cursor, OpenCode, and Codex app/CLI with production-grade hook reliability and a large passing test suite.
+> ECC は設定リポジトリではなく、agent ハーネスパフォーマンスシステムとして位置付けられています。
+> npm 配布、GitHub App インストール、リポジトリの成長を通じて採用を追跡しています。
+> Claude プラグインのインストールは公開では構造的に過小カウントされるため、ブレンドメトリクスモデルを使用しています。
+> プロジェクトは Claude Code、Cursor、OpenCode、Codex app/CLI をプロダクショングレードの hook 信頼性と大規模なパステストスイートでサポートしています。
 
-For launch-ready social copy snippets, see [`social-launch-copy.md`](./social-launch-copy.md).
+ローンチ用のソーシャルコピースニペットについては [`social-launch-copy.md`](./social-launch-copy.md) を参照。

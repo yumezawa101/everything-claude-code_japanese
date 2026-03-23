@@ -3,31 +3,31 @@ paths:
   - "**/*.swift"
   - "**/Package.swift"
 ---
-# Swift Coding Style
+# Swift コーディングスタイル
 
-> This file extends [common/coding-style.md](../common/coding-style.md) with Swift specific content.
+> このファイルは [common/coding-style.md](../common/coding-style.md) を Swift 固有のコンテンツで拡張します。
 
-## Formatting
+## フォーマット
 
-- **SwiftFormat** for auto-formatting, **SwiftLint** for style enforcement
-- `swift-format` is bundled with Xcode 16+ as an alternative
+- **SwiftFormat** で自動フォーマット、**SwiftLint** でスタイル強制
+- Xcode 16+ には代替として `swift-format` が同梱
 
-## Immutability
+## イミュータビリティ
 
-- Prefer `let` over `var` — define everything as `let` and only change to `var` if the compiler requires it
-- Use `struct` with value semantics by default; use `class` only when identity or reference semantics are needed
+- `var` より `let` を優先 -- すべてを `let` で定義し、コンパイラが要求する場合のみ `var` に変更
+- デフォルトで値セマンティクスの `struct` を使用; アイデンティティや参照セマンティクスが必要な場合のみ `class` を使用
 
-## Naming
+## 命名規則
 
-Follow [Apple API Design Guidelines](https://www.swift.org/documentation/api-design-guidelines/):
+[Apple API Design Guidelines](https://www.swift.org/documentation/api-design-guidelines/) に従う:
 
-- Clarity at the point of use — omit needless words
-- Name methods and properties for their roles, not their types
-- Use `static let` for constants over global constants
+- 使用時の明確さ -- 不必要な単語は省略
+- メソッドやプロパティは型ではなく役割で名前を付ける
+- グローバル定数よりも `static let` を使用
 
-## Error Handling
+## エラーハンドリング
 
-Use typed throws (Swift 6+) and pattern matching:
+型付き throws（Swift 6+）とパターンマッチングを使用:
 
 ```swift
 func load(id: String) throws(LoadError) -> Item {
@@ -38,10 +38,10 @@ func load(id: String) throws(LoadError) -> Item {
 }
 ```
 
-## Concurrency
+## 並行処理
 
-Enable Swift 6 strict concurrency checking. Prefer:
+Swift 6 の厳密な並行処理チェックを有効化。以下を優先:
 
-- `Sendable` value types for data crossing isolation boundaries
-- Actors for shared mutable state
-- Structured concurrency (`async let`, `TaskGroup`) over unstructured `Task {}`
+- 分離境界を越えるデータには `Sendable` 値型
+- 共有ミュータブル状態には Actor
+- 非構造化 `Task {}` よりも構造化並行処理（`async let`、`TaskGroup`）

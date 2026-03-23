@@ -8,15 +8,15 @@ paths:
 ---
 # Perl Hooks
 
-> This file extends [common/hooks.md](../common/hooks.md) with Perl-specific content.
+> このファイルは [common/hooks.md](../common/hooks.md) を Perl 固有のコンテンツで拡張します。
 
 ## PostToolUse Hooks
 
-Configure in `~/.claude/settings.json`:
+`~/.claude/settings.json` で設定:
 
-- **perltidy**: Auto-format `.pl` and `.pm` files after edit
-- **perlcritic**: Run lint check after editing `.pm` files
+- **perltidy**: 編集後に `.pl` と `.pm` ファイルを自動フォーマット
+- **perlcritic**: `.pm` ファイルの編集後にリントチェックを実行
 
-## Warnings
+## 警告
 
-- Warn about `print` in non-script `.pm` files — use `say` or a logging module (e.g., `Log::Any`)
+- スクリプトでない `.pm` ファイルの `print` について警告 -- `say` またはロギングモジュール（例: `Log::Any`）を使用
