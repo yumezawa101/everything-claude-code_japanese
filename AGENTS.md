@@ -43,6 +43,7 @@
 | rust-build-resolver | Rust ビルドエラー | Rust ビルド失敗 |
 | pytorch-build-resolver | PyTorch ランタイム/CUDA/トレーニングエラー | PyTorch ビルド/トレーニング失敗 |
 | typescript-reviewer | TypeScript/JavaScript コードレビュー | TypeScript/JavaScript プロジェクト |
+| flutter-reviewer | Flutter/Dart コードレビュー | Flutter プロジェクト |
 
 ## Agent オーケストレーション
 

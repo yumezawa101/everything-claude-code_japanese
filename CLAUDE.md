@@ -51,7 +51,7 @@ node tests/hooks/hooks.test.js
 
 ## コントリビューション
 
-CONTRIBUTING.md の形式に従ってください:
+以下の形式に従ってください（詳細は [upstream CONTRIBUTING.md](https://github.com/affaan-m/everything-claude-code/blob/main/CONTRIBUTING.md) を参照）:
 - Agent: frontmatter 付き Markdown（name, description, tools, model）
 - スキル: 明確なセクション（使用タイミング、仕組み、例）
 - コマンド: description frontmatter 付き Markdown

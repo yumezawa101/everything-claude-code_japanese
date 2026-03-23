@@ -417,6 +417,6 @@ find ~/.claude/plugins -name "*.sh" -exec dos2unix {} \;
 ## 関連ドキュメント
 
 - [README.md](./README.md) - インストールと機能
-- [CONTRIBUTING.md](./CONTRIBUTING.md) - 開発ガイドライン
+- [CONTRIBUTING.md](https://github.com/affaan-m/everything-claude-code/blob/main/CONTRIBUTING.md) - 開発ガイドライン（upstream）
 - [docs/](./docs/) - 詳細なドキュメント
 - [examples/](./examples/) - 使用例
