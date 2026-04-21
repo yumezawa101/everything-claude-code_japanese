@@ -95,6 +95,14 @@
       "command": "npx",
       "args": ["-y", "task-master-ai"],
       "description": "PRD to structured task lists for MVP development"
+    },
+    "gemini-image": {
+      "command": "npx",
+      "args": ["-y", "claude-image-gen"],
+      "env": {
+        "GEMINI_API_KEY": "YOUR_GEMINI_API_KEY_HERE"
+      },
+      "description": "Gemini image generation for slides/diagrams via /diagram-prompt"
     }
   },
   "_comments": {
