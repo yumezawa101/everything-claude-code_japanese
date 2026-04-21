@@ -24,7 +24,7 @@ const {
 async function main() {
   // 設定ファイルを見つけるためにスクリプトディレクトリを取得
   const scriptDir = __dirname;
-  const configFile = path.join(scriptDir, '..', '..', 'skills', 'continuous-learning', 'config.json');
+  const configFile = path.join(scriptDir, '..', '..', 'skills', 'continuous-learning-v2', 'config.json');
 
   // デフォルト設定
   let minSessionLength = 10;

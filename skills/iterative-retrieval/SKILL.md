@@ -198,5 +198,5 @@ agentプロンプトでの使用：
 ## 関連
 
 - [The Longform Guide](https://x.com/affaanmustafa/status/2014040193557471352) - サブagentオーケストレーションセクション
-- `continuous-learning` skill - 時間とともに改善されるパターン
+- `continuous-learning-v2` skill - 時間とともに改善されるパターン
 - `~/.claude/agents/`のagent定義

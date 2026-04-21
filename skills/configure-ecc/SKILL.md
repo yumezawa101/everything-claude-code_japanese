@@ -113,7 +113,6 @@ Options:
 
 | スキル | 説明 |
 |-------|------|
-| `continuous-learning` | セッションから再利用可能なパターンを自動抽出し、学習済みスキルとして保存 |
 | `continuous-learning-v2` | 信頼度スコアリング付きの instinct ベース学習、スキル/コマンド/エージェントに進化 |
 | `eval-harness` | eval 駆動開発（EDD）のための正式な評価フレームワーク |
 | `iterative-retrieval` | サブエージェントの context 問題に対する段階的な context 精緻化 |
@@ -135,7 +134,7 @@ Options:
 cp -r $ECC_ROOT/skills/<skill-name> $TARGET/skills/
 ```
 
-注意: `continuous-learning` と `continuous-learning-v2` には追加ファイル（config.json、hooks、スクリプト）があります — SKILL.md だけでなくディレクトリ全体がコピーされていることを確認してください。
+注意: `continuous-learning-v2` には追加ファイル（config.json、hooks、スクリプト）があります — SKILL.md だけでなくディレクトリ全体がコピーされていることを確認してください。
 
 ---
 
