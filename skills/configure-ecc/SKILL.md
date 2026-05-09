@@ -65,14 +65,14 @@ mkdir -p $TARGET/skills $TARGET/rules
 
 ### 2a: スキルカテゴリの選択
 
-27個のスキルが4つのカテゴリに整理されています。`AskUserQuestion` を `multiSelect: true` で使用します：
+15個のスキルが4つのカテゴリに整理されています。`AskUserQuestion` を `multiSelect: true` で使用します：
 
 ```
 Question: "どのスキルカテゴリをインストールしますか？"
 Options:
-  - "フレームワーク & 言語" — "Django、Spring Boot、Go、Python、Java、フロントエンド、バックエンドパターン"
-  - "データベース" — "PostgreSQL、ClickHouse、JPA/Hibernate パターン"
-  - "ワークフロー & 品質" — "TDD、検証、学習、セキュリティレビュー、コンパクション"
+  - "コード品質 & アーキテクチャ" — "コーディング標準、フロントエンド、バックエンド、セキュリティレビュー"
+  - "データベース" — "PostgreSQL、ClickHouse パターン"
+  - "ワークフロー & 品質" — "TDD、検証、学習、コンパクション"
   - "全スキル" — "利用可能なすべてのスキルをインストール"
 ```
 
@@ -80,33 +80,21 @@ Options:
 
 選択されたカテゴリごとに、以下の全スキルリストを表示し、ユーザーに特定のスキルの確認または選択解除を求めます。リストが4項目を超える場合は、テキストとしてリストを表示し、`AskUserQuestion` で「リスト全体をインストール」オプションと「Other」（ユーザーが特定の名前を入力するため）を使用します。
 
-**カテゴリ: フレームワーク & 言語（16スキル）**
+**カテゴリ: コード品質 & アーキテクチャ（5スキル）**
 
 | スキル | 説明 |
 |-------|------|
 | `backend-patterns` | バックエンドアーキテクチャ、API 設計、Node.js/Express/Next.js のサーバーサイドベストプラクティス |
 | `coding-standards` | TypeScript、JavaScript、React、Node.js のユニバーサルコーディング標準 |
-| `django-patterns` | Django アーキテクチャ、DRF による REST API、ORM、キャッシュ、シグナル、ミドルウェア |
-| `django-security` | Django セキュリティ: 認証、CSRF、SQL インジェクション、XSS 防止 |
-| `django-tdd` | pytest-django、factory_boy、モッキング、カバレッジによる Django テスト |
-| `django-verification` | Django 検証ループ: マイグレーション、リンティング、テスト、セキュリティスキャン |
 | `frontend-patterns` | React、Next.js、状態管理、パフォーマンス、UI パターン |
-| `golang-patterns` | Go のイディオムとベストプラクティス、堅牢な Go アプリケーションのための規約 |
-| `golang-testing` | Go テスト: テーブル駆動テスト、サブテスト、ベンチマーク、ファジング |
-| `java-coding-standards` | Spring Boot 向け Java コーディング標準: 命名規則、イミュータビリティ、Optional、ストリーム |
-| `python-patterns` | Python のイディオム、PEP 8、型ヒント、ベストプラクティス |
-| `python-testing` | pytest による Python テスト、TDD、フィクスチャ、モッキング、パラメトリゼーション |
-| `springboot-patterns` | Spring Boot アーキテクチャ、REST API、レイヤードサービス、キャッシュ、非同期 |
-| `springboot-security` | Spring Security: 認証/認可、バリデーション、CSRF、シークレット、レート制限 |
-| `springboot-tdd` | JUnit 5、Mockito、MockMvc、Testcontainers による Spring Boot TDD |
-| `springboot-verification` | Spring Boot 検証: ビルド、静的解析、テスト、セキュリティスキャン |
+| `security-review` | セキュリティチェックリスト: 認証、入力、シークレット、API、決済機能 |
+| `project-guidelines-example` | プロジェクト固有のスキルを作成するためのテンプレート |
 
-**カテゴリ: データベース（3スキル）**
+**カテゴリ: データベース（2スキル）**
 
 | スキル | 説明 |
 |-------|------|
 | `clickhouse-io` | ClickHouse パターン、クエリ最適化、分析、データエンジニアリング |
-| `jpa-patterns` | JPA/Hibernate エンティティ設計、リレーションシップ、クエリ最適化、トランザクション |
 | `postgres-patterns` | PostgreSQL クエリ最適化、スキーマ設計、インデックス、セキュリティ |
 
 **カテゴリ: ワークフロー & 品質（8スキル）**
@@ -117,16 +105,10 @@ Options:
 | `continuous-learning-v2` | 信頼度スコアリング付きの instinct ベース学習、スキル/コマンド/エージェントに進化 |
 | `eval-harness` | eval 駆動開発（EDD）のための正式な評価フレームワーク |
 | `iterative-retrieval` | サブエージェントの context 問題に対する段階的な context 精緻化 |
-| `security-review` | セキュリティチェックリスト: 認証、入力、シークレット、API、決済機能 |
 | `strategic-compact` | 論理的な間隔での手動 context コンパクションを提案 |
 | `tdd-workflow` | 80%以上のカバレッジで TDD を強制: ユニット、結合、E2E |
 | `verification-loop` | 検証と品質ループパターン |
-
-**スタンドアロン**
-
-| スキル | 説明 |
-|-------|------|
-| `project-guidelines-example` | プロジェクト固有のスキルを作成するためのテンプレート |
+| `configure-ecc` | このインタラクティブインストーラー自体 |
 
 ### 2c: インストールの実行
 
@@ -148,8 +130,7 @@ Question: "どのルールセットをインストールしますか？"
 Options:
   - "共通ルール（推奨）" — "言語非依存の原則: コーディングスタイル、git ワークフロー、テスト、セキュリティなど（8ファイル）"
   - "TypeScript/JavaScript" — "TS/JS パターン、hooks、Playwright テスト（5ファイル）"
-  - "Python" — "Python パターン、pytest、black/ruff フォーマット（5ファイル）"
-  - "Go" — "Go パターン、テーブル駆動テスト、gofmt/staticcheck（5ファイル）"
+  - "両方" — "共通ルール + TypeScript/JavaScript ルールをすべてインストール"
 ```
 
 インストールを実行：
@@ -159,8 +140,6 @@ cp -r $ECC_ROOT/rules/common/* $TARGET/rules/
 
 # 言語固有ルール（rules/ にフラットコピー）
 cp -r $ECC_ROOT/rules/typescript/* $TARGET/rules/   # 選択した場合
-cp -r $ECC_ROOT/rules/python/* $TARGET/rules/        # 選択した場合
-cp -r $ECC_ROOT/rules/golang/* $TARGET/rules/        # 選択した場合
 ```
 
 **重要**: ユーザーが言語固有ルールを選択し、共通ルールを選択しなかった場合は警告してください：
@@ -197,12 +176,9 @@ grep -rn "skills/" $TARGET/skills/
 ### 4c: スキル間のクロスリファレンスチェック
 
 一部のスキルは他のスキルを参照しています。以下の依存関係を確認してください：
-- `django-tdd` は `django-patterns` を参照する可能性あり
-- `springboot-tdd` は `springboot-patterns` を参照する可能性あり
 - `continuous-learning-v2` は `~/.claude/homunculus/` ディレクトリを参照
-- `python-testing` は `python-patterns` を参照する可能性あり
-- `golang-testing` は `golang-patterns` を参照する可能性あり
-- 言語固有ルールは `common/` の対応ファイルを参照
+- `tdd-workflow` は `verification-loop` を参照する可能性あり
+- TypeScript ルールは `common/` の対応ファイルを参照
 
 ### 4d: 問題の報告
 
