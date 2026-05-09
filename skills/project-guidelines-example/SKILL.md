@@ -1,45 +1,45 @@
-# プロジェクトガイドライン skill（例）
+# プロジェクトガイドラインスキル（例）
 
-これはプロジェクト固有のskillの例です。これを独自のプロジェクトのテンプレートとして使用してください。
+これはプロジェクト固有のスキルの例です。自分のプロジェクトのテンプレートとして使用してください。
 
-実際の本番アプリケーションに基づいています：[Zenith](https://zenith.chat) - AI搭載の顧客発見プラットフォーム。
+実際の本番アプリケーションに基づいています：[Zenith](https://zenith.chat) - AI駆動の顧客発見プラットフォーム。
 
 ---
 
 ## 使用するタイミング
 
-設計対象の特定のプロジェクトで作業する際にこのskillを参照してください。プロジェクトskillには以下が含まれます：
+このスキルが設計された特定のプロジェクトで作業する際に参照してください。プロジェクトスキルには以下が含まれます：
 - アーキテクチャの概要
 - ファイル構造
 - コードパターン
 - テスト要件
-- デプロイワークフロー
+- デプロイメントワークフロー
 
 ---
 
-## アーキテクチャ概要
+## アーキテクチャの概要
 
 **技術スタック：**
-- **フロントエンド**: Next.js 15（App Router）、TypeScript、React
-- **バックエンド**: FastAPI（Python）、Pydanticモデル
-- **データベース**: Supabase（PostgreSQL）
-- **AI**: Claude API（ツール呼び出しと構造化出力）
-- **デプロイ**: Google Cloud Run
-- **テスト**: Playwright（E2E）、pytest（バックエンド）、React Testing Library
+- **フロントエンド**: Next.js 15 (App Router), TypeScript, React
+- **バックエンド**: FastAPI (Python), Pydanticモデル
+- **データベース**: Supabase (PostgreSQL)
+- **AI**: Claudeツール呼び出しと構造化出力付きAPI
+- **デプロイメント**: Google Cloud Run
+- **テスト**: Playwright (E2E), pytest (バックエンド), React Testing Library
 
 **サービス：**
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                         フロントエンド                       │
+│                         Frontend                            │
 │  Next.js 15 + TypeScript + TailwindCSS                     │
-│  デプロイ先: Vercel / Cloud Run                            │
+│  Deployed: Vercel / Cloud Run                              │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                         バックエンド                         │
+│                         Backend                             │
 │  FastAPI + Python 3.11 + Pydantic                          │
-│  デプロイ先: Cloud Run                                      │
+│  Deployed: Cloud Run                                       │
 └─────────────────────────────────────────────────────────────┘
                               │
               ┌───────────────┼───────────────┐
@@ -60,19 +60,19 @@ project/
 │   └── src/
 │       ├── app/              # Next.js app routerページ
 │       │   ├── api/          # APIルート
-│       │   ├── (auth)/       # 認証保護ルート
+│       │   ├── (auth)/       # 認証保護されたルート
 │       │   └── workspace/    # メインアプリワークスペース
 │       ├── components/       # Reactコンポーネント
-│       │   ├── ui/           # 基本UIコンポーネント
+│       │   ├── ui/           # ベースUIコンポーネント
 │       │   ├── forms/        # フォームコンポーネント
 │       │   └── layouts/      # レイアウトコンポーネント
-│       ├── hooks/            # カスタムReact hooks
+│       ├── hooks/            # カスタムReactフック
 │       ├── lib/              # ユーティリティ
 │       ├── types/            # TypeScript定義
 │       └── config/           # 設定
 │
 ├── backend/
-│   ├── routers/              # FastAPIルートハンドラー
+│   ├── routers/              # FastAPIルートハンドラ
 │   ├── models.py             # Pydanticモデル
 │   ├── main.py               # FastAPIアプリエントリ
 │   ├── auth_system.py        # 認証
@@ -80,7 +80,7 @@ project/
 │   ├── services/             # ビジネスロジック
 │   └── tests/                # pytestテスト
 │
-├── deploy/                   # デプロイ設定
+├── deploy/                   # デプロイメント設定
 ├── docs/                     # ドキュメント
 └── scripts/                  # ユーティリティスクリプト
 ```
@@ -89,7 +89,7 @@ project/
 
 ## コードパターン
 
-### APIレスポンス形式（FastAPI）
+### APIレスポンス形式 (FastAPI)
 
 ```python
 from pydantic import BaseModel
@@ -111,7 +111,7 @@ class ApiResponse(BaseModel, Generic[T]):
         return cls(success=False, error=error)
 ```
 
-### フロントエンドAPI呼び出し（TypeScript）
+### フロントエンドAPI呼び出し (TypeScript)
 
 ```typescript
 interface ApiResponse<T> {
@@ -170,7 +170,7 @@ async def analyze_with_claude(content: str) -> AnalysisResult:
         tool_choice={"type": "tool", "name": "provide_analysis"}
     )
 
-    # ツール使用結果を抽出
+    # Extract tool use result
     tool_use = next(
         block for block in response.content
         if block.type == "tool_use"
@@ -179,7 +179,7 @@ async def analyze_with_claude(content: str) -> AnalysisResult:
     return AnalysisResult(**tool_use.input)
 ```
 
-### カスタムHooks（React）
+### カスタムフック (React)
 
 ```typescript
 import { useState, useCallback } from 'react'
@@ -219,7 +219,7 @@ export function useApi<T>(
 
 ## テスト要件
 
-### バックエンド（pytest）
+### バックエンド (pytest)
 
 ```bash
 # すべてのテストを実行
@@ -250,7 +250,7 @@ async def test_health_check(client: AsyncClient):
     assert response.json()["status"] == "healthy"
 ```
 
-### フロントエンド（React Testing Library）
+### フロントエンド (React Testing Library)
 
 ```bash
 # テストを実行
@@ -284,25 +284,25 @@ describe('WorkspacePanel', () => {
 
 ---
 
-## デプロイワークフロー
+## デプロイメントワークフロー
 
 ### デプロイ前チェックリスト
 
-- [ ] すべてのテストがローカルで合格
-- [ ] `npm run build`が成功（フロントエンド）
-- [ ] `poetry run pytest`が合格（バックエンド）
+- [ ] すべてのテストがローカルで成功
+- [ ] `npm run build` が成功（フロントエンド）
+- [ ] `poetry run pytest` が成功（バックエンド）
 - [ ] ハードコードされたシークレットなし
 - [ ] 環境変数がドキュメント化されている
-- [ ] データベースマイグレーション準備完了
+- [ ] データベースマイグレーションが準備されている
 
-### デプロイコマンド
+### デプロイメントコマンド
 
 ```bash
-# フロントエンドをビルドしてデプロイ
+# フロントエンドのビルドとデプロイ
 cd frontend && npm run build
 gcloud run deploy frontend --source .
 
-# バックエンドをビルドしてデプロイ
+# バックエンドのビルドとデプロイ
 cd backend
 gcloud run deploy backend --source .
 ```
@@ -326,20 +326,20 @@ SUPABASE_KEY=eyJ...
 
 ## 重要なルール
 
-1. コード、コメント、ドキュメントに**絵文字禁止**
+1. **絵文字なし** - コード、コメント、ドキュメントに絵文字を使用しない
 2. **不変性** - オブジェクトや配列を変更しない
 3. **TDD** - 実装前にテストを書く
-4. **80%カバレッジ**が最小要件
-5. **多くの小さなファイル** - 通常200-400行、最大800行
-6. 本番コードに**console.log禁止**
-7. try/catchによる**適切なエラー処理**
-8. Pydantic/Zodによる**入力バリデーション**
+4. **80%カバレッジ** - 最低基準
+5. **小さなファイル多数** - 通常200-400行、最大800行
+6. **console.log禁止** - 本番コードには使用しない
+7. **適切なエラー処理** - try/catchを使用
+8. **入力検証** - Pydantic/Zodを使用
 
 ---
 
-## 関連skill
+## 関連スキル
 
 - `coding-standards.md` - 一般的なコーディングベストプラクティス
 - `backend-patterns.md` - APIとデータベースパターン
 - `frontend-patterns.md` - ReactとNext.jsパターン
-- `tdd-workflow/` - TDD方法論
+- `tdd-workflow/` - テスト駆動開発の方法論

@@ -1,12 +1,12 @@
 ---
 name: instinct-export
-description: チームメイトや他のプロジェクトと共有するためにinstinctをエクスポートする
+description: チームメイトや他のプロジェクトと共有するためにインスティンクトをエクスポート
 command: /instinct-export
 ---
 
-# Instinct Export Command
+# インスティンクトエクスポートコマンド
 
-instinctを共有可能なフォーマットにエクスポートします。以下に最適です：
+インスティンクトを共有可能な形式でエクスポートします。以下の用途に最適です:
 - チームメイトとの共有
 - 新しいマシンへの転送
 - プロジェクト規約への貢献
@@ -14,25 +14,25 @@ instinctを共有可能なフォーマットにエクスポートします。以
 ## 使用方法
 
 ```
-/instinct-export                           # すべての個人instinctをエクスポート
-/instinct-export --domain testing          # testingのinstinctのみをエクスポート
-/instinct-export --min-confidence 0.7      # 高信頼度のinstinctのみをエクスポート
+/instinct-export                           # すべての個人インスティンクトをエクスポート
+/instinct-export --domain testing          # テスト関連のインスティンクトのみをエクスポート
+/instinct-export --min-confidence 0.7      # 高信頼度のインスティンクトのみをエクスポート
 /instinct-export --output team-instincts.yaml
 ```
 
 ## 実行内容
 
-1. `~/.claude/homunculus/instincts/personal/`からinstinctを読み込む
+1. `~/.claude/homunculus/instincts/personal/` からインスティンクトを読み込む
 2. フラグに基づいてフィルタリング
-3. 機密情報を除去：
+3. 機密情報を除外:
    - セッションIDを削除
-   - ファイルパスを削除（パターンのみを保持）
+   - ファイルパスを削除（パターンのみ保持）
    - 「先週」より古いタイムスタンプを削除
 4. エクスポートファイルを生成
 
-## 出力フォーマット
+## 出力形式
 
-YAMLファイルを作成します：
+YAMLファイルを作成します:
 
 ```yaml
 # Instincts Export
@@ -69,23 +69,23 @@ instincts:
 
 ## プライバシーに関する考慮事項
 
-エクスポートに含まれるもの：
+エクスポートに含まれる内容:
 - ✅ トリガーパターン
 - ✅ アクション
 - ✅ 信頼度スコア
 - ✅ ドメイン
 - ✅ 観察回数
 
-エクスポートに含まれないもの：
+エクスポートに含まれない内容:
 - ❌ 実際のコードスニペット
 - ❌ ファイルパス
-- ❌ セッショントランスクリプト
-- ❌ 個人識別子
+- ❌ セッション記録
+- ❌ 個人識別情報
 
 ## フラグ
 
-- `--domain <name>`: 指定したドメインのみをエクスポート
+- `--domain <name>`: 指定されたドメインのみをエクスポート
 - `--min-confidence <n>`: 最小信頼度閾値（デフォルト: 0.3）
 - `--output <file>`: 出力ファイルパス（デフォルト: instincts-export-YYYYMMDD.yaml）
-- `--format <yaml|json|md>`: 出力フォーマット（デフォルト: yaml）
+- `--format <yaml|json|md>`: 出力形式（デフォルト: yaml）
 - `--include-evidence`: 証拠テキストを含める（デフォルト: 除外）

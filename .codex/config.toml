@@ -1,0 +1,107 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+
+# Everything Claude Code (ECC) -- Codex リファレンス設定
+#
+# このファイルを ~/.codex/config.toml にコピーするとグローバルデフォルトになります。
+# プロジェクトルートに .codex/config.toml として配置するとプロジェクトローカル設定になります。
+#
+# 公式ドキュメント:
+# - https://developers.openai.com/codex/config-reference
+# - https://developers.openai.com/codex/multi-agent
+
+# モデル選択
+# Codex CLI が現在のビルトインデフォルトを使用するよう、`model` と `model_provider` は
+# 未設定のままにしてください。意図的にリポジトリローカルまたはグローバルのモデル
+# オーバーライドが必要な場合のみ、コメントを解除してピン留めしてください。
+
+# トップレベルのランタイム設定（現在の Codex スキーマ）
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+web_search = "live"
+
+# 外部通知は stdin で JSON ペイロードを受け取ります。
+notify = [
+  "terminal-notifier",
+  "-title", "Codex ECC",
+  "-message", "Task completed!",
+  "-sound", "default",
+]
+
+# 命令には AGENTS.md とプロジェクトローカルの .codex/AGENTS.md を優先してください。
+# model_instructions_file は AGENTS.md の代わりにビルトイン命令を置き換えるため、
+# 単一のオーバーライドファイルを意図的に使用する場合以外は未設定のままにしてください。
+# model_instructions_file = "/absolute/path/to/instructions.md"
+
+# MCP サーバー
+# デフォルトのプロジェクトセットは軽量に保ってください。API ベースのサーバーは
+# 起動環境から認証情報を継承するか、ユーザーレベルの ~/.codex/config.toml で提供できます。
+[mcp_servers.github]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-github"]
+
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp@latest"]
+
+[mcp_servers.exa]
+url = "https://mcp.exa.ai/mcp"
+
+[mcp_servers.memory]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-memory"]
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["-y", "@playwright/mcp@latest", "--extension"]
+
+[mcp_servers.sequential-thinking]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+
+# 追加の MCP サーバー（必要に応じてコメントを解除）:
+# [mcp_servers.supabase]
+# command = "npx"
+# args = ["-y", "supabase-mcp-server@latest", "--read-only"]
+#
+# [mcp_servers.firecrawl]
+# command = "npx"
+# args = ["-y", "firecrawl-mcp"]
+#
+# [mcp_servers.fal-ai]
+# command = "npx"
+# args = ["-y", "fal-ai-mcp-server"]
+#
+# [mcp_servers.cloudflare]
+# command = "npx"
+# args = ["-y", "@cloudflare/mcp-server-cloudflare"]
+
+[features]
+# Codex マルチエージェントサポートは 2026年3月時点で実験的です。
+multi_agent = true
+
+# プロファイル -- `codex -p <name>` で切り替え
+[profiles.strict]
+approval_policy = "on-request"
+sandbox_mode = "read-only"
+web_search = "cached"
+
+[profiles.yolo]
+approval_policy = "never"
+sandbox_mode = "workspace-write"
+web_search = "live"
+
+[agents]
+max_threads = 6
+max_depth = 1
+
+[agents.explorer]
+description = "Read-only codebase explorer for gathering evidence before changes are proposed."
+config_file = "agents/explorer.toml"
+
+[agents.reviewer]
+description = "PR reviewer focused on correctness, security, and missing tests."
+config_file = "agents/reviewer.toml"
+
+[agents.docs_researcher]
+description = "Documentation specialist that verifies APIs, framework behavior, and release notes."
+config_file = "agents/docs-researcher.toml"

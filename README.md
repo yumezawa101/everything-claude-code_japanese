@@ -1,324 +1,186 @@
 # claudecode-tool-ja
 
-Claude Code の設定を日本語化し、自分の開発ワークフローに合わせてカスタマイズした個人用ツールキット。本番環境対応の agent、skill、hook、command、rule、MCP 設定を収録。
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![Shell](https://img.shields.io/badge/-Shell-4EAA25?logo=gnu-bash&logoColor=white)
+![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white)
+![Python](https://img.shields.io/badge/-Python-3776AB?logo=python&logoColor=white)
+![Go](https://img.shields.io/badge/-Go-00ADD8?logo=go&logoColor=white)
+![Java](https://img.shields.io/badge/-Java-ED8B00?logo=openjdk&logoColor=white)
+![Markdown](https://img.shields.io/badge/-Markdown-000000?logo=markdown&logoColor=white)
+
+> upstream: [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) の日本語版フォーク
+
+---
+
+Claude Code の設定を日本語化した個人用ツールキット。本番環境対応のエージェント、スキル、フック、コマンド、ルール、MCP設定を収録。
+
+---
+
+| トピック | 学べる内容 |
+|-------|-------------------|
+| トークン最適化 | モデル選択、システムプロンプト削減、バックグラウンドプロセス |
+| メモリ永続化 | セッション間でコンテキストを自動保存/読み込みするフック |
+| 継続的学習 | セッションからパターンを自動抽出して再利用可能なスキルに変換 |
+| 検証ループ | チェックポイントと継続的評価、スコアラータイプ、pass@k メトリクス |
+| 並列化 | Git ワークツリー、カスケード方法、スケーリング時期 |
+| サブエージェント オーケストレーション | コンテキスト問題、反復検索パターン |
 
 ---
 
 ## クイックスタート
 
-2分以内でセットアップ完了：
-
 ### ステップ 1: プラグインをインストール
 
 ```bash
-# マーケットプレイスを追加
 /plugin marketplace add yumezawa101/everything-claude-code_japanese
-
-# プラグインをインストール
 /plugin install claudecode-tool-ja@claudecode-tool-ja
 ```
 
 ### ステップ 2: ルールをインストール（必須）
 
-> **重要:** Claude Code のプラグインシステムでは rules を自動配布できません。手動でインストールしてください：
+> **重要:** Claude Codeプラグインは`rules`を自動配布できません。手動でインストールしてください:
 
 ```bash
-# リポジトリをクローン
 git clone https://github.com/yumezawa101/everything-claude-code_japanese.git
 
-# 共通ルールをインストール（必須）
+# 共通ルール（必須）
 cp -r everything-claude-code_japanese/rules/common/* ~/.claude/rules/
 
-# 言語固有ルールをインストール（使用する言語に合わせて選択）
+# 言語固有ルール（スタックを選択）
 cp -r everything-claude-code_japanese/rules/typescript/* ~/.claude/rules/
+cp -r everything-claude-code_japanese/rules/python/* ~/.claude/rules/
+cp -r everything-claude-code_japanese/rules/golang/* ~/.claude/rules/
+
+# クローンしたリポジトリを削除
+rm -rf everything-claude-code_japanese
 ```
 
-### ステップ 3: 使い始める
+### ステップ 3: 使用開始
 
 ```bash
-# コマンドを試す
-/plan "Add user authentication"
-
-# 利用可能なコマンドを確認
-/plugin list claudecode-tool-ja@claudecode-tool-ja
+/claudecode-tool-ja:plan "ユーザー認証を追加"
 ```
 
-**以上です！** これで 10 種類の agent、15 種類の skill、27 種類の command が使えます。
+**完了です!** これで28のエージェント、116のスキル、59のコマンドにアクセスできます。
 
 ---
 
-## クロスプラットフォームサポート
+## 含まれるもの
 
-このプラグインは **Windows、macOS、Linux** を完全サポートしています。すべての hook とスクリプトは最大限の互換性のために Node.js で書き直されました。
-
-### パッケージマネージャー検出
-
-プラグインは以下の優先順位で優先パッケージマネージャー（npm、pnpm、yarn、または bun）を自動検出します：
-
-1. **環境変数**: `CLAUDE_PACKAGE_MANAGER`
-2. **プロジェクト設定**: `.claude/package-manager.json`
-3. **package.json**: `packageManager` フィールド
-4. **ロックファイル**: package-lock.json、yarn.lock、pnpm-lock.yaml、または bun.lockb から検出
-5. **グローバル設定**: `~/.claude/package-manager.json`
-6. **フォールバック**: 利用可能な最初のパッケージマネージャー
-
-優先パッケージマネージャーを設定するには：
-
-```bash
-# 環境変数経由
-export CLAUDE_PACKAGE_MANAGER=pnpm
-
-# グローバル設定経由
-node scripts/setup-package-manager.js --global pnpm
-
-# プロジェクト設定経由
-node scripts/setup-package-manager.js --project bun
-
-# 現在の設定を検出
-node scripts/setup-package-manager.js --detect
 ```
-
-または Claude Code で `/setup-pm` command を使用してください。
+claudecode-tool-ja/
+|-- agents/           # 専門サブエージェント（28種類）
+|   |-- planner.md, architect.md, tdd-guide.md, code-reviewer.md,
+|   |-- security-reviewer.md, build-error-resolver.md, e2e-runner.md,
+|   |-- refactor-cleaner.md, doc-updater.md, database-reviewer.md,
+|   |-- chief-of-staff.md, typescript-reviewer.md, python-reviewer.md,
+|   |-- go-reviewer.md, ...他 14 エージェント
+|
+|-- skills/           # ワークフロー定義と領域知識（116種類）
+|   |-- coding-standards/, backend-patterns/, frontend-patterns/,
+|   |-- tdd-workflow/, security-review/, continuous-learning-v2/,
+|   |-- docker-patterns/, mcp-server-patterns/, api-design/, ...
+|
+|-- commands/         # スラッシュコマンド（59種類）
+|   |-- tdd.md, plan.md, e2e.md, code-review.md, build-fix.md, ...
+|
+|-- rules/            # ガイドライン（~/.claude/rules/ にコピー）
+|   |-- common/       # 言語非依存
+|   |-- typescript/, python/, golang/, java/, kotlin/,
+|   |-- rust/, cpp/, swift/, php/, perl/, csharp/
+|
+|-- hooks/            # トリガーベースの自動化
+|-- scripts/          # クロスプラットフォーム Node.js スクリプト
+|-- contexts/         # 動的コンテキスト
+|-- examples/         # 設定例
+|-- mcp-configs/      # MCP サーバー設定
+```
 
 ---
 
-## 内容
+## おすすめ Skills & Commands
 
-このリポジトリは **Claude Code プラグイン** です - 直接インストールするか、手動でコンポーネントをコピーできます。
+### まずやるべきこと
 
-| ディレクトリ | 内容 | 数 |
-|---|---|---|
-| `agents/` | 特化型サブエージェント（計画、レビュー、TDD、セキュリティなど） | 10 |
-| `skills/` | ワークフロー定義とドメイン知識 | 15 |
-| `commands/` | スラッシュコマンド（/plan、/tdd、/code-review など） | 27 |
-| `rules/` | 常に従うガイドライン（common + typescript） | 13 |
-| `hooks/` | トリガーベースの自動化 | 1 |
-| `contexts/` | 動的コンテキスト（dev、review、research） | 3 |
-| `scripts/` | クロスプラットフォーム Node.js スクリプト | - |
-| `tests/` | テストスイート | - |
-| `mcp-configs/` | MCP サーバー設定 | 1 |
-| `examples/` | 設定例とセッション例 | 2+ |
+| 種類 | 名前 | 説明 |
+|------|------|------|
+| skill | **continuous-learning-v2** | セッション中のパターンを自動検出し instinct として蓄積 |
+| command | **`/evolve`** | 蓄積した instinct を skill/command/agent に自動変換 |
+| skill | **codebase-onboarding** | 未知のコードベースを体系的に分析・マップ化 |
+| skill | **verification-loop** | コミット前の包括的検証（build/lint/test） |
+| skill | **tdd-workflow** | TDD を強制、80%+ カバレッジ確保 |
 
----
+### 必須 Skills
 
-## インストール
+| 名前 | 説明 |
+|------|------|
+| **coding-standards** | TS/JS/React/Node のベストプラクティス |
+| **security-review** | 認証・入力・シークレットの包括的セキュリティチェック |
+| **blueprint** | 1行の目標を複数セッションの実装計画に変換 |
+| **architecture-decision-records** | アーキテクチャ決定を文脈付きで記録 |
+| **e2e-testing** | Playwright E2E テストパターン |
+| **documentation-lookup** | Context7 MCP で最新ドキュメントを取得 |
 
-### オプション 1: プラグインとしてインストール（推奨）
+### 開発基盤 Skills
 
-`~/.claude/settings.json` に以下を追加：
+| 名前 | 説明 |
+|------|------|
+| **api-design** | REST API 設計パターン |
+| **backend-patterns** | Node.js/Express/Next.js バックエンド |
+| **frontend-patterns** | React/Next.js フロントエンド |
+| **postgres-patterns** | PostgreSQL 最適化、RLS |
+| **docker-patterns** | Docker Compose パターン |
+| **deployment-patterns** | CI/CD、Docker、ロールバック |
+| **database-migrations** | 安全なスキーマ変更 |
+| **strategic-compact** | コンテキスト圧縮の戦略的提案 |
+| **iterative-retrieval** | マルチ agent のコンテキスト問題解決 |
+| **context-budget** | コンテキストウィンドウ消費の監査 |
 
-```json
-{
-  "extraKnownMarketplaces": {
-    "claudecode-tool-ja": {
-      "source": {
-        "source": "github",
-        "repo": "yumezawa101/everything-claude-code_japanese"
-      }
-    }
-  },
-  "enabledPlugins": {
-    "claudecode-tool-ja@claudecode-tool-ja": true
-  }
-}
-```
+### おすすめ Commands
 
-これですべての command、agent、skill、hook に即座にアクセスできます。
+| コマンド | 説明 |
+|---------|------|
+| **`/plan`** | 要件を分析し段階的な実装計画を作成 |
+| **`/tdd`** | テスト駆動開発ワークフローを強制 |
+| **`/code-review`** | セキュリティと品質の包括的レビュー |
+| **`/build-fix`** | ビルドエラーを段階的に修正 |
+| **`/evolve`** | instinct を skill/command/agent に変換 |
+| **`/instinct-status`** | 学習した instinct を信頼度付きで表示 |
+| **`/verify`** | build、型チェック、lint、テストを一括実行 |
+| **`/refactor-clean`** | デッドコードを安全に特定・削除 |
+| **`/orchestrate`** | 複雑なタスクの順次 agent ワークフロー |
 
-> **注意:** Claude Code のプラグインシステムでは rules を自動配布できません。手動でインストールしてください：
->
-> ```bash
-> # リポジトリをクローン
-> git clone https://github.com/yumezawa101/everything-claude-code_japanese.git
->
-> # オプション A: ユーザーレベル（全プロジェクトに適用）
-> cp -r everything-claude-code_japanese/rules/common/* ~/.claude/rules/
-> cp -r everything-claude-code_japanese/rules/typescript/* ~/.claude/rules/   # 使用する言語に合わせて選択
->
-> # オプション B: プロジェクトレベル（現在のプロジェクトのみ）
-> mkdir -p .claude/rules
-> cp -r everything-claude-code_japanese/rules/common/* .claude/rules/
-> cp -r everything-claude-code_japanese/rules/typescript/* .claude/rules/     # 使用する言語に合わせて選択
-> ```
+### 言語/フレームワーク固有（51件）
 
----
+Python, Go, Rust, Java/Spring, Kotlin/Android, PHP/Laravel, Swift/iOS, C++, Perl 等。`skills/` ディレクトリを参照。
 
-### オプション 2: 手動インストール
+### 専門ドメイン（40件）
 
-インストール内容を手動で制御したい場合：
-
-```bash
-# リポジトリをクローン
-git clone https://github.com/yumezawa101/everything-claude-code_japanese.git
-
-# agent を Claude 設定にコピー
-cp everything-claude-code_japanese/agents/*.md ~/.claude/agents/
-
-# rule をコピー（common + 言語固有）
-cp -r everything-claude-code_japanese/rules/common/* ~/.claude/rules/
-cp -r everything-claude-code_japanese/rules/typescript/* ~/.claude/rules/   # 使用する言語に合わせて選択
-
-# command をコピー
-cp everything-claude-code_japanese/commands/*.md ~/.claude/commands/
-
-# skill をコピー
-cp -r everything-claude-code_japanese/skills/* ~/.claude/skills/
-```
-
-#### settings.json に hook を追加
-
-`hooks/hooks.json` から hook を `~/.claude/settings.json` にコピーしてください。
-
-#### MCP を設定
-
-`mcp-configs/mcp-servers.json` から必要な MCP サーバーを `~/.claude.json` にコピーしてください。
-
-**重要:** `YOUR_*_HERE` プレースホルダーを実際の API キーに置き換えてください。
+AI エージェント構築、リサーチ、コンテンツ制作、サプライチェーン、動画編集等。`skills/` ディレクトリを参照。
 
 ---
 
-## 主要コンセプト
+## 要件
 
-### Agents
-
-サブエージェントは限定されたスコープで委譲されたタスクを処理します。例：
-
-```markdown
----
-name: code-reviewer
-description: 品質、セキュリティ、保守性のためにコードをレビューする
-tools: ["Read", "Grep", "Glob", "Bash"]
-model: opus
----
-
-あなたはシニアコードレビュアーです...
-```
-
-### Skills
-
-skill は command または agent によって呼び出されるワークフロー定義です：
-
-```markdown
-# TDD ワークフロー
-
-1. まずインターフェースを定義
-2. 失敗するテストを書く（RED）
-3. 最小限のコードを実装（GREEN）
-4. リファクタリング（IMPROVE）
-5. 80%以上のカバレッジを確認
-```
-
-### Hooks
-
-hook はツールイベントで発火します。例 - console.log について警告：
-
-```json
-{
-  "matcher": "tool == \"Edit\" && tool_input.file_path matches \"\\\\.(ts|tsx|js|jsx)$\"",
-  "hooks": [{
-    "type": "command",
-    "command": "#!/bin/bash\ngrep -n 'console\\.log' \"$file_path\" && echo '[Hook] console.log を削除してください' >&2"
-  }]
-}
-```
-
-### Rules
-
-rule は常に従うガイドラインです。`common/`（言語非依存）+ 言語固有のディレクトリで構成されています：
-
-```
-rules/
-  common/          # 普遍的な原則（常にインストール）
-  typescript/      # TS/JS 固有のパターンとツール
-```
-
-詳細は [`rules/README.md`](rules/README.md) を参照してください。
-
----
-
-## エコシステムツール
-
-### Skill Creator
-
-`/skill-create` コマンドでリポジトリから Claude Code skill を自動生成します：
-
-```bash
-/skill-create                    # 現在のリポジトリを分析
-/skill-create --instincts        # instinct も同時に生成（continuous-learning 用）
-```
-
-git 履歴をローカルで分析し、SKILL.md ファイルを生成します。
-
-### Continuous Learning v2
-
-instinct ベースの学習システムが開発パターンを自動的に学習します：
-
-```bash
-/instinct-status        # 学習済み instinct を信頼度付きで表示
-/instinct-import <file> # 他の環境から instinct をインポート
-/instinct-export        # instinct をエクスポートして共有
-/evolve                 # 関連する instinct をクラスタリングして skill 化
-```
-
-詳細は `skills/continuous-learning-v2/` を参照してください。
-
----
-
-## 動作要件
-
-### Claude Code CLI バージョン
-
-**最低バージョン: v2.1.0 以上**
-
-hook の処理方法の変更により、Claude Code CLI v2.1.0 以上が必要です。
+**Claude Code CLI v2.1.0 以上**
 
 ```bash
 claude --version
 ```
 
-> **注意:** `.claude-plugin/plugin.json` に `"hooks"` フィールドを追加しないでください。v2.1 以降は `hooks/hooks.json` が自動的に読み込まれるため、重複検出エラーの原因になります。
-
 ---
 
-## テストの実行
+## 重要な注記
 
-プラグインには包括的なテストスイートが含まれています：
+すべてのMCPを一度に有効にしないでください。多くのツールを有効にすると、200kのコンテキストウィンドウが70kに縮小される可能性があります。
 
-```bash
-# すべてのテストを実行
-node tests/run-all.js
-
-# 個別のテストファイルを実行
-node tests/lib/utils.test.js
-node tests/lib/package-manager.test.js
-node tests/hooks/hooks.test.js
-```
-
----
-
-## 重要な注意事項
-
-### コンテキストウィンドウ管理
-
-**重要:** すべての MCP を一度に有効にしないでください。有効なツールが多すぎると、200k のコンテキストウィンドウが 70k に縮小する可能性があります。
-
-目安：
-- 20-30 の MCP を設定
-- プロジェクトごとに 10 個未満を有効化
-- アクティブなツールは 80 個未満
-
-プロジェクト設定で `disabledMcpServers` を使用して未使用のものを無効にしてください。
-
-### カスタマイズ
-
-これらの設定は私のワークフロー向けです。あなたは：
-1. 共感できるものから始める
-2. 自分のスタックに合わせて修正
-3. 使わないものは削除
-4. 独自のパターンを追加
+経験則:
+- 20-30のMCPを設定
+- プロジェクトごとに10未満を有効化
+- アクティブなツール80未満
 
 ---
 
 ## ライセンス
 
-MIT - 自由に使用し、必要に応じて修正してください。
+MIT

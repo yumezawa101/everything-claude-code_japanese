@@ -1,14 +1,21 @@
-# TypeScript/JavaScript Security
+---
+paths:
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.js"
+  - "**/*.jsx"
+---
+# TypeScript/JavaScript セキュリティ
 
-> This file extends [common/security.md](../common/security.md) with TypeScript/JavaScript specific content.
+> このファイルは [common/security.md](../common/security.md) を TypeScript/JavaScript 固有のコンテンツで拡張します。
 
-## Secret Management
+## シークレット管理
 
 ```typescript
-// NEVER: Hardcoded secrets
+// 絶対にダメ: ハードコードされたシークレット
 const apiKey = "sk-proj-xxxxx"
 
-// ALWAYS: Environment variables
+// 常にこうする: 環境変数
 const apiKey = process.env.OPENAI_API_KEY
 
 if (!apiKey) {
@@ -16,6 +23,6 @@ if (!apiKey) {
 }
 ```
 
-## Agent Support
+## Agent サポート
 
-- Use **security-reviewer** skill for comprehensive security audits
+- 包括的なセキュリティ監査には **security-reviewer** スキルを使用

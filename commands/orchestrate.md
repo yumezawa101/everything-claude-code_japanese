@@ -1,14 +1,10 @@
----
-description: 複雑なタスクのための順次agentワークフロー。feature、bugfix、refactor、securityの各パイプラインを実行します。
----
+# Orchestrateコマンド
 
-# Orchestrate Command
-
-複雑なタスクのための順次 agent ワークフロー。
+複雑なタスクのための連続的なエージェントワークフロー。
 
 ## 使用方法
 
-`/orchestrate [workflow-type] [task-description]`
+`/orchestrate [ワークフロータイプ] [タスク説明]`
 
 ## ワークフロータイプ
 
@@ -38,63 +34,63 @@ security-reviewer -> code-reviewer -> architect
 
 ## 実行パターン
 
-ワークフロー内の各 agent について:
+ワークフロー内の各エージェントに対して:
 
-1. **agent を呼び出し** - 前の agent からの context を使用
-2. **出力を収集** - 構造化された引き継ぎドキュメントとして
-3. **次の agent に渡す** - チェーン内で
-4. **結果を集約** - 最終レポートに
+1. 前のエージェントからのコンテキストで**エージェントを呼び出す**
+2. 出力を構造化されたハンドオフドキュメントとして**収集**
+3. チェーン内の**次のエージェントに渡す**
+4. 結果を最終レポートに**集約**
 
-## 引き継ぎドキュメント形式
+## ハンドオフドキュメント形式
 
-agent 間で引き継ぎドキュメントを作成:
+エージェント間でハンドオフドキュメントを作成します:
 
 ```markdown
-## HANDOFF: [previous-agent] -> [next-agent]
+## HANDOFF: [前のエージェント] -> [次のエージェント]
 
-### Context
-[実行内容の要約]
+### コンテキスト
+[実行された内容の要約]
 
-### Findings
-[主な発見や決定事項]
+### 発見事項
+[重要な発見または決定]
 
-### Files Modified
-[変更したファイルのリスト]
+### 変更されたファイル
+[変更されたファイルのリスト]
 
-### Open Questions
-[次の agent 向けの未解決事項]
+### 未解決の質問
+[次のエージェントのための未解決項目]
 
-### Recommendations
+### 推奨事項
 [推奨される次のステップ]
 ```
 
-## 例: Feature ワークフロー
+## 例: 機能ワークフロー
 
 ```
 /orchestrate feature "Add user authentication"
 ```
 
-実行内容:
+以下を実行します:
 
-1. **Planner Agent**
+1. **Plannerエージェント**
    - 要件を分析
    - 実装計画を作成
    - 依存関係を特定
    - 出力: `HANDOFF: planner -> tdd-guide`
 
-2. **TDD Guide Agent**
-   - planner の引き継ぎを読み取り
-   - 最初にテストを作成
-   - テストをパスするよう実装
+2. **TDD Guideエージェント**
+   - プランナーのハンドオフを読み込む
+   - 最初にテストを記述
+   - テストに合格するように実装
    - 出力: `HANDOFF: tdd-guide -> code-reviewer`
 
-3. **Code Reviewer Agent**
+3. **Code Reviewerエージェント**
    - 実装をレビュー
    - 問題をチェック
    - 改善を提案
    - 出力: `HANDOFF: code-reviewer -> security-reviewer`
 
-4. **Security Reviewer Agent**
+4. **Security Reviewerエージェント**
    - セキュリティ監査
    - 脆弱性チェック
    - 最終承認
@@ -122,7 +118,7 @@ Security Reviewer: [要約]
 
 FILES CHANGED
 -------------
-[変更されたすべてのファイルのリスト]
+[変更されたすべてのファイルをリスト]
 
 TEST RESULTS
 ------------
@@ -130,36 +126,36 @@ TEST RESULTS
 
 SECURITY STATUS
 ---------------
-[セキュリティ上の発見事項]
+[セキュリティの発見事項]
 
 RECOMMENDATION
 --------------
-[SHIP / NEEDS WORK / BLOCKED]
+[リリース可 / 要修正 / ブロック中]
 ```
 
-## 並列実行
+## 並行実行
 
-独立したチェックについては、agent を並列実行:
+独立したチェックの場合、エージェントを並行実行します:
 
 ```markdown
-### Parallel Phase
+### 並行フェーズ
 同時に実行:
 - code-reviewer (品質)
 - security-reviewer (セキュリティ)
 - architect (設計)
 
-### Merge Results
-出力を単一のレポートに統合
+### 結果のマージ
+出力を単一のレポートに結合
 ```
 
 ## 引数
 
 $ARGUMENTS:
-- `feature <description>` - 完全な機能ワークフロー
-- `bugfix <description>` - バグ修正ワークフロー
-- `refactor <description>` - リファクタリングワークフロー
-- `security <description>` - セキュリティレビューワークフロー
-- `custom <agents> <description>` - カスタム agent シーケンス
+- `feature <説明>` - 完全な機能ワークフロー
+- `bugfix <説明>` - バグ修正ワークフロー
+- `refactor <説明>` - リファクタリングワークフロー
+- `security <説明>` - セキュリティレビューワークフロー
+- `custom <エージェント> <説明>` - カスタムエージェントシーケンス
 
 ## カスタムワークフローの例
 
@@ -169,8 +165,8 @@ $ARGUMENTS:
 
 ## ヒント
 
-1. **複雑な機能は planner から開始** する
-2. **マージ前には必ず code-reviewer を含める**
-3. **認証/決済/個人情報には security-reviewer を使用**
-4. **引き継ぎは簡潔に** - 次の agent に必要な情報に焦点を当てる
-5. **必要に応じて agent 間で検証を実行**
+1. 複雑な機能には**plannerから始める**
+2. マージ前に**常にcode-reviewerを含める**
+3. 認証/決済/個人情報には**security-reviewerを使用**
+4. **ハンドオフを簡潔に保つ** - 次のエージェントが必要とするものに焦点を当てる
+5. 必要に応じて**エージェント間で検証を実行**

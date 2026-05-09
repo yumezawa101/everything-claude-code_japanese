@@ -1,0 +1,503 @@
+---
+name: perl-security
+description: Perlアプリケーションのセキュリティベストプラクティス -- 入力検証、タイントモード、SQLインジェクション防止、安全なファイル操作。
+origin: ECC
+---
+
+# Perl セキュリティベストプラクティス
+
+入力検証、インジェクション防止、セキュアなコーディングプラクティスをカバーする Perl アプリケーション向けの包括的セキュリティガイドラインです。
+
+## 発動条件
+
+- Perl アプリケーションでのユーザー入力処理
+- Perl ウェブアプリケーションの構築（CGI、Mojolicious、Dancer2、Catalyst）
+- Perl コードのセキュリティ脆弱性レビュー
+- ユーザー指定パスを使用したファイル操作の実行
+- Perl からのシステムコマンド実行
+- DBI データベースクエリの記述
+
+## 仕組み
+
+タイント対応の入力境界から始め、外側に向かって進みます: 入力を検証してアンタイントし、ファイルシステムとプロセス実行を制約し、あらゆる場所でパラメータ化された DBI クエリを使用します。以下の例は、ユーザー入力、シェル、またはネットワークに触れる Perl コードを出荷する前に適用すべき安全なデフォルトを示しています。
+
+## タイントモード
+
+Perl のタイントモード（`-T`）は外部ソースからのデータを追跡し、明示的な検証なしに安全でない操作で使用されることを防ぎます。
+
+### タイントモードの有効化
+
+```perl
+#!/usr/bin/perl -T
+use v5.36;
+
+# Tainted: anything from outside the program
+my $input    = $ARGV[0];        # Tainted
+my $env_path = $ENV{PATH};      # Tainted
+my $form     = <STDIN>;         # Tainted
+my $query    = $ENV{QUERY_STRING}; # Tainted
+
+# Sanitize PATH early (required in taint mode)
+$ENV{PATH} = '/usr/local/bin:/usr/bin:/bin';
+delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
+```
+
+### アンタイントパターン
+
+```perl
+use v5.36;
+
+# Good: Validate and untaint with a specific regex
+sub untaint_username($input) {
+    if ($input =~ /^([a-zA-Z0-9_]{3,30})$/) {
+        return $1;  # $1 is untainted
+    }
+    die "Invalid username: must be 3-30 alphanumeric characters\n";
+}
+
+# Good: Validate and untaint a file path
+sub untaint_filename($input) {
+    if ($input =~ m{^([a-zA-Z0-9._-]+)$}) {
+        return $1;
+    }
+    die "Invalid filename: contains unsafe characters\n";
+}
+
+# Bad: Overly permissive untainting (defeats the purpose)
+sub bad_untaint($input) {
+    $input =~ /^(.*)$/s;
+    return $1;  # Accepts ANYTHING — pointless
+}
+```
+
+## 入力検証
+
+### ブロックリストよりも許可リスト
+
+```perl
+use v5.36;
+
+# Good: Allowlist — define exactly what's permitted
+sub validate_sort_field($field) {
+    my %allowed = map { $_ => 1 } qw(name email created_at updated_at);
+    die "Invalid sort field: $field\n" unless $allowed{$field};
+    return $field;
+}
+
+# Good: Validate with specific patterns
+sub validate_email($email) {
+    if ($email =~ /^([a-zA-Z0-9._%+-]+\@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/) {
+        return $1;
+    }
+    die "Invalid email address\n";
+}
+
+sub validate_integer($input) {
+    if ($input =~ /^(-?\d{1,10})$/) {
+        return $1 + 0;  # Coerce to number
+    }
+    die "Invalid integer\n";
+}
+
+# Bad: Blocklist — always incomplete
+sub bad_validate($input) {
+    die "Invalid" if $input =~ /[<>"';&|]/;  # Misses encoded attacks
+    return $input;
+}
+```
+
+### 長さ制約
+
+```perl
+use v5.36;
+
+sub validate_comment($text) {
+    die "Comment is required\n"        unless length($text) > 0;
+    die "Comment exceeds 10000 chars\n" if length($text) > 10_000;
+    return $text;
+}
+```
+
+## 安全な正規表現
+
+### ReDoS 防止
+
+壊滅的バックトラッキングは、重複するパターン上のネストされた量指定子で発生します。
+
+```perl
+use v5.36;
+
+# Bad: Vulnerable to ReDoS (exponential backtracking)
+my $bad_re = qr/^(a+)+$/;           # Nested quantifiers
+my $bad_re2 = qr/^([a-zA-Z]+)*$/;   # Nested quantifiers on class
+my $bad_re3 = qr/^(.*?,){10,}$/;    # Repeated greedy/lazy combo
+
+# Good: Rewrite without nesting
+my $good_re = qr/^a+$/;             # Single quantifier
+my $good_re2 = qr/^[a-zA-Z]+$/;     # Single quantifier on class
+
+# Good: Use possessive quantifiers or atomic groups to prevent backtracking
+my $safe_re = qr/^[a-zA-Z]++$/;             # Possessive (5.10+)
+my $safe_re2 = qr/^(?>a+)$/;                # Atomic group
+
+# Good: Enforce timeout on untrusted patterns
+use POSIX qw(alarm);
+sub safe_match($string, $pattern, $timeout = 2) {
+    my $matched;
+    eval {
+        local $SIG{ALRM} = sub { die "Regex timeout\n" };
+        alarm($timeout);
+        $matched = $string =~ $pattern;
+        alarm(0);
+    };
+    alarm(0);
+    die $@ if $@;
+    return $matched;
+}
+```
+
+## 安全なファイル操作
+
+### 3引数 open
+
+```perl
+use v5.36;
+
+# Good: Three-arg open, lexical filehandle, check return
+sub read_file($path) {
+    open my $fh, '<:encoding(UTF-8)', $path
+        or die "Cannot open '$path': $!\n";
+    local $/;
+    my $content = <$fh>;
+    close $fh;
+    return $content;
+}
+
+# Bad: Two-arg open with user data (command injection)
+sub bad_read($path) {
+    open my $fh, $path;        # If $path = "|rm -rf /", runs command!
+    open my $fh, "< $path";   # Shell metacharacter injection
+}
+```
+
+### TOCTOU 防止とパストラバーサル
+
+```perl
+use v5.36;
+use Fcntl qw(:DEFAULT :flock);
+use File::Spec;
+use Cwd qw(realpath);
+
+# Atomic file creation
+sub create_file_safe($path) {
+    sysopen(my $fh, $path, O_WRONLY | O_CREAT | O_EXCL, 0600)
+        or die "Cannot create '$path': $!\n";
+    return $fh;
+}
+
+# Validate path stays within allowed directory
+sub safe_path($base_dir, $user_path) {
+    my $real = realpath(File::Spec->catfile($base_dir, $user_path))
+        // die "Path does not exist\n";
+    my $base_real = realpath($base_dir)
+        // die "Base dir does not exist\n";
+    die "Path traversal blocked\n" unless $real =~ /^\Q$base_real\E(?:\/|\z)/;
+    return $real;
+}
+```
+
+一時ファイルには `File::Temp` を使用し（`tempfile(UNLINK => 1)`）、競合状態の防止には `flock(LOCK_EX)` を使用します。
+
+## 安全なプロセス実行
+
+### リスト形式の system と exec
+
+```perl
+use v5.36;
+
+# Good: List form — no shell interpolation
+sub run_command(@cmd) {
+    system(@cmd) == 0
+        or die "Command failed: @cmd\n";
+}
+
+run_command('grep', '-r', $user_pattern, '/var/log/app/');
+
+# Good: Capture output safely with IPC::Run3
+use IPC::Run3;
+sub capture_output(@cmd) {
+    my ($stdout, $stderr);
+    run3(\@cmd, \undef, \$stdout, \$stderr);
+    if ($?) {
+        die "Command failed (exit $?): $stderr\n";
+    }
+    return $stdout;
+}
+
+# Bad: String form — shell injection!
+sub bad_search($pattern) {
+    system("grep -r '$pattern' /var/log/app/");  # If $pattern = "'; rm -rf / #"
+}
+
+# Bad: Backticks with interpolation
+my $output = `ls $user_dir`;   # Shell injection risk
+```
+
+外部コマンドの stdout/stderr を安全にキャプチャするには `Capture::Tiny` も使用できます。
+
+## SQL インジェクション防止
+
+### DBI プレースホルダー
+
+```perl
+use v5.36;
+use DBI;
+
+my $dbh = DBI->connect($dsn, $user, $pass, {
+    RaiseError => 1,
+    PrintError => 0,
+    AutoCommit => 1,
+});
+
+# Good: Parameterized queries — always use placeholders
+sub find_user($dbh, $email) {
+    my $sth = $dbh->prepare('SELECT * FROM users WHERE email = ?');
+    $sth->execute($email);
+    return $sth->fetchrow_hashref;
+}
+
+sub search_users($dbh, $name, $status) {
+    my $sth = $dbh->prepare(
+        'SELECT * FROM users WHERE name LIKE ? AND status = ? ORDER BY name'
+    );
+    $sth->execute("%$name%", $status);
+    return $sth->fetchall_arrayref({});
+}
+
+# Bad: String interpolation in SQL (SQLi vulnerability!)
+sub bad_find($dbh, $email) {
+    my $sth = $dbh->prepare("SELECT * FROM users WHERE email = '$email'");
+    # If $email = "' OR 1=1 --", returns all users
+    $sth->execute;
+    return $sth->fetchrow_hashref;
+}
+```
+
+### 動的カラム許可リスト
+
+```perl
+use v5.36;
+
+# Good: Validate column names against an allowlist
+sub order_by($dbh, $column, $direction) {
+    my %allowed_cols = map { $_ => 1 } qw(name email created_at);
+    my %allowed_dirs = map { $_ => 1 } qw(ASC DESC);
+
+    die "Invalid column: $column\n"    unless $allowed_cols{$column};
+    die "Invalid direction: $direction\n" unless $allowed_dirs{uc $direction};
+
+    my $sth = $dbh->prepare("SELECT * FROM users ORDER BY $column $direction");
+    $sth->execute;
+    return $sth->fetchall_arrayref({});
+}
+
+# Bad: Directly interpolating user-chosen column
+sub bad_order($dbh, $column) {
+    $dbh->prepare("SELECT * FROM users ORDER BY $column");  # SQLi!
+}
+```
+
+### DBIx::Class（ORM の安全性）
+
+```perl
+use v5.36;
+
+# DBIx::Class generates safe parameterized queries
+my @users = $schema->resultset('User')->search({
+    status => 'active',
+    email  => { -like => '%@example.com' },
+}, {
+    order_by => { -asc => 'name' },
+    rows     => 50,
+});
+```
+
+## ウェブセキュリティ
+
+### XSS 防止
+
+```perl
+use v5.36;
+use HTML::Entities qw(encode_entities);
+use URI::Escape qw(uri_escape_utf8);
+
+# Good: Encode output for HTML context
+sub safe_html($user_input) {
+    return encode_entities($user_input);
+}
+
+# Good: Encode for URL context
+sub safe_url_param($value) {
+    return uri_escape_utf8($value);
+}
+
+# Good: Encode for JSON context
+use JSON::MaybeXS qw(encode_json);
+sub safe_json($data) {
+    return encode_json($data);  # Handles escaping
+}
+
+# Template auto-escaping (Mojolicious)
+# <%= $user_input %>   — auto-escaped (safe)
+# <%== $raw_html %>    — raw output (dangerous, use only for trusted content)
+
+# Template auto-escaping (Template Toolkit)
+# [% user_input | html %]  — explicit HTML encoding
+
+# Bad: Raw output in HTML
+sub bad_html($input) {
+    print "<div>$input</div>";  # XSS if $input contains <script>
+}
+```
+
+### CSRF 保護
+
+```perl
+use v5.36;
+use Crypt::URandom qw(urandom);
+use MIME::Base64 qw(encode_base64url);
+
+sub generate_csrf_token() {
+    return encode_base64url(urandom(32));
+}
+```
+
+トークンの検証には定数時間比較を使用します。ほとんどのウェブフレームワーク（Mojolicious、Dancer2、Catalyst）にはビルトインの CSRF 保護が備わっています -- 独自実装よりもそちらを推奨します。
+
+### セッションとヘッダーのセキュリティ
+
+```perl
+use v5.36;
+
+# Mojolicious session + headers
+$app->secrets(['long-random-secret-rotated-regularly']);
+$app->sessions->secure(1);          # HTTPS only
+$app->sessions->samesite('Lax');
+
+$app->hook(after_dispatch => sub ($c) {
+    $c->res->headers->header('X-Content-Type-Options' => 'nosniff');
+    $c->res->headers->header('X-Frame-Options'        => 'DENY');
+    $c->res->headers->header('Content-Security-Policy' => "default-src 'self'");
+    $c->res->headers->header('Strict-Transport-Security' => 'max-age=31536000; includeSubDomains');
+});
+```
+
+## 出力エンコーディング
+
+出力は常にそのコンテキストに応じてエンコードします: HTML には `HTML::Entities::encode_entities()`、URL には `URI::Escape::uri_escape_utf8()`、JSON には `JSON::MaybeXS::encode_json()` を使用します。
+
+## CPAN モジュールのセキュリティ
+
+- cpanfile でバージョンを**ピン留め**: `requires 'DBI', '== 1.643';`
+- **メンテナンスされているモジュールを推奨**: MetaCPAN で最近のリリースを確認
+- **依存関係を最小化**: 各依存関係は攻撃対象領域
+
+## セキュリティツール
+
+### perlcritic セキュリティポリシー
+
+```ini
+# .perlcriticrc — security-focused configuration
+severity = 3
+theme = security + core
+
+# Require three-arg open
+[InputOutput::RequireThreeArgOpen]
+severity = 5
+
+# Require checked system calls
+[InputOutput::RequireCheckedSyscalls]
+functions = :builtins
+severity = 4
+
+# Prohibit string eval
+[BuiltinFunctions::ProhibitStringyEval]
+severity = 5
+
+# Prohibit backtick operators
+[InputOutput::ProhibitBacktickOperators]
+severity = 4
+
+# Require taint checking in CGI
+[Modules::RequireTaintChecking]
+severity = 5
+
+# Prohibit two-arg open
+[InputOutput::ProhibitTwoArgOpen]
+severity = 5
+
+# Prohibit bare-word filehandles
+[InputOutput::ProhibitBarewordFileHandles]
+severity = 5
+```
+
+### perlcritic の実行
+
+```bash
+# Check a file
+perlcritic --severity 3 --theme security lib/MyApp/Handler.pm
+
+# Check entire project
+perlcritic --severity 3 --theme security lib/
+
+# CI integration
+perlcritic --severity 4 --theme security --quiet lib/ || exit 1
+```
+
+## クイックセキュリティチェックリスト
+
+| チェック項目 | 確認内容 |
+|---|---|
+| タイントモード | CGI/ウェブスクリプトに `-T` フラグ |
+| 入力検証 | 許可リストパターン、長さ制限 |
+| ファイル操作 | 3引数 open、パストラバーサルチェック |
+| プロセス実行 | リスト形式 system、シェル補間なし |
+| SQL クエリ | DBI プレースホルダー、補間しない |
+| HTML 出力 | `encode_entities()`、テンプレート自動エスケープ |
+| CSRF トークン | 生成済み、状態変更リクエストで検証 |
+| セッション設定 | Secure、HttpOnly、SameSite Cookie |
+| HTTP ヘッダー | CSP、X-Frame-Options、HSTS |
+| 依存関係 | バージョンピン留め、監査済みモジュール |
+| 正規表現の安全性 | ネストされた量指定子なし、アンカーされたパターン |
+| エラーメッセージ | スタックトレースやパスをユーザーに漏洩しない |
+
+## アンチパターン
+
+```perl
+# 1. Two-arg open with user data (command injection)
+open my $fh, $user_input;               # CRITICAL vulnerability
+
+# 2. String-form system (shell injection)
+system("convert $user_file output.png"); # CRITICAL vulnerability
+
+# 3. SQL string interpolation
+$dbh->do("DELETE FROM users WHERE id = $id");  # SQLi
+
+# 4. eval with user input (code injection)
+eval $user_code;                         # Remote code execution
+
+# 5. Trusting $ENV without sanitizing
+my $path = $ENV{UPLOAD_DIR};             # Could be manipulated
+system("ls $path");                      # Double vulnerability
+
+# 6. Disabling taint without validation
+($input) = $input =~ /(.*)/s;           # Lazy untaint — defeats purpose
+
+# 7. Raw user data in HTML
+print "<div>Welcome, $username!</div>";  # XSS
+
+# 8. Unvalidated redirects
+print $cgi->redirect($user_url);         # Open redirect
+```
+
+**注意**: Perl の柔軟性は強力ですが、規律が求められます。ウェブ向けコードにはタイントモードを使用し、すべての入力を許可リストで検証し、すべてのクエリに DBI プレースホルダーを使用し、すべての出力をそのコンテキストに応じてエンコードしてください。多層防御 -- 単一のレイヤーに依存しないこと。

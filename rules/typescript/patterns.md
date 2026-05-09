@@ -1,3 +1,10 @@
+---
+paths:
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.js"
+  - "**/*.jsx"
+---
 # TypeScript/JavaScript パターン
 
 > このファイルは [common/patterns.md](../common/patterns.md) を TypeScript/JavaScript 固有のコンテンツで拡張します。
@@ -17,7 +24,7 @@ interface ApiResponse<T> {
 }
 ```
 
-## カスタム Hook パターン
+## カスタム Hooks パターン
 
 ```typescript
 export function useDebounce<T>(value: T, delay: number): T {
@@ -32,7 +39,7 @@ export function useDebounce<T>(value: T, delay: number): T {
 }
 ```
 
-## リポジトリパターン
+## Repository パターン
 
 ```typescript
 interface Repository<T> {

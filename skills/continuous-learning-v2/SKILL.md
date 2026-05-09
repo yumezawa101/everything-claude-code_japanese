@@ -1,27 +1,27 @@
 ---
 name: continuous-learning-v2
-description: hookを通じてセッションを観察し、信頼度スコアリング付きのアトミックなinstinctを作成し、それらをskill/command/agentに進化させるinstinctベースの学習システム。
+description: フックを介してセッションを観察し、信頼度スコアリング付きのアトミックなインスティンクトを作成し、スキル/コマンド/エージェントに進化させるインスティンクトベースの学習システム。
 version: 2.0.0
 ---
 
-# Continuous Learning v2 - instinctベースアーキテクチャ
+# Continuous Learning v2 - インスティンクトベースアーキテクチャ
 
-アトミックな「instinct」（信頼度スコアリング付きの小さな学習された行動）を通じて、Claude Codeセッションを再利用可能な知識に変換する高度な学習システム。
+Claude Codeセッションを信頼度スコアリング付きの小さな学習済み行動である「インスティンクト」を通じて再利用可能な知識に変える高度な学習システム。
 
 ## v2の新機能
 
 | 機能 | v1 | v2 |
 |---------|----|----|
-| 観察 | Stop hook（セッション終了時） | PreToolUse/PostToolUse（100%信頼性） |
-| 分析 | メインcontext | バックグラウンドagent（Haiku） |
-| 粒度 | 完全なskill | アトミックな「instinct」 |
-| 信頼度 | なし | 0.3-0.9の重み付け |
-| 進化 | 直接skillへ | instinct → クラスター → skill/command/agent |
-| 共有 | なし | instinctのエクスポート/インポート |
+| 観察 | Stopフック（セッション終了） | PreToolUse/PostToolUse（100%信頼性） |
+| 分析 | メインコンテキスト | バックグラウンドエージェント（Haiku） |
+| 粒度 | 完全なスキル | アトミック「インスティンクト」 |
+| 信頼度 | なし | 0.3-0.9重み付け |
+| 進化 | 直接スキルへ | インスティンクト → クラスター → スキル/コマンド/エージェント |
+| 共有 | なし | インスティンクトのエクスポート/インポート |
 
-## instinctモデル
+## インスティンクトモデル
 
-instinctは小さな学習された行動です：
+インスティンクトは小さな学習済み行動です：
 
 ```yaml
 ---
@@ -32,41 +32,41 @@ domain: "code-style"
 source: "session-observation"
 ---
 
-# Prefer Functional Style
+# 関数型スタイルを優先
 
 ## Action
-適切な場合、クラスより関数型パターンを使用する。
+適切な場合はクラスよりも関数型パターンを使用します。
 
 ## Evidence
-- 関数型パターン選好の5インスタンスを観察
-- 2025-01-15にユーザーがクラスベースアプローチを関数型に修正
+- 関数型パターンの優先が5回観察されました
+- ユーザーが2025-01-15にクラスベースのアプローチを関数型に修正しました
 ```
 
 **プロパティ：**
 - **アトミック** — 1つのトリガー、1つのアクション
-- **信頼度で重み付け** — 0.3 = 暫定的、0.9 = ほぼ確実
-- **ドメインタグ付き** — code-style、testing、git、debugging、workflow など
-- **エビデンスに基づく** — 何の観察がそれを作成したかを追跡
+- **信頼度重み付け** — 0.3 = 暫定的、0.9 = ほぼ確実
+- **ドメインタグ付き** — code-style、testing、git、debugging、workflowなど
+- **証拠に基づく** — それを作成した観察を追跡
 
-## 動作の仕組み
+## 仕組み
 
 ```
-セッションアクティビティ
+Session Activity
       │
-      │ hookがプロンプト + ツール使用をキャプチャ（100%信頼性）
+      │ フックがプロンプト + ツール使用をキャプチャ（100%信頼性）
       ▼
 ┌─────────────────────────────────────────┐
 │         observations.jsonl              │
-│   （プロンプト、ツール呼び出し、結果）    │
+│   (prompts, tool calls, outcomes)       │
 └─────────────────────────────────────────┘
       │
-      │ Observer agentが読み取り（バックグラウンド、Haiku）
+      │ Observerエージェントが読み取り（バックグラウンド、Haiku）
       ▼
 ┌─────────────────────────────────────────┐
 │          パターン検出                    │
-│   • ユーザーの修正 → instinct            │
-│   • エラー解決 → instinct                │
-│   • 繰り返しのワークフロー → instinct     │
+│   • ユーザー修正 → インスティンクト      │
+│   • エラー解決 → インスティンクト        │
+│   • 繰り返しワークフロー → インスティンクト │
 └─────────────────────────────────────────┘
       │
       │ 作成/更新
@@ -78,7 +78,7 @@ source: "session-observation"
 │   • use-zod-validation.md (0.6)         │
 └─────────────────────────────────────────┘
       │
-      │ /evolve がクラスタリング
+      │ /evolveクラスター
       ▼
 ┌─────────────────────────────────────────┐
 │              evolved/                   │
@@ -90,9 +90,9 @@ source: "session-observation"
 
 ## クイックスタート
 
-### 1. 観察hookの有効化
+### 1. 観察フックを有効化
 
-`~/.claude/settings.json`に追加してください。
+`~/.claude/settings.json`に追加します。
 
 **プラグインとしてインストールした場合**（推奨）：
 
@@ -117,7 +117,7 @@ source: "session-observation"
 }
 ```
 
-**手動で `~/.claude/skills` にインストールした場合**：
+**`~/.claude/skills`に手動でインストールした場合**：
 
 ```json
 {
@@ -140,32 +140,32 @@ source: "session-observation"
 }
 ```
 
-### 2. ディレクトリ構造の初期化
+### 2. ディレクトリ構造を初期化
 
-Python CLI が自動的に作成しますが、手動で作成することもできます：
+Python CLIが自動的に作成しますが、手動で作成することもできます：
 
 ```bash
 mkdir -p ~/.claude/homunculus/{instincts/{personal,inherited},evolved/{agents,skills,commands}}
 touch ~/.claude/homunculus/observations.jsonl
 ```
 
-### 3. Instinct コマンドの使用
+### 3. インスティンクトコマンドを使用
 
 ```bash
-/instinct-status     # 信頼度スコア付きで学習済みinstinctを表示
-/evolve              # 関連するinstinctをskill/commandにクラスタリング
-/instinct-export     # 共有用にinstinctをエクスポート
-/instinct-import     # 他の人からinstinctをインポート
+/instinct-status     # 信頼度スコア付きの学習済みインスティンクトを表示
+/evolve              # 関連するインスティンクトをスキル/コマンドにクラスター化
+/instinct-export     # 共有のためにインスティンクトをエクスポート
+/instinct-import     # 他の人からインスティンクトをインポート
 ```
 
 ## コマンド
 
 | コマンド | 説明 |
 |---------|-------------|
-| `/instinct-status` | 信頼度とともにすべての学習済みinstinctを表示 |
-| `/evolve` | 関連するinstinctをskill/commandにクラスタリング |
-| `/instinct-export` | 共有用にinstinctをエクスポート |
-| `/instinct-import <file>` | 他の人からinstinctをインポート |
+| `/instinct-status` | すべての学習済みインスティンクトを信頼度と共に表示 |
+| `/evolve` | 関連するインスティンクトをスキル/コマンドにクラスター化 |
+| `/instinct-export` | 共有のためにインスティンクトをエクスポート |
+| `/instinct-import <file>` | 他の人からインスティンクトをインポート |
 
 ## 設定
 
@@ -209,25 +209,25 @@ touch ~/.claude/homunculus/observations.jsonl
 
 ```
 ~/.claude/homunculus/
-├── identity.json           # あなたのプロファイル、技術レベル
+├── identity.json           # プロフィール、技術レベル
 ├── observations.jsonl      # 現在のセッション観察
 ├── observations.archive/   # 処理済み観察
 ├── instincts/
-│   ├── personal/           # 自動学習されたinstinct
-│   └── inherited/          # 他から インポートされたもの
+│   ├── personal/           # 自動学習されたインスティンクト
+│   └── inherited/          # 他の人からインポート
 └── evolved/
-    ├── agents/             # 生成されたスペシャリストagent
-    ├── skills/             # 生成されたskill
-    └── commands/           # 生成されたcommand
+    ├── agents/             # 生成された専門エージェント
+    ├── skills/             # 生成されたスキル
+    └── commands/           # 生成されたコマンド
 ```
 
 ## Skill Creatorとの統合
 
 [Skill Creator GitHub App](https://skill-creator.app)を使用すると、**両方**が生成されます：
 - 従来のSKILL.mdファイル（後方互換性のため）
-- instinctコレクション（v2学習システム用）
+- インスティンクトコレクション（v2学習システム用）
 
-リポジトリ分析からのinstinctは`source: "repo-analysis"`を持ち、ソースリポジトリURLを含みます。
+リポジトリ分析からのインスティンクトには`source: "repo-analysis"`があり、ソースリポジトリURLが含まれます。
 
 ## 信頼度スコアリング
 
@@ -237,48 +237,48 @@ touch ~/.claude/homunculus/observations.jsonl
 |-------|---------|----------|
 | 0.3 | 暫定的 | 提案されるが強制されない |
 | 0.5 | 中程度 | 関連する場合に適用 |
-| 0.7 | 強い | 適用の自動承認 |
+| 0.7 | 強い | 適用が自動承認される |
 | 0.9 | ほぼ確実 | コア動作 |
 
 **信頼度が上がる**場合：
 - パターンが繰り返し観察される
 - ユーザーが提案された動作を修正しない
-- 他のソースからの類似instinctが一致する
+- 他のソースからの類似インスティンクトが一致する
 
 **信頼度が下がる**場合：
 - ユーザーが明示的に動作を修正する
 - パターンが長期間観察されない
-- 矛盾するエビデンスが現れる
+- 矛盾する証拠が現れる
 
-## 観察にhookを使う理由 vs skill
+## 観察にスキルではなくフックを使用する理由は？
 
-> 「v1は観察にskillを使用していました。skillは確率的で、Claudeの判断に基づいて約50-80%の確率で発火します。」
+> 「v1はスキルに依存して観察していました。スキルは確率的で、Claudeの判断に基づいて約50-80%の確率で発火します。」
 
-hookは**100%の確率**で決定論的に発火します。これは：
+フックは**100%の確率で**決定論的に発火します。これは次のことを意味します：
 - すべてのツール呼び出しが観察される
 - パターンが見逃されない
-- 学習が包括的になる
+- 学習が包括的
 
 ## 後方互換性
 
 v2はv1と完全に互換性があります：
-- 既存の`~/.claude/skills/learned/` skillは引き続き機能
-- Stop hookは引き続き実行（ただし現在はv2にもフィード）
+- 既存の`~/.claude/skills/learned/`スキルは引き続き機能
+- Stopフックは引き続き実行される（ただしv2にもフィードされる）
 - 段階的な移行パス：両方を並行して実行
 
 ## プライバシー
 
-- 観察はあなたのマシンに**ローカル**に保存
-- **instinct**（パターン）のみがエクスポート可能
-- 実際のコードや会話内容は共有されない
-- 何がエクスポートされるかはあなたがコントロール
+- 観察はマシン上で**ローカル**に保持されます
+- **インスティンクト**（パターン）のみをエクスポート可能
+- 実際のコードや会話内容は共有されません
+- エクスポートする内容を制御できます
 
 ## 関連
 
-- [Skill Creator](https://skill-creator.app) - リポジトリ履歴からinstinctを生成
-- [Homunculus](https://github.com/humanplane/homunculus) - v2アーキテクチャのインスピレーション
-- [The Longform Guide](https://x.com/affaanmustafa/status/2014040193557471352) - continuous learningセクション
+- [Skill Creator](https://skill-creator.app) - リポジトリ履歴からインスティンクトを生成
+- Homunculus - v2アーキテクチャのインスピレーション（アトミック観察、信頼度スコアリング、インスティンクト進化パイプライン）
+- [The Longform Guide](https://x.com/affaanmustafa/status/2014040193557471352) - 継続的学習セクション
 
 ---
 
-*instinctベースの学習：一度の観察からClaudeにあなたのパターンを教える。*
+*インスティンクトベースの学習：一度に1つの観察で、Claudeにあなたのパターンを教える。*

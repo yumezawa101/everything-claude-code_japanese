@@ -1,64 +1,64 @@
 ---
 name: security-review
-description: 認証の追加、ユーザー入力の処理、シークレットの取り扱い、APIエンドポイントの作成、支払いや機密機能の実装時にこのskillを使用。包括的なセキュリティチェックリストとパターンを提供。
+description: 認証の追加、ユーザー入力の処理、シークレットの操作、APIエンドポイントの作成、支払い/機密機能の実装時にこのスキルを使用します。包括的なセキュリティチェックリストとパターンを提供します。
 ---
 
-# セキュリティレビュー skill
+# セキュリティレビュースキル
 
-このskillは、すべてのコードがセキュリティのベストプラクティスに従い、潜在的な脆弱性を特定することを確認します。
+このスキルは、すべてのコードがセキュリティのベストプラクティスに従い、潜在的な脆弱性を特定することを保証します。
 
 ## 有効化するタイミング
 
-- 認証または認可を実装する時
-- ユーザー入力やファイルアップロードを処理する時
-- 新しいAPIエンドポイントを作成する時
-- シークレットや認証情報を扱う時
-- 支払い機能を実装する時
-- 機密データを保存または送信する時
-- サードパーティAPIを統合する時
+- 認証または認可の実装
+- ユーザー入力またはファイルアップロードの処理
+- 新しいAPIエンドポイントの作成
+- シークレットまたは資格情報の操作
+- 支払い機能の実装
+- 機密データの保存または送信
+- サードパーティAPIの統合
 
 ## セキュリティチェックリスト
 
 ### 1. シークレット管理
 
-#### 絶対にやってはいけないこと
+#### ❌ 絶対にしないこと
 ```typescript
 const apiKey = "sk-proj-xxxxx"  // ハードコードされたシークレット
 const dbPassword = "password123" // ソースコード内
 ```
 
-#### 常にやるべきこと
+#### ✅ 常にすること
 ```typescript
 const apiKey = process.env.OPENAI_API_KEY
 const dbUrl = process.env.DATABASE_URL
 
-// シークレットの存在を確認
+// シークレットが存在することを確認
 if (!apiKey) {
   throw new Error('OPENAI_API_KEY not configured')
 }
 ```
 
-#### 確認項目
-- [ ] APIキー、トークン、パスワードがハードコードされていない
-- [ ] すべてのシークレットが環境変数に格納されている
-- [ ] `.env.local`が.gitignoreに含まれている
-- [ ] git履歴にシークレットが含まれていない
-- [ ] 本番シークレットがホスティングプラットフォーム（Vercel、Railway）に設定されている
+#### 検証ステップ
+- [ ] ハードコードされたAPIキー、トークン、パスワードなし
+- [ ] すべてのシークレットを環境変数に
+- [ ] `.env.local`を.gitignoreに
+- [ ] git履歴にシークレットなし
+- [ ] 本番シークレットはホスティングプラットフォーム（Vercel、Railway）に
 
-### 2. 入力バリデーション
+### 2. 入力検証
 
-#### 常にユーザー入力をバリデーション
+#### 常にユーザー入力を検証
 ```typescript
 import { z } from 'zod'
 
-// バリデーションスキーマを定義
+// 検証スキーマを定義
 const CreateUserSchema = z.object({
   email: z.string().email(),
   name: z.string().min(1).max(100),
   age: z.number().int().min(0).max(150)
 })
 
-// 処理前にバリデーション
+// 処理前に検証
 export async function createUser(input: unknown) {
   try {
     const validated = CreateUserSchema.parse(input)
@@ -72,7 +72,7 @@ export async function createUser(input: unknown) {
 }
 ```
 
-#### ファイルアップロードのバリデーション
+#### ファイルアップロード検証
 ```typescript
 function validateFileUpload(file: File) {
   // サイズチェック（最大5MB）
@@ -98,51 +98,51 @@ function validateFileUpload(file: File) {
 }
 ```
 
-#### 確認項目
-- [ ] すべてのユーザー入力がスキーマでバリデーションされている
-- [ ] ファイルアップロードが制限されている（サイズ、タイプ、拡張子）
-- [ ] クエリでユーザー入力を直接使用していない
-- [ ] ホワイトリストバリデーション（ブラックリストではない）
-- [ ] エラーメッセージが機密情報を漏洩しない
+#### 検証ステップ
+- [ ] すべてのユーザー入力をスキーマで検証
+- [ ] ファイルアップロードを制限（サイズ、タイプ、拡張子）
+- [ ] クエリでのユーザー入力の直接使用なし
+- [ ] ホワイトリスト検証（ブラックリストではなく）
+- [ ] エラーメッセージが機密情報を漏らさない
 
 ### 3. SQLインジェクション防止
 
-#### 絶対にSQLを連結してはいけない
+#### ❌ 絶対にSQLを連結しない
 ```typescript
 // 危険 - SQLインジェクションの脆弱性
 const query = `SELECT * FROM users WHERE email = '${userEmail}'`
 await db.query(query)
 ```
 
-#### 常にパラメータ化クエリを使用
+#### ✅ 常にパラメータ化されたクエリを使用
 ```typescript
-// 安全 - パラメータ化クエリ
+// 安全 - パラメータ化されたクエリ
 const { data } = await supabase
   .from('users')
   .select('*')
   .eq('email', userEmail)
 
-// または生SQLで
+// または生のSQLで
 await db.query(
   'SELECT * FROM users WHERE email = $1',
   [userEmail]
 )
 ```
 
-#### 確認項目
-- [ ] すべてのデータベースクエリがパラメータ化クエリを使用
-- [ ] SQLで文字列連結をしていない
-- [ ] ORM/クエリビルダーが正しく使用されている
+#### 検証ステップ
+- [ ] すべてのデータベースクエリがパラメータ化されたクエリを使用
+- [ ] SQLでの文字列連結なし
+- [ ] ORM/クエリビルダーを正しく使用
 - [ ] Supabaseクエリが適切にサニタイズされている
 
 ### 4. 認証と認可
 
-#### JWTトークンの取り扱い
+#### JWTトークン処理
 ```typescript
-// 間違い: localStorage（XSSに脆弱）
+// ❌ 誤り：localStorage（XSSに脆弱）
 localStorage.setItem('token', token)
 
-// 正しい: httpOnlyクッキー
+// ✅ 正解：httpOnly Cookie
 res.setHeader('Set-Cookie',
   `token=${token}; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`)
 ```
@@ -167,27 +167,27 @@ export async function deleteUser(userId: string, requesterId: string) {
 }
 ```
 
-#### Row Level Security（Supabase）
+#### 行レベルセキュリティ (Supabase)
 ```sql
 -- すべてのテーブルでRLSを有効化
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 
--- ユーザーは自分のデータのみ表示可能
+-- ユーザーは自分のデータのみを表示できる
 CREATE POLICY "Users view own data"
   ON users FOR SELECT
   USING (auth.uid() = id);
 
--- ユーザーは自分のデータのみ更新可能
+-- ユーザーは自分のデータのみを更新できる
 CREATE POLICY "Users update own data"
   ON users FOR UPDATE
   USING (auth.uid() = id);
 ```
 
-#### 確認項目
-- [ ] トークンがhttpOnlyクッキーに保存されている（localStorageではない）
-- [ ] 機密操作の前に認可チェックがある
-- [ ] SupabaseでRow Level Securityが有効
-- [ ] ロールベースのアクセス制御が実装されている
+#### 検証ステップ
+- [ ] トークンはhttpOnly Cookieに保存（localStorageではなく）
+- [ ] 機密操作前の認可チェック
+- [ ] SupabaseでRow Level Securityを有効化
+- [ ] ロールベースのアクセス制御を実装
 - [ ] セッション管理が安全
 
 ### 5. XSS防止
@@ -206,7 +206,7 @@ function renderUserContent(html: string) {
 }
 ```
 
-#### Content Security Policy
+#### コンテンツセキュリティポリシー
 ```typescript
 // next.config.js
 const securityHeaders = [
@@ -224,11 +224,11 @@ const securityHeaders = [
 ]
 ```
 
-#### 確認項目
-- [ ] ユーザー提供のHTMLがサニタイズされている
-- [ ] CSPヘッダーが設定されている
-- [ ] 未検証の動的コンテンツレンダリングがない
-- [ ] Reactの組み込みXSS保護が使用されている
+#### 検証ステップ
+- [ ] ユーザー提供のHTMLをサニタイズ
+- [ ] CSPヘッダーを設定
+- [ ] 検証されていない動的コンテンツのレンダリングなし
+- [ ] Reactの組み込みXSS保護を使用
 
 ### 6. CSRF保護
 
@@ -250,16 +250,16 @@ export async function POST(request: Request) {
 }
 ```
 
-#### SameSiteクッキー
+#### SameSite Cookie
 ```typescript
 res.setHeader('Set-Cookie',
   `session=${sessionId}; HttpOnly; Secure; SameSite=Strict`)
 ```
 
-#### 確認項目
-- [ ] 状態変更操作にCSRFトークンがある
-- [ ] すべてのクッキーにSameSite=Strict
-- [ ] ダブルサブミットクッキーパターンが実装されている
+#### 検証ステップ
+- [ ] 状態変更操作でCSRFトークン
+- [ ] すべてのCookieでSameSite=Strict
+- [ ] ダブルサブミットCookieパターンを実装
 
 ### 7. レート制限
 
@@ -279,7 +279,7 @@ app.use('/api/', limiter)
 
 #### 高コスト操作
 ```typescript
-// 検索に対する厳格なレート制限
+// 検索の積極的なレート制限
 const searchLimiter = rateLimit({
   windowMs: 60 * 1000, // 1分
   max: 10, // 1分あたり10リクエスト
@@ -289,28 +289,28 @@ const searchLimiter = rateLimit({
 app.use('/api/search', searchLimiter)
 ```
 
-#### 確認項目
-- [ ] すべてのAPIエンドポイントにレート制限がある
-- [ ] 高コスト操作には厳格な制限
+#### 検証ステップ
+- [ ] すべてのAPIエンドポイントでレート制限
+- [ ] 高コスト操作でより厳しい制限
 - [ ] IPベースのレート制限
 - [ ] ユーザーベースのレート制限（認証済み）
 
 ### 8. 機密データの露出
 
-#### ログ記録
+#### ロギング
 ```typescript
-// 間違い: 機密データをログ
+// ❌ 誤り：機密データをログに記録
 console.log('User login:', { email, password })
 console.log('Payment:', { cardNumber, cvv })
 
-// 正しい: 機密データを編集
+// ✅ 正解：機密データを編集
 console.log('User login:', { email, userId })
 console.log('Payment:', { last4: card.last4, userId })
 ```
 
 #### エラーメッセージ
 ```typescript
-// 間違い: 内部詳細を露出
+// ❌ 誤り：内部詳細を露出
 catch (error) {
   return NextResponse.json(
     { error: error.message, stack: error.stack },
@@ -318,7 +318,7 @@ catch (error) {
   )
 }
 
-// 正しい: 一般的なエラーメッセージ
+// ✅ 正解：一般的なエラーメッセージ
 catch (error) {
   console.error('Internal error:', error)
   return NextResponse.json(
@@ -328,13 +328,13 @@ catch (error) {
 }
 ```
 
-#### 確認項目
-- [ ] ログにパスワード、トークン、シークレットがない
-- [ ] ユーザー向けのエラーメッセージが一般的
-- [ ] 詳細エラーはサーバーログのみ
-- [ ] ユーザーにスタックトレースが露出していない
+#### 検証ステップ
+- [ ] ログにパスワード、トークン、シークレットなし
+- [ ] ユーザー向けの一般的なエラーメッセージ
+- [ ] 詳細なエラーはサーバーログのみ
+- [ ] ユーザーにスタックトレースを露出しない
 
-### 9. ブロックチェーンセキュリティ（Solana）
+### 9. ブロックチェーンセキュリティ (Solana)
 
 #### ウォレット検証
 ```typescript
@@ -361,7 +361,7 @@ async function verifyWalletOwnership(
 #### トランザクション検証
 ```typescript
 async function verifyTransaction(transaction: Transaction) {
-  // 受取人を検証
+  // 受信者を検証
   if (transaction.to !== expectedRecipient) {
     throw new Error('Invalid recipient')
   }
@@ -371,7 +371,7 @@ async function verifyTransaction(transaction: Transaction) {
     throw new Error('Amount exceeds limit')
   }
 
-  // ユーザーが十分な残高を持っているか確認
+  // ユーザーに十分な残高があることを確認
   const balance = await getBalance(transaction.from)
   if (balance < transaction.amount) {
     throw new Error('Insufficient balance')
@@ -381,13 +381,13 @@ async function verifyTransaction(transaction: Transaction) {
 }
 ```
 
-#### 確認項目
-- [ ] ウォレット署名が検証されている
-- [ ] トランザクション詳細が検証されている
-- [ ] トランザクション前に残高チェック
-- [ ] 盲目的なトランザクション署名がない
+#### 検証ステップ
+- [ ] ウォレット署名を検証
+- [ ] トランザクション詳細を検証
+- [ ] トランザクション前の残高チェック
+- [ ] ブラインドトランザクション署名なし
 
-### 10. 依存関係のセキュリティ
+### 10. 依存関係セキュリティ
 
 #### 定期的な更新
 ```bash
@@ -406,23 +406,23 @@ npm outdated
 
 #### ロックファイル
 ```bash
-# 常にロックファイルをcommit
+# 常にロックファイルをコミット
 git add package-lock.json
 
-# 再現可能なビルドのためCI/CDで使用
+# CI/CDで再現可能なビルドに使用
 npm ci  # npm installの代わりに
 ```
 
-#### 確認項目
+#### 検証ステップ
 - [ ] 依存関係が最新
-- [ ] 既知の脆弱性がない（npm auditがクリーン）
-- [ ] ロックファイルがcommitされている
-- [ ] GitHubでDependabotが有効
+- [ ] 既知の脆弱性なし（npm auditクリーン）
+- [ ] ロックファイルをコミット
+- [ ] GitHubでDependabotを有効化
 - [ ] 定期的なセキュリティ更新
 
 ## セキュリティテスト
 
-### 自動化セキュリティテスト
+### 自動セキュリティテスト
 ```typescript
 // 認証をテスト
 test('requires authentication', async () => {
@@ -438,7 +438,7 @@ test('requires admin role', async () => {
   expect(response.status).toBe(403)
 })
 
-// 入力バリデーションをテスト
+// 入力検証をテスト
 test('rejects invalid input', async () => {
   const response = await fetch('/api/users', {
     method: 'POST',
@@ -462,25 +462,25 @@ test('enforces rate limits', async () => {
 
 ## デプロイ前セキュリティチェックリスト
 
-本番デプロイ前に必ず確認：
+すべての本番デプロイメントの前に：
 
-- [ ] **シークレット**: ハードコードされたシークレットがない、すべて環境変数に
-- [ ] **入力バリデーション**: すべてのユーザー入力がバリデーションされている
-- [ ] **SQLインジェクション**: すべてのクエリがパラメータ化されている
-- [ ] **XSS**: ユーザーコンテンツがサニタイズされている
-- [ ] **CSRF**: 保護が有効
-- [ ] **認証**: 適切なトークン処理
-- [ ] **認可**: ロールチェックが実施されている
-- [ ] **レート制限**: すべてのエンドポイントで有効
-- [ ] **HTTPS**: 本番環境で強制
-- [ ] **セキュリティヘッダー**: CSP、X-Frame-Optionsが設定されている
-- [ ] **エラー処理**: エラーに機密データがない
-- [ ] **ログ記録**: 機密データがログに記録されていない
-- [ ] **依存関係**: 最新で脆弱性がない
-- [ ] **Row Level Security**: Supabaseで有効
-- [ ] **CORS**: 適切に設定されている
-- [ ] **ファイルアップロード**: バリデーション済み（サイズ、タイプ）
-- [ ] **ウォレット署名**: 検証済み（ブロックチェーンの場合）
+- [ ] **シークレット**：ハードコードされたシークレットなし、すべて環境変数に
+- [ ] **入力検証**：すべてのユーザー入力を検証
+- [ ] **SQLインジェクション**：すべてのクエリをパラメータ化
+- [ ] **XSS**：ユーザーコンテンツをサニタイズ
+- [ ] **CSRF**：保護を有効化
+- [ ] **認証**：適切なトークン処理
+- [ ] **認可**：ロールチェックを配置
+- [ ] **レート制限**：すべてのエンドポイントで有効化
+- [ ] **HTTPS**：本番で強制
+- [ ] **セキュリティヘッダー**：CSP、X-Frame-Optionsを設定
+- [ ] **エラー処理**：エラーに機密データなし
+- [ ] **ロギング**：ログに機密データなし
+- [ ] **依存関係**：最新、脆弱性なし
+- [ ] **Row Level Security**：Supabaseで有効化
+- [ ] **CORS**：適切に設定
+- [ ] **ファイルアップロード**：検証済み（サイズ、タイプ）
+- [ ] **ウォレット署名**：検証済み（ブロックチェーンの場合）
 
 ## リソース
 
@@ -491,4 +491,4 @@ test('enforces rate limits', async () => {
 
 ---
 
-**覚えておくこと**: セキュリティはオプションではありません。1つの脆弱性がプラットフォーム全体を危険にさらす可能性があります。疑わしい場合は、より慎重な側に立ってください。
+**覚えておいてください**：セキュリティはオプションではありません。1つの脆弱性がプラットフォーム全体を危険にさらす可能性があります。疑わしい場合は、慎重に判断してください。

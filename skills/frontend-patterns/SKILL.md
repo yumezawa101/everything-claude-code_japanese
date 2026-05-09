@@ -5,14 +5,14 @@ description: React、Next.js、状態管理、パフォーマンス最適化、U
 
 # フロントエンド開発パターン
 
-React、Next.js、および高パフォーマンスなユーザーインターフェースのためのモダンなフロントエンドパターン。
+React、Next.js、高性能ユーザーインターフェースのためのモダンなフロントエンドパターン。
 
 ## コンポーネントパターン
 
 ### 継承よりコンポジション
 
 ```typescript
-// 良い例: コンポーネントのコンポジション
+// ✅ GOOD: Component composition
 interface CardProps {
   children: React.ReactNode
   variant?: 'default' | 'outlined'
@@ -30,7 +30,7 @@ export function CardBody({ children }: { children: React.ReactNode }) {
   return <div className="card-body">{children}</div>
 }
 
-// 使用例
+// Usage
 <Card>
   <CardHeader>Title</CardHeader>
   <CardBody>Content</CardBody>
@@ -78,7 +78,7 @@ export function Tab({ id, children }: { id: string, children: React.ReactNode })
   )
 }
 
-// 使用例
+// Usage
 <Tabs defaultTab="overview">
   <TabList>
     <Tab id="overview">Overview</Tab>
@@ -87,7 +87,7 @@ export function Tab({ id, children }: { id: string, children: React.ReactNode })
 </Tabs>
 ```
 
-### Render Propsパターン
+### レンダープロップパターン
 
 ```typescript
 interface DataLoaderProps<T> {
@@ -111,7 +111,7 @@ export function DataLoader<T>({ url, children }: DataLoaderProps<T>) {
   return <>{children(data, loading, error)}</>
 }
 
-// 使用例
+// Usage
 <DataLoader<Market[]> url="/api/markets">
   {(markets, loading, error) => {
     if (loading) return <Spinner />
@@ -121,9 +121,9 @@ export function DataLoader<T>({ url, children }: DataLoaderProps<T>) {
 </DataLoader>
 ```
 
-## カスタムHooksパターン
+## カスタムフックパターン
 
-### 状態管理Hook
+### 状態管理フック
 
 ```typescript
 export function useToggle(initialValue = false): [boolean, () => void] {
@@ -136,11 +136,11 @@ export function useToggle(initialValue = false): [boolean, () => void] {
   return [value, toggle]
 }
 
-// 使用例
+// Usage
 const [isOpen, toggleOpen] = useToggle()
 ```
 
-### 非同期データ取得Hook
+### 非同期データ取得フック
 
 ```typescript
 interface UseQueryOptions<T> {
@@ -184,7 +184,7 @@ export function useQuery<T>(
   return { data, error, loading, refetch }
 }
 
-// 使用例
+// Usage
 const { data: markets, loading, error, refetch } = useQuery(
   'markets',
   () => fetch('/api/markets').then(r => r.json()),
@@ -195,7 +195,7 @@ const { data: markets, loading, error, refetch } = useQuery(
 )
 ```
 
-### DebounceのHook
+### デバウンスフック
 
 ```typescript
 export function useDebounce<T>(value: T, delay: number): T {
@@ -212,7 +212,7 @@ export function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue
 }
 
-// 使用例
+// Usage
 const [searchQuery, setSearchQuery] = useState('')
 const debouncedQuery = useDebounce(searchQuery, 500)
 
@@ -283,17 +283,17 @@ export function useMarkets() {
 ### メモ化
 
 ```typescript
-// useMemo: 高コストな計算に使用
+// ✅ useMemo for expensive computations
 const sortedMarkets = useMemo(() => {
   return markets.sort((a, b) => b.volume - a.volume)
 }, [markets])
 
-// useCallback: 子コンポーネントに渡す関数に使用
+// ✅ useCallback for functions passed to children
 const handleSearch = useCallback((query: string) => {
   setSearchQuery(query)
 }, [])
 
-// React.memo: 純粋なコンポーネントに使用
+// ✅ React.memo for pure components
 export const MarketCard = React.memo<MarketCardProps>(({ market }) => {
   return (
     <div className="market-card">
@@ -309,7 +309,7 @@ export const MarketCard = React.memo<MarketCardProps>(({ market }) => {
 ```typescript
 import { lazy, Suspense } from 'react'
 
-// 重いコンポーネントを遅延読み込み
+// ✅ Lazy load heavy components
 const HeavyChart = lazy(() => import('./HeavyChart'))
 const ThreeJsBackground = lazy(() => import('./ThreeJsBackground'))
 
@@ -339,8 +339,8 @@ export function VirtualMarketList({ markets }: { markets: Market[] }) {
   const virtualizer = useVirtualizer({
     count: markets.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 100,  // 推定行の高さ
-    overscan: 5  // 追加でレンダリングするアイテム数
+    estimateSize: () => 100,  // Estimated row height
+    overscan: 5  // Extra items to render
   })
 
   return (
@@ -426,9 +426,9 @@ export function CreateMarketForm() {
 
     try {
       await createMarket(formData)
-      // 成功時の処理
+      // Success handling
     } catch (error) {
-      // エラー処理
+      // Error handling
     }
   }
 
@@ -441,7 +441,7 @@ export function CreateMarketForm() {
       />
       {errors.name && <span className="error">{errors.name}</span>}
 
-      {/* その他のフィールド */}
+      {/* Other fields */}
 
       <button type="submit">Create Market</button>
     </form>
@@ -449,7 +449,7 @@ export function CreateMarketForm() {
 }
 ```
 
-## Error Boundaryパターン
+## エラーバウンダリパターン
 
 ```typescript
 interface ErrorBoundaryState {
@@ -491,7 +491,7 @@ export class ErrorBoundary extends React.Component<
   }
 }
 
-// 使用例
+// Usage
 <ErrorBoundary>
   <App />
 </ErrorBoundary>
@@ -504,7 +504,7 @@ export class ErrorBoundary extends React.Component<
 ```typescript
 import { motion, AnimatePresence } from 'framer-motion'
 
-// リストアニメーション
+// ✅ List animations
 export function AnimatedMarketList({ markets }: { markets: Market[] }) {
   return (
     <AnimatePresence>
@@ -523,7 +523,7 @@ export function AnimatedMarketList({ markets }: { markets: Market[] }) {
   )
 }
 
-// モーダルアニメーション
+// ✅ Modal animations
 export function Modal({ isOpen, onClose, children }: ModalProps) {
   return (
     <AnimatePresence>
@@ -588,7 +588,7 @@ export function Dropdown({ options, onSelect }: DropdownProps) {
       aria-haspopup="listbox"
       onKeyDown={handleKeyDown}
     >
-      {/* ドロップダウンの実装 */}
+      {/* Dropdown implementation */}
     </div>
   )
 }
@@ -603,13 +603,13 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
 
   useEffect(() => {
     if (isOpen) {
-      // 現在フォーカスされている要素を保存
+      // Save currently focused element
       previousFocusRef.current = document.activeElement as HTMLElement
 
-      // モーダルにフォーカス
+      // Focus modal
       modalRef.current?.focus()
     } else {
-      // 閉じるときにフォーカスを復元
+      // Restore focus when closing
       previousFocusRef.current?.focus()
     }
   }, [isOpen])
@@ -628,4 +628,4 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
 }
 ```
 
-**覚えておくこと**: モダンなフロントエンドパターンは、保守性が高く高パフォーマンスなユーザーインターフェースを実現します。プロジェクトの複雑さに合ったパターンを選択してください。
+**覚えておいてください**: モダンなフロントエンドパターンにより、保守可能で高性能なユーザーインターフェースを実装できます。プロジェクトの複雑さに適したパターンを選択してください。
