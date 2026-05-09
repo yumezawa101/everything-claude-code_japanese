@@ -8,6 +8,7 @@
 rules/
 ├── common/          # 言語に依存しない原則（常にインストール）
 │   ├── coding-style.md
+│   ├── development-workflow.md
 │   ├── git-workflow.md
 │   ├── testing.md
 │   ├── performance.md
@@ -15,11 +16,7 @@ rules/
 │   ├── hooks.md
 │   ├── agents.md
 │   └── security.md
-├── typescript/      # TypeScript/JavaScript 固有
-├── python/          # Python 固有
-├── golang/          # Go 固有
-├── swift/           # Swift 固有
-└── php/             # PHP 固有
+└── typescript/      # TypeScript/JavaScript 固有
 ```
 
 - **common/** には普遍的な原則が含まれています。言語固有のコード例は含みません。
@@ -27,21 +24,7 @@ rules/
 
 ## インストール
 
-### オプション 1: インストールスクリプト（推奨）
-
-```bash
-# common + 1つ以上の言語固有ルールセットをインストール
-./install.sh typescript
-./install.sh python
-./install.sh golang
-./install.sh swift
-./install.sh php
-
-# 複数の言語を一度にインストール
-./install.sh typescript python
-```
-
-### オプション 2: 手動インストール
+### 手動インストール
 
 > **重要:** ディレクトリ全体をコピーしてください。`/*` でフラット化しないでください。
 > Common と言語固有ディレクトリには同じ名前のファイルが含まれています。
@@ -52,52 +35,25 @@ rules/
 # common ルールをインストール（すべてのプロジェクトに必須）
 cp -r rules/common ~/.claude/rules/common
 
-# プロジェクトの技術スタックに応じて言語固有ルールをインストール
+# TypeScript/JavaScript 固有ルール
 cp -r rules/typescript ~/.claude/rules/typescript
-cp -r rules/python ~/.claude/rules/python
-cp -r rules/golang ~/.claude/rules/golang
-cp -r rules/swift ~/.claude/rules/swift
-cp -r rules/php ~/.claude/rules/php
 
-# 注意！実際のプロジェクト要件に応じて設定してください。ここでの設定は参考例です。
+# 注意！実際のプロジェクト要件に応じて設定してください。
 ```
 
 ## ルール vs スキル
 
 - **ルール** は広範に適用される標準、規約、チェックリストを定義します（例: 「80% テストカバレッジ」、「ハードコードされたシークレットなし」）。
-- **スキル** （`skills/` ディレクトリ）は特定のタスクに対する詳細で実行可能な参考資料を提供します（例: `python-patterns`、`golang-testing`）。
+- **スキル** （`skills/` ディレクトリ）は特定のタスクに対する詳細で実行可能な参考資料を提供します（例: `coding-standards`、`tdd-workflow`）。
 
 言語固有のルールファイルは必要に応じて関連するスキルを参照します。ルールは *何を* するかを示し、スキルは *どのように* するかを示します。
-
-## 新しい言語の追加
-
-新しい言語（例: `rust/`）のサポートを追加するには:
-
-1. `rules/rust/` ディレクトリを作成
-2. common ルールを拡張するファイルを追加:
-   - `coding-style.md` -- フォーマットツール、イディオム、エラーハンドリングパターン
-   - `testing.md` -- テストフレームワーク、カバレッジツール、テスト構成
-   - `patterns.md` -- 言語固有の設計パターン
-   - `hooks.md` -- フォーマッタ、リンター、型チェッカー用の PostToolUse フック
-   - `security.md` -- シークレット管理、セキュリティスキャンツール
-3. 各ファイルは次の内容で始めてください:
-   ```
-   > このファイルは [common/xxx.md](../common/xxx.md) を <言語> 固有のコンテンツで拡張します。
-   ```
-4. 利用可能な既存のスキルを参照するか、`skills/` 配下に新しいものを作成してください。
 
 ## ルールの優先順位
 
 言語固有ルールと common ルールが競合する場合、**言語固有ルールが優先** されます（具体的なものが一般的なものを上書き）。これは標準的な階層型設定パターン（CSS の詳細度や `.gitignore` の優先順位と同様）に従います。
 
 - `rules/common/` はすべてのプロジェクトに適用される普遍的なデフォルトを定義します。
-- `rules/golang/`、`rules/python/`、`rules/swift/`、`rules/php/`、`rules/typescript/` などは、言語のイディオムが異なる場合にデフォルトを上書きします。
-
-### 例
-
-`common/coding-style.md` はデフォルト原則として不変性を推奨しています。言語固有の `golang/coding-style.md` はこれを上書きできます:
-
-> Go のイディオムでは構造体のミューテーションにポインタレシーバを使用します -- 一般原則は [common/coding-style.md](../common/coding-style.md) を参照してください。ただし、ここでは Go のイディオムに沿ったミューテーションを優先します。
+- `rules/typescript/` は、TypeScript/JavaScript のイディオムが異なる場合にデフォルトを上書きします。
 
 ### 上書き注記のある common ルール
 

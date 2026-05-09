@@ -46,10 +46,8 @@ git clone https://github.com/yumezawa101/everything-claude-code_japanese.git
 # 共通ルール（必須）
 cp -r everything-claude-code_japanese/rules/common/* ~/.claude/rules/
 
-# 言語固有ルール（スタックを選択）
+# TypeScript/JavaScript ルール
 cp -r everything-claude-code_japanese/rules/typescript/* ~/.claude/rules/
-cp -r everything-claude-code_japanese/rules/python/* ~/.claude/rules/
-cp -r everything-claude-code_japanese/rules/golang/* ~/.claude/rules/
 
 # クローンしたリポジトリを削除
 rm -rf everything-claude-code_japanese
@@ -61,7 +59,7 @@ rm -rf everything-claude-code_japanese
 /claudecode-tool-ja:plan "ユーザー認証を追加"
 ```
 
-**完了です!** これで28のエージェント、116のスキル、59のコマンドにアクセスできます。
+**完了です!** これで8のエージェント、11のスキル、14のコマンドにアクセスできます。
 
 ---
 
@@ -69,94 +67,73 @@ rm -rf everything-claude-code_japanese
 
 ```
 claudecode-tool-ja/
-|-- agents/           # 専門サブエージェント（28種類）
+|-- agents/           # 専門サブエージェント（8種類）
 |   |-- planner.md, architect.md, tdd-guide.md, code-reviewer.md,
 |   |-- security-reviewer.md, build-error-resolver.md, e2e-runner.md,
-|   |-- refactor-cleaner.md, doc-updater.md, database-reviewer.md,
-|   |-- chief-of-staff.md, typescript-reviewer.md, python-reviewer.md,
-|   |-- go-reviewer.md, ...他 14 エージェント
+|   |-- refactor-cleaner.md
 |
-|-- skills/           # ワークフロー定義と領域知識（116種類）
+|-- skills/           # ワークフロー定義と領域知識（11種類）
 |   |-- coding-standards/, backend-patterns/, frontend-patterns/,
-|   |-- tdd-workflow/, security-review/, continuous-learning-v2/,
-|   |-- docker-patterns/, mcp-server-patterns/, api-design/, ...
+|   |-- security-review/, tdd-workflow/, verification-loop/,
+|   |-- strategic-compact/, continuous-learning-v2/, configure-ecc/,
+|   |-- agentic-engineering/, autonomous-loops/
 |
-|-- commands/         # スラッシュコマンド（59種類）
-|   |-- tdd.md, plan.md, e2e.md, code-review.md, build-fix.md, ...
+|-- commands/         # スラッシュコマンド（14種類）
+|   |-- plan.md, tdd.md, e2e.md, verify.md, code-review.md,
+|   |-- build-fix.md, refactor-clean.md, test-coverage.md,
+|   |-- orchestrate.md, learn.md, instinct-status.md,
+|   |-- update-docs.md, update-codemaps.md, sessions.md
 |
 |-- rules/            # ガイドライン（~/.claude/rules/ にコピー）
 |   |-- common/       # 言語非依存
-|   |-- typescript/, python/, golang/, java/, kotlin/,
-|   |-- rust/, cpp/, swift/, php/, perl/, csharp/
+|   |-- typescript/   # TypeScript/JavaScript 固有
 |
 |-- hooks/            # トリガーベースの自動化
-|-- scripts/          # クロスプラットフォーム Node.js スクリプト
-|-- contexts/         # 動的コンテキスト
-|-- examples/         # 設定例
 |-- mcp-configs/      # MCP サーバー設定
 ```
 
 ---
 
-## おすすめ Skills & Commands
+## Skills & Commands
 
-### まずやるべきこと
+### Skills（11種）
 
-| 種類 | 名前 | 説明 |
-|------|------|------|
-| skill | **continuous-learning-v2** | セッション中のパターンを自動検出し instinct として蓄積 |
-| command | **`/evolve`** | 蓄積した instinct を skill/command/agent に自動変換 |
-| skill | **codebase-onboarding** | 未知のコードベースを体系的に分析・マップ化 |
-| skill | **verification-loop** | コミット前の包括的検証（build/lint/test） |
-| skill | **tdd-workflow** | TDD を強制、80%+ カバレッジ確保 |
+| カテゴリ | 名前 | 説明 |
+|---------|------|------|
+| 開発標準 | **coding-standards** | TS/JS/React/Node のベストプラクティス |
+| 開発標準 | **frontend-patterns** | React/Next.js フロントエンド |
+| 開発標準 | **backend-patterns** | Node.js/Express/Next.js バックエンド |
+| セキュリティ | **security-review** | 認証・入力・シークレットの包括的チェック |
+| ワークフロー | **tdd-workflow** | TDD を強制、80%+ カバレッジ確保 |
+| ワークフロー | **verification-loop** | コミット前の包括的検証（build/lint/test） |
+| ワークフロー | **strategic-compact** | コンテキスト圧縮の戦略的提案 |
+| 学習 | **continuous-learning-v2** | hook 経由で instinct として蓄積 |
+| ツール | **configure-ecc** | このリポジトリのインタラクティブインストーラー |
+| AI開発 | **agentic-engineering** | エージェント開発の基本指針 |
+| AI開発 | **autonomous-loops** | 自律ループパターン |
 
-### 必須 Skills
-
-| 名前 | 説明 |
-|------|------|
-| **coding-standards** | TS/JS/React/Node のベストプラクティス |
-| **security-review** | 認証・入力・シークレットの包括的セキュリティチェック |
-| **blueprint** | 1行の目標を複数セッションの実装計画に変換 |
-| **architecture-decision-records** | アーキテクチャ決定を文脈付きで記録 |
-| **e2e-testing** | Playwright E2E テストパターン |
-| **documentation-lookup** | Context7 MCP で最新ドキュメントを取得 |
-
-### 開発基盤 Skills
-
-| 名前 | 説明 |
-|------|------|
-| **api-design** | REST API 設計パターン |
-| **backend-patterns** | Node.js/Express/Next.js バックエンド |
-| **frontend-patterns** | React/Next.js フロントエンド |
-| **postgres-patterns** | PostgreSQL 最適化、RLS |
-| **docker-patterns** | Docker Compose パターン |
-| **deployment-patterns** | CI/CD、Docker、ロールバック |
-| **database-migrations** | 安全なスキーマ変更 |
-| **strategic-compact** | コンテキスト圧縮の戦略的提案 |
-| **iterative-retrieval** | マルチ agent のコンテキスト問題解決 |
-| **context-budget** | コンテキストウィンドウ消費の監査 |
-
-### おすすめ Commands
+### Commands（14種）
 
 | コマンド | 説明 |
 |---------|------|
 | **`/plan`** | 要件を分析し段階的な実装計画を作成 |
 | **`/tdd`** | テスト駆動開発ワークフローを強制 |
-| **`/code-review`** | セキュリティと品質の包括的レビュー |
 | **`/build-fix`** | ビルドエラーを段階的に修正 |
-| **`/evolve`** | instinct を skill/command/agent に変換 |
-| **`/instinct-status`** | 学習した instinct を信頼度付きで表示 |
-| **`/verify`** | build、型チェック、lint、テストを一括実行 |
 | **`/refactor-clean`** | デッドコードを安全に特定・削除 |
+| **`/e2e`** | Playwright で E2E テスト |
+| **`/test-coverage`** | カバレッジ分析・不足テスト自動生成 |
+| **`/verify`** | build、型チェック、lint、テストを一括実行 |
+| **`/code-review`** | セキュリティと品質の包括的レビュー |
 | **`/orchestrate`** | 複雑なタスクの順次 agent ワークフロー |
+| **`/learn`** | セッション分析→再利用パターンを skill として保存 |
+| **`/instinct-status`** | 学習した instinct を信頼度付きで表示 |
+| **`/update-docs`** | package.json/.env.example を信頼源にドキュメント同期 |
+| **`/update-codemaps`** | コードマップ生成・更新 |
+| **`/sessions`** | セッション履歴管理 |
 
-### 言語/フレームワーク固有（51件）
+### Agents（8種、Claude が自動起動）
 
-Python, Go, Rust, Java/Spring, Kotlin/Android, PHP/Laravel, Swift/iOS, C++, Perl 等。`skills/` ディレクトリを参照。
-
-### 専門ドメイン（40件）
-
-AI エージェント構築、リサーチ、コンテンツ制作、サプライチェーン、動画編集等。`skills/` ディレクトリを参照。
+planner, architect, tdd-guide, code-reviewer, security-reviewer, build-error-resolver, e2e-runner, refactor-cleaner
 
 ---
 

@@ -65,14 +65,14 @@ mkdir -p $TARGET/skills $TARGET/rules
 
 ### 2a: スキルカテゴリの選択
 
-15個のスキルが4つのカテゴリに整理されています。`AskUserQuestion` を `multiSelect: true` で使用します：
+11個のスキルが3つのカテゴリに整理されています。`AskUserQuestion` を `multiSelect: true` で使用します：
 
 ```
 Question: "どのスキルカテゴリをインストールしますか？"
 Options:
   - "コード品質 & アーキテクチャ" — "コーディング標準、フロントエンド、バックエンド、セキュリティレビュー"
-  - "データベース" — "PostgreSQL、ClickHouse パターン"
   - "ワークフロー & 品質" — "TDD、検証、学習、コンパクション"
+  - "AI/エージェント関連" — "エージェント設計、自律ループ"
   - "全スキル" — "利用可能なすべてのスキルをインストール"
 ```
 
@@ -80,7 +80,7 @@ Options:
 
 選択されたカテゴリごとに、以下の全スキルリストを表示し、ユーザーに特定のスキルの確認または選択解除を求めます。リストが4項目を超える場合は、テキストとしてリストを表示し、`AskUserQuestion` で「リスト全体をインストール」オプションと「Other」（ユーザーが特定の名前を入力するため）を使用します。
 
-**カテゴリ: コード品質 & アーキテクチャ（5スキル）**
+**カテゴリ: コード品質 & アーキテクチャ（4スキル）**
 
 | スキル | 説明 |
 |-------|------|
@@ -88,27 +88,23 @@ Options:
 | `coding-standards` | TypeScript、JavaScript、React、Node.js のユニバーサルコーディング標準 |
 | `frontend-patterns` | React、Next.js、状態管理、パフォーマンス、UI パターン |
 | `security-review` | セキュリティチェックリスト: 認証、入力、シークレット、API、決済機能 |
-| `project-guidelines-example` | プロジェクト固有のスキルを作成するためのテンプレート |
 
-**カテゴリ: データベース（2スキル）**
-
-| スキル | 説明 |
-|-------|------|
-| `clickhouse-io` | ClickHouse パターン、クエリ最適化、分析、データエンジニアリング |
-| `postgres-patterns` | PostgreSQL クエリ最適化、スキーマ設計、インデックス、セキュリティ |
-
-**カテゴリ: ワークフロー & 品質（8スキル）**
+**カテゴリ: ワークフロー & 品質（5スキル）**
 
 | スキル | 説明 |
 |-------|------|
-| `continuous-learning` | セッションから再利用可能なパターンを自動抽出し、学習済みスキルとして保存 |
 | `continuous-learning-v2` | 信頼度スコアリング付きの instinct ベース学習、スキル/コマンド/エージェントに進化 |
-| `eval-harness` | eval 駆動開発（EDD）のための正式な評価フレームワーク |
-| `iterative-retrieval` | サブエージェントの context 問題に対する段階的な context 精緻化 |
 | `strategic-compact` | 論理的な間隔での手動 context コンパクションを提案 |
 | `tdd-workflow` | 80%以上のカバレッジで TDD を強制: ユニット、結合、E2E |
 | `verification-loop` | 検証と品質ループパターン |
 | `configure-ecc` | このインタラクティブインストーラー自体 |
+
+**カテゴリ: AI/エージェント関連（2スキル）**
+
+| スキル | 説明 |
+|-------|------|
+| `agentic-engineering` | eval 駆動・分解・モデルルーティングでエージェント的に開発 |
+| `autonomous-loops` | 自律ループのパターン（逐次〜RFC 駆動マルチエージェント DAG） |
 
 ### 2c: インストールの実行
 
@@ -117,7 +113,7 @@ Options:
 cp -r $ECC_ROOT/skills/<skill-name> $TARGET/skills/
 ```
 
-注意: `continuous-learning` と `continuous-learning-v2` には追加ファイル（config.json、hooks、スクリプト）があります — SKILL.md だけでなくディレクトリ全体がコピーされていることを確認してください。
+注意: `continuous-learning-v2` には追加ファイル（config.json、hooks、スクリプト）があります — SKILL.md だけでなくディレクトリ全体がコピーされていることを確認してください。
 
 ---
 

@@ -14,8 +14,6 @@
 | build-error-resolver | ビルドエラー修正 | ビルド失敗時 |
 | e2e-runner | E2E テスト | 重要なユーザーフロー |
 | refactor-cleaner | デッドコードクリーンアップ | コードメンテナンス |
-| doc-updater | ドキュメント | ドキュメント更新 |
-| rust-reviewer | Rust コードレビュー | Rust プロジェクト |
 
 ## Agent の即座の使用
 
